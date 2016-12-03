@@ -1,0 +1,18 @@
+#X86 Readings
+
+http://wiki.osdev.org/Main_Page 									- wiki on x86
+https://github.com/cirosantilli/x86-assembly-cheat 							- cheat sheet on x86 operations
+http://stackoverflow.com/questions/22054578/how-to-run-a-program-without-an-operating-system 		- design guideline #1
+http://stackoverflow.com/questions/1722687/can-i-execute-any-c-made-prog-without-any-os-platform 	- design guideline #2
+https://github.com/cirosantilli/x86-bare-metal-examples							- barebones OS
+http://www.felixcloutier.com/x86/
+http://cs.lmu.edu/~ray/notes/x86overview/
+http://www.cs.virginia.edu/~evans/cs216/guides/x86.html							- how to read x86
+
+
+#RTC Source
+
+https://www.hex-rays.com/products/ida/support/download_freeware.shtml 					- X86 decompiler
+http://www.bestoldgames.net/rollercoaster-tycoon							- RTC Demo code
+
+
