@@ -5,32 +5,33 @@
 
 export class Memory {
 
-
     private stack : number[] = [];
 
-
-
     public writeByte(val : number): void {
-
+        //TODO
     }
 
-    public readByte(): void {
-
+    public readByte(address: number): number {
+        //TODO
+        return 0;
     }
 
     public writeWord(val : number): void {
-
+        //TODO
     }
 
-    public readWord(): void {
-
+    public readWord(address: number): number {
+        //TODO
+        return 0;
     }
 
+    public pushByte(val : number): void {
+        //TODO
+    }
 
-
-}
-
-export class Stack {
-
+    public popByte() : number {
+        //TODO
+        return 0;
+    }
 
 }

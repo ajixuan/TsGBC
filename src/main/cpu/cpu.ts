@@ -1,14 +1,16 @@
 import {Registers} from "./registers";
 import {Operations} from "./operations";
-import {MMU} from "../memory/mmu";
+import {Memory} from "./memory";
 export class Cpu {
 
-    public registers : Registers = new Registers();
-    public opcodes : Operations = new Operations();
-    public mmu : MMU = new MMU();
+    public registers : Registers;
+    public memory : Memory;
+    public operations : Operations;
 
     constructor() {
-        //TODO
+        this.registers = new Registers();
+        this.memory = new Memory();
+        this.operations = new Operations(this);
     }
 
     /**
@@ -40,9 +42,11 @@ export class Cpu {
     public tick(): void {
         //TODO
 
-        // this.mmu.cpu
-        // this.registers
-        // this.opcodes
+        var opaddr =  this.registers.getPC();
+        var opcode = this.memory.readByte(opaddr);
+        var operation = this.operations.get(opcode);
+
+        operation.execute(opaddr);
     }
 
     /**
