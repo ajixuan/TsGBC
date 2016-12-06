@@ -1,7 +1,7 @@
 {
-  "name": "RTCJS",
+  "name": "GBC-JS",
   "version": "1.0.0",
-  "description": "Roller Coaster Tycoon made on javascript.",
+  "description": "A Javascript Gameboy Color Emulator.",
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
