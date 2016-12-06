@@ -87,11 +87,6 @@ class Operation {
     //System Links
     cpu: Cpu;
 
-    constructor(cpu: Cpu, mode: Mode) {
-        this.cpu;
-        this.mode;
-    }
-
     constructor(cpu: Cpu, id: number, cycle: number, mode: Mode, size : number) {
         this.cpu = cpu;
         this.id = id;
@@ -122,8 +117,6 @@ class Sub extends Operation {
 
     execute(pc: number) {
         //TODO
-        var add = new Add(this.cpu, this.mode);
-        add.execute(pc);
 
     };
 }

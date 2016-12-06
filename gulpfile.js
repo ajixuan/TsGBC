@@ -18,6 +18,7 @@ gulp.task('clean', function() {
 gulp.task('src', function() {
 	return gulp.src(dir.src)
 		.pipe(ts({
+			module: 'system',
             noImplicitAny: true,
             out: 'app.js'
         }))

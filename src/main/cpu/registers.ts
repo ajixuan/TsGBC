@@ -1,17 +1,15 @@
 /**
  * Created by hkamran on 12/5/2016.
  */
-
-
 export class Registers {
 
     private a : number;
 
-    private f : {
+    private f : { zero : number, subtract : number, half : number, carry : number} = {
         zero : 0,
         subtract : 0,
         half : 0,
-        carry : 0,
+        carry : 0
     };
 
     private b : number;
@@ -102,7 +100,7 @@ export class Registers {
         return this.f.zero;
     }
 
-    public getSubtractFlag(num : number) {
+    public setSubtractFlag(num : number) {
         this.isValid(num, 0x1, "Register argument to large for Subtract: " + num);
         this.f.subtract;
     }
@@ -111,7 +109,7 @@ export class Registers {
         return this.f.subtract;
     }
 
-    public getHalfFlag(num : number) {
+    public setHalfFlag(num : number) {
         this.isValid(num, 0x1, "Register argument to large for Half: " + num);
         this.f.half;
     }
@@ -120,7 +118,7 @@ export class Registers {
         return this.f.half;
     }
 
-    public getCarryFlag(num : number) {
+    public setCarryFlag(num : number) {
         this.isValid(num, 0x1, "Register argument to large for Carry: " + num);
         this.f.carry;
     }
@@ -246,7 +244,7 @@ export class Registers {
     }
 
     private isValid(num : number, size: number, error : string): void {
-        if (num == 'undefined' || num > size || num < 0) {
+        if (num == null || num > size || num < 0) {
             throw error;
         }
     }
