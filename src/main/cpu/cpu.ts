@@ -1,11 +1,13 @@
 import {Registers} from "./registers";
 import {Operations} from "./operations";
 import {Memory} from "./memory";
+import {Cartridge} from "../cartridge/cartridge";
 export class Cpu {
 
     public registers : Registers;
     public memory : Memory;
     public operations : Operations;
+    public cartridge : Cartridge;
 
     constructor() {
         this.registers = new Registers();
@@ -25,8 +27,8 @@ export class Cpu {
      * @param rom
      *      String representation of the ROM.
      */
-    public load(rom : String): void {
-        //TODO
+    public load(cartridge : Cartridge): void {
+        this.cartridge = cartridge;
     }
 
     /**
