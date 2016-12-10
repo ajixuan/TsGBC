@@ -4,6 +4,7 @@ var runSequence = require('run-sequence');
 var tar = require('gulp-tar');
 var p = require('./package.json')
 var ts = require('gulp-typescript');
+var systemjsBuilder = require('gulp-systemjs-builder')
 
 var dir = {
   src: 		'./src/main/**/*',
@@ -25,6 +26,15 @@ gulp.task('src', function() {
         .pipe(gulp.dest('target/'));
 });
 
+gulp.task('system', function() {
+    var builder = systemjsBuilder();
+
+    builder.buildStatic('target/app.js', 'target/outfile.js', {
+        minify: false,
+        mangle: false
+    });
+});
+
 gulp.task('html', function() {
 	return gulp.src(dir.html)
 		.pipe(gulp.dest('target/'));
@@ -38,7 +48,9 @@ gulp.task('package', function() {
 		.pipe(gulp.dest('target/'));
 });
 
-gulp.task('build', ['html', 'src']);
+gulp.task('build', function(callback) {
+    runSequence('html', 'src', 'system', callback);
+});
 
 gulp.task('watch', function() {
   gulp.watch([dir.src, dir.html], ['build']);
