@@ -1,1 +1,2 @@
 http://gbdev.gg8.se/wiki/articles/Pan_Docs#Overview		- Overview of the GBC
+http://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html	- contains Opcodes for Gameboy and Gameboy color (CB)
