@@ -3,7 +3,7 @@
  */
 export class Registers {
 
-    private a : number;
+    private a : number = 0;
 
     private f : { zero : number, subtract : number, half : number, carry : number} = {
         zero : 0,
@@ -12,18 +12,22 @@ export class Registers {
         carry : 0
     };
 
-    private b : number;
-    private c : number;
+    private b : number = 0;
+    private c : number = 0;
 
-    private d : number;
-    private e : number;
+    private d : number = 0;
+    private e : number = 0;
 
-    private h : number;
-    private l : number;
+    private h : number = 0;
+    private l : number = 0;
 
-    private sp : number;
-    private pc : number;
+    private sp : number = 0;
+    private pc : number = 0;
 
+
+    constructor() {
+
+    }
 
     /**
      * PC (Program Counter) 16 bits

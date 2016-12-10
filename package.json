@@ -20,6 +20,7 @@
     "http-server": "^0.9.0",
     "run-sequence": "^1.2.2",
     "systemjs-builder": "^0.15.34",
+    "tsd": "^0.6.5",
     "typescript": "^2.1.4"
   },
   "repository": {

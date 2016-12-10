@@ -7,7 +7,7 @@ var p = require('./package.json')
 var Builder = require('systemjs-builder');
 
 var dir = {
-  src: 		'./src/main/**/*',
+  src: 		'./src/main/**/*.ts',
   html: 	'./src/html/**/*',
   target:	'./target/**/*'
 };
