@@ -3,8 +3,9 @@ import {Ppu} from "./ppu/ppu";
 
 export class GameBoy {
 
-    public cpu : Cpu;
+
     public ppu : Ppu;
+    public cpu : Cpu;
 
     constructor() {
         this.cpu = new Cpu();

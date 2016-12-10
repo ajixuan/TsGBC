@@ -1,10 +1,10 @@
 var gulp = require('gulp');
+var ts = require('gulp-typescript');
 var del = require('del');
 var runSequence = require('run-sequence');
 var tar = require('gulp-tar');
 var p = require('./package.json')
-var ts = require('gulp-typescript');
-var systemjsBuilder = require('gulp-systemjs-builder')
+var Builder = require('systemjs-builder');
 
 var dir = {
   src: 		'./src/main/**/*',
@@ -19,20 +19,14 @@ gulp.task('clean', function() {
 gulp.task('src', function() {
 	return gulp.src(dir.src)
 		.pipe(ts({
-			module: 'system',
-            noImplicitAny: true,
-            out: 'app.js'
+            typescript: require('typescript'), // In my package.json I have "typescript": "~1.8.0-dev.20151128"
+            module: 'system',
+            experimentalDecorators: true,
+            emitDecoratorMetadata: true,
+            outFile : 'app.js',
+            target: "es5",
         }))
         .pipe(gulp.dest('target/'));
-});
-
-gulp.task('system', function() {
-    var builder = systemjsBuilder();
-
-    builder.buildStatic('target/app.js', 'target/outfile.js', {
-        minify: false,
-        mangle: false
-    });
 });
 
 gulp.task('html', function() {
@@ -49,7 +43,7 @@ gulp.task('package', function() {
 });
 
 gulp.task('build', function(callback) {
-    runSequence('html', 'src', 'system', callback);
+    runSequence('html', 'src', callback);
 });
 
 gulp.task('watch', function() {
