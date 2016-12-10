@@ -46,7 +46,7 @@ export class Operations {
         };
 
         /**
-         * Instructions
+         * Instructions for Gameboy (Not Gameboy Color)
          */
 
         //----------------------------------------
@@ -69,7 +69,7 @@ export class Operations {
             cycle : 8,
             mode : immediate,
             size : 2,
-            execute(pc: number) : number {
+            execute(pc: number)  {
                 var addr = this.mode.getValue(pc)
                 registers.setC(memory.readByte(addr));
             }
@@ -120,19 +120,604 @@ export class Operations {
         };
 
         //----------------------------------------
-        // LD nn,n - Load (8 bits)
+        // LD r1, r2
         //----------------------------------------
 
         this.operations[0x7F] = {
             name :"LD",
             cycle : 4,
             mode : immediate,
-            size : 2,
+            size : 1,
             execute(pc: number) {
-                registers.setA(registers.getA());
+                //WHY!?!?! is this created!!!!!
             }
         };
 
+        this.operations[0x78] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setA(registers.getB());
+            }
+        };
+
+        this.operations[0x79] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setA(registers.getC());
+            }
+        };
+
+        this.operations[0x7A] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setA(registers.getD());
+            }
+        };
+
+        this.operations[0x7B] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setA(registers.getE());
+            }
+        };
+
+        this.operations[0x7C] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setA(registers.getH());
+            }
+        };
+
+        this.operations[0x7D] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setA(registers.getL());
+            }
+        };
+
+        this.operations[0x7E] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var val = memory.readByte(registers.getHL());
+                registers.setA(val);
+            }
+        };
+
+        this.operations[0x40] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+
+            }
+        };
+
+        this.operations[0x41] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setB(registers.getC());
+            }
+        };
+
+        this.operations[0x42] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setB(registers.getD());
+            }
+        };
+
+        this.operations[0x43] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setB(registers.getE());
+            }
+        };
+
+        this.operations[0x44] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setB(registers.getH());
+            }
+        };
+
+        this.operations[0x45] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setB(registers.getL());
+            }
+        };
+
+        this.operations[0x46] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var val = memory.readByte(registers.getHL());
+                registers.setB(val);
+            }
+        };
+
+        this.operations[0x48] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setC(registers.getB());
+            }
+        };
+
+        this.operations[0x49] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+            }
+        };
+
+        this.operations[0x4A] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setC(registers.getD());
+            }
+        };
+
+        this.operations[0x4B] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setC(registers.getE());
+            }
+        };
+
+        this.operations[0x4C] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setC(registers.getH());
+            }
+        };
+
+        this.operations[0x4D] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setC(registers.getL());
+            }
+        };
+
+        this.operations[0x4E] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var val = memory.readByte(registers.getHL());
+                registers.setC(val);
+            }
+        };
+
+        this.operations[0x50] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setD(registers.getB());
+            }
+        };
+
+        this.operations[0x50] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setD(registers.getB());
+            }
+        };
+
+        this.operations[0x51] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setD(registers.getC());
+            }
+        };
+
+        this.operations[0x52] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+            }
+        };
+
+        this.operations[0x53] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setD(registers.getE());
+            }
+        };
+
+        this.operations[0x54] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setD(registers.getH());
+            }
+        };
+
+        this.operations[0x55] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setD(registers.getL());
+            }
+        };
+
+        this.operations[0x56] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var val = memory.readByte(registers.getHL());
+                registers.setD(val);
+            }
+        };
+
+        this.operations[0x58] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setE(registers.getB());
+            }
+        };
+
+        this.operations[0x59] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setE(registers.getC());
+            }
+        };
+
+        this.operations[0x5A] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setE(registers.getD());
+            }
+        };
+
+        this.operations[0x5B] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+            }
+        };
+
+        this.operations[0x5C] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setE(registers.getH());
+            }
+        };
+
+        this.operations[0x5D] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setE(registers.getL());
+            }
+        };
+
+        this.operations[0x5E] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var val = memory.readByte(registers.getHL());
+                registers.setE(val);
+            }
+        };
+
+        this.operations[0x60] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setH(registers.getB());
+            }
+        };
+
+        this.operations[0x61] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setH(registers.getC());
+            }
+        };
+
+        this.operations[0x62] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setH(registers.getD());
+            }
+        };
+
+        this.operations[0x63] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setH(registers.getE());
+            }
+        };
+
+        this.operations[0x64] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+            }
+        };
+
+        this.operations[0x65] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setH(registers.getL());
+            }
+        };
+
+        this.operations[0x66] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var val = memory.readByte(registers.getH());
+                registers.setH(val);
+            }
+        };
+
+        this.operations[0x68] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setL(registers.getB());
+            }
+        };
+
+        this.operations[0x69] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setL(registers.getC());
+            }
+        };
+
+        this.operations[0x6A] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setL(registers.getD());
+            }
+        };
+
+        this.operations[0x6B] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setL(registers.getE());
+            }
+        };
+
+        this.operations[0x6C] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                registers.setL(registers.getH());
+            }
+        };
+
+        this.operations[0x6D] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+            }
+        };
+
+        this.operations[0x6E] = {
+            name :"LD",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var val = memory.readByte(registers.getHL());
+                registers.setL(val);
+            }
+        };
+
+        this.operations[0x70] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var addr = registers.getHL();
+                var val = registers.getB();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        this.operations[0x71] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var addr = registers.getHL();
+                var val = registers.getC();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        this.operations[0x72] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var addr = registers.getHL();
+                var val = registers.getD();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        this.operations[0x73] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var addr = registers.getHL();
+                var val = registers.getE();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        this.operations[0x74] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var addr = registers.getHL();
+                var val = registers.getH();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        this.operations[0x75] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var addr = registers.getHL();
+                var val = registers.getL();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        this.operations[0x36] = {
+            name :"LD",
+            cycle : 12,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var addr = this.mode.getValue(pc);
+                var val = memory.readByte(addr);
+                memory.writeByte(registers.getHL(), val);
+            }
+        };
 
 
         //----------------------------------------

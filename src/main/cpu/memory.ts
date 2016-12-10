@@ -7,7 +7,7 @@ export class Memory {
 
     private stack : number[] = [];
 
-    public writeByte(val : number): void {
+    public writeByte(addr: number, val : number): void {
         //TODO
     }
 
@@ -16,7 +16,7 @@ export class Memory {
         return 0;
     }
 
-    public writeWord(val : number): void {
+    public writeWord(addr: number, val : number): void {
         //TODO
     }
 
