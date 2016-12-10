@@ -6,13 +6,14 @@ import {Cpu} from "./cpu";
  */
 export class Operations {
 
-    private mapping: Operation[];
+    private operations : Operation[];
     public modes: Object;
     public cpu : Cpu;
 
     constructor(cpu : Cpu) {
         this.cpu = cpu;
-        this.createMapping();
+        this.createModes();
+        this.createOperations();
     }
 
     /**
@@ -22,89 +23,76 @@ export class Operations {
      * @returns Operation
      */
     public get(opcode : number) : Operation {
-        return this.mapping[opcode];
+        return this.operations[opcode];
+    }
+
+
+    private createModes() {
+
     }
 
     /**
      * Create a list of opcodes with their respective addressing modes.
      */
-    private createMapping(): void {
+    private createOperations(): void {
+        this.operations =  [];
+
+        //System Pointers
         let registers = this.cpu.registers;
         let memory = this.cpu.memory;
 
-        let modes =  {
-            absolute : new Absolute()
-        }
+        /**
+         * Modes
+         */
 
-
-        //Define Operations
-        this.mapping =  [];
+        let immediate: Mode = new class {
+            name : string = "Immediate";
+            getValue(addr: number) : number {
+                return memory.readByte(addr);
+            }
+        };
 
         /**
          * Instructions
          */
 
-
         //----------------------------------------
         // LD - Load (8 bits)
         //----------------------------------------
 
-        this.mapping[0x0E] = {
+        this.operations[0x0E] = {
             name :"LD",
             id : 0x0E,
             cycle : 8,
-            mode : modes.absolute,
+            mode : immediate,
             execute(addr: number) : number {
-                console.log(registers.getA());
-                return 0;
+                registers.setB(memory.readByte(addr));
+                return this.cycle;
             }
         };
 
-        this.mapping[0x01] =  {
+        this.operations[0x01] =  {
             name : "LD",
             id : 0x01,
             cycle : 8,
-            mode : modes.absolute,
+            mode : immediate,
             execute(addr: number) : number {
                 return 0;
             }
         }
 
+        //----------------------------------------
+        // LD - Load (16 bits)
+        //----------------------------------------
+
     }
 
 }
-
-/**
- * Addressing Modes
- */
 
 interface Mode {
     name : string;
-    id : number;
-    getValue(address: number): number;
+    getValue(addr: number): number;
 }
-
-class Absolute implements Mode {
-    name : string = "Absolute";
-    id : number = 1;
-
-    getValue(address: number) : number {
-        //TODO
-        return 0;
-    }
-}
-
-class Relative implements Mode {
-    name : string = "Absolute";
-    id : number = 1;
-
-    getValue(address: number) : number {
-        //TODO
-        return 0;
-    }
-}
-
-
 
 interface Operation {
     name: string;
