@@ -1,16 +1,18 @@
 import {Registers} from "./registers";
 import {Operations} from "./operations";
 import {Memory} from "../memory/memory";
-import {Cartridge} from "../memory/cartridge";
+import {Stack} from "../memory/stack";
 export class Cpu {
 
     public registers : Registers;
     public memory : Memory;
     public operations : Operations;
+    public stack : Stack;
 
     constructor(memory : Memory) {
         this.registers = new Registers();
         this.memory = memory;
+        this.stack = new Stack(this.memory, this.registers);
         this.operations = new Operations(this);
     }
 

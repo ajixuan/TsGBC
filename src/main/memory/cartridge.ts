@@ -2,8 +2,10 @@ import {Memory} from "./memory";
 
 export class Cartridge {
 
-    constructor(memory : Memory) {
+    public memory : Memory;
 
+    constructor(memory : Memory) {
+        this.memory = memory;
     }
 
 }

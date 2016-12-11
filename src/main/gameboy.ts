@@ -8,11 +8,11 @@ export class GameBoy {
     public ppu : Ppu;
     public cpu : Cpu;
     public memory : Memory;
-    public cartidge : Cartridge;
+    public cartridge : Cartridge;
 
     constructor() {
         this.memory = new Memory();
-        this.cartidge = new Cartridge(this.memory);
+        this.cartridge = new Cartridge(this.memory);
         this.cpu = new Cpu(this.memory);
         this.ppu = new Ppu(this.memory);
     }

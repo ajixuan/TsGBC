@@ -1,3 +1,4 @@
+import {Cartridge} from "./cartridge";
 /**
  * Created by hkamran on 12/5/2016.
  */
@@ -5,91 +6,120 @@
 
 export class Memory {
 
-    //PPU
-    private bank0 : number[] = [0x1800];
-    private data1 : number[] = [0x400];
-    private data2 : number[] = [0x400];
-
-    //switchable ram
-    private expansion : number[] = [0x2000];
-
-    private ram : number[] = [0x2000];
-
-    private oam : number[] = [0xA0];
     private io : number[] = [0x80];
-    private stack : number[] = [0x7E];
-    private interrupt : number[] = [0x1];
 
+    public cartridge : any = new class {
+        public bank0 : number[] = [0x4000];
+        public bankn : number[] = [0x4000];
+        public external : number[] = [0x2000];
+    };
+
+    public ppu : any = new class {
+        public vram : number[] = [0x2000];
+        public oam : number[] = [0xA0];
+    };
+
+    public cpu : any = new class {
+        public ram : number[] = [0x2000];
+        public stack : number[] = [0x7F];
+        public interrupt : number[] = [0x1];
+    }
 
     public writeByte(addr: number, val : number): void {
+        if (val == null  || val > 0xFF || addr == null || addr > 0xFFFF) {
+            throw "Invalid Write at 0x" + addr.toString(16) + " with " + val;
+        }
+
         if (addr < 0x8000) {
-            //Cartridge
+            if (addr < 0x4000) {
+                this.cartridge.bank0[addr] = val;
+            } else if (addr < 0x8000) {
+                this.cartridge.bankn[addr - 0x4000] = val;
+            }
         } else if (addr < 0xA000) {
-            //PPU
+            this.ppu.vram[addr - 0x8000] = val;
         } else if (addr < 0xC000) {
-            //Switchable RAM
-        } else if (addr < 0xE000) {
-            //RAM
+            this.cartridge.external[addr - 0xA000] = val;
         } else if (addr < 0xFE00) {
-            //RAM - 0x2000
+            this.cpu.ram[(addr - 0xC000) & 0x2000] = val;
         } else if (addr < 0xFEA0) {
-            //OAM
-        } else if (addr < 0xFF00) {
-            //error
+            this.ppu.oam[addr - 0xFE00] = val;
         } else if (addr < 0xFF80) {
-            //io
+            if (addr < 0xFF00) {
+                throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
+            } else if (addr < 0xFF4C) {
+                this.io[addr - 0xFF00] = val;
+            } else if (addr < 0xFF80) {
+                throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
+            }
         } else if (addr < 0xFFFF) {
-            //stack
+            this.cpu.stack[addr - 0xFF80] = val;
         } else if (addr == 0xFFFF) {
-            //interrupt
+            this.cpu.interrupt[addr - 0xFFFF] = val;
         } else {
-            throw "error";
+            throw "Invalid write led to unknown address at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
         }
     }
 
     public readByte(addr: number): number {
-        if (addr < 0x8000) {
-            //Cartridge
-        } else if (addr < 0xA000) {
-            //PPU
-        } else if (addr < 0xC000) {
-            //Switchable RAM
-        } else if (addr < 0xE000) {
-            //RAM
-        } else if (addr < 0xFE00) {
-            //RAM - 0x2000
-        } else if (addr < 0xFEA0) {
-            //OAM
-        } else if (addr < 0xFF00) {
-            //error
-        } else if (addr < 0xFF80) {
-            //io
-        } else if (addr < 0xFFFF) {
-            //stack
-        } else if (addr == 0xFFFF) {
-            //interrupt
-        } else {
-            throw "error";
+        if (addr == null  || addr > 0xFF) {
+            throw "Invalid read at 0x" + addr.toString(16);
         }
-        return 0;
+
+        var val = null;
+        if (addr < 0x8000) {
+            if (addr < 0x4000) {
+                val = this.cartridge.bank0[addr];
+            } else if (addr < 0x8000) {
+                val = this.cartridge.bankn[addr - 0x4000];
+            }
+        } else if (addr < 0xA000) {
+            val = this.ppu.vram[addr - 0x8000];
+        } else if (addr < 0xC000) {
+            val = this.cartridge.external[addr - 0xA000];
+        } else if (addr < 0xFE00) {
+            val = this.cpu.ram[(addr - 0xC000) & 0x2000];
+        } else if (addr < 0xFEA0) {
+            val = this.ppu.oam[addr - 0xFE00];
+        } else if (addr < 0xFF80) {
+            if (addr < 0xFF00) {
+                throw "Invalid read on unused i/o at 0x" + addr.toString(16);
+            } else if (addr < 0xFF4C) {
+                val = this.io[addr - 0xFF00];
+            } else if (addr < 0xFF80) {
+                throw "Invalid write on unused i/o at 0x" + addr.toString(16);
+            }
+        } else if (addr < 0xFFFF) {
+            val = this.cpu.stack[addr - 0xFF80];
+        } else if (addr == 0xFFFF) {
+            val = this.cpu.interrupt[addr - 0xFFFF];
+        } else {
+            throw "Invalid read led to unknown address at 0x" + addr.toString(16);
+        }
+
+        if (val == null || val > 0xFF) {
+            throw "Invalid read led to unknown value at 0x" + addr.toString(16) + " with " + val;
+        }
+
+        return null;
     }
 
     public writeWord(addr: number, val : number): void {
-        //TODO
+        //TODO this might be wrong
+        var high = val >> 8;
+        var low = val & 0xFF;
+
+        this.writeByte(addr, high);
+        this.writeByte(addr + 1, low);
     }
 
-    public readWord(address: number): number {
-        //TODO
-        return 0;
-    }
+    public readWord(addr: number): number {
+        var high = this.readByte(addr + 1);
+        var low = this.readByte(addr);
+        var word = high << 8 || low;
 
-    public pushByte(val : number): void {
-        //TODO
-    }
-
-    public popByte() : number {
-        //TODO
-        return 0;
+        return word;
     }
 
 }
+
