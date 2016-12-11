@@ -7,7 +7,6 @@ export class Cpu {
     public registers : Registers;
     public memory : Memory;
     public operations : Operations;
-    public cartridge : Cartridge;
 
     constructor(memory : Memory) {
         this.registers = new Registers();
@@ -20,15 +19,6 @@ export class Cpu {
      */
     public reset(): void {
         //TODO
-    }
-
-    /**
-     * Load a game ROM.
-     * @param rom
-     *      String representation of the ROM.
-     */
-    public load(cartridge : Cartridge): void {
-        this.cartridge = cartridge;
     }
 
     /**
