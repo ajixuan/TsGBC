@@ -1,4 +1,4 @@
-import {Memory}  from "./memory";
+import {Memory}  from "../memory/memory";
 import {Cpu} from "./cpu";
 
 /**

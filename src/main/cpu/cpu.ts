@@ -1,7 +1,7 @@
 import {Registers} from "./registers";
 import {Operations} from "./operations";
-import {Memory} from "./memory";
-import {Cartridge} from "../cartridge/cartridge";
+import {Memory} from "../memory/memory";
+import {Cartridge} from "../memory/cartridge";
 export class Cpu {
 
     public registers : Registers;
@@ -9,9 +9,9 @@ export class Cpu {
     public operations : Operations;
     public cartridge : Cartridge;
 
-    constructor() {
+    constructor(memory : Memory) {
         this.registers = new Registers();
-        this.memory = new Memory();
+        this.memory = memory;
         this.operations = new Operations(this);
     }
 
