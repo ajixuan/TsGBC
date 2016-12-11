@@ -1,35 +1,26 @@
 <html>
 <head>
-
     <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js" type="application/javascript"></script>
     <script src="app.js" type="application/javascript"></script>
-
 </head>
 <body>
-
-
 <script>
-
     var gameboy = null;
     System.import('gameboy').then(function(e) {
         try {
             gameboy = new e.GameBoy();
         } catch (e) {
             console.error("Unable to load GameBoy");
+            console.error(e);
             return;
         }
         console.info("Gameboy is loaded!");
     }).catch(
         function(err){
+            console.error("Unable to load GameBoy");
             console.error(err);
         }
     );
-
-
-
-
 </script>
 </body>
-
-
 </html>

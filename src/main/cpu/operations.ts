@@ -119,10 +119,6 @@ export class Operations {
             }
         };
 
-        //----------------------------------------
-        // LD r1, r2
-        //----------------------------------------
-
         this.operations[0x7F] = {
             name :"LD",
             cycle : 4,
@@ -190,6 +186,190 @@ export class Operations {
             size : 1,
             execute(pc: number) {
                 registers.setA(registers.getL());
+            }
+        };
+
+        this.operations[0x0A] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var val = memory.readByte(registers.getBC());
+                registers.setA(val);
+            }
+        };
+
+        this.operations[0x1A] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var val = memory.readByte(registers.getDE());
+                registers.setA(val);
+            }
+        };
+
+        this.operations[0xFA] = {
+            name :"LD",
+            cycle : 16,
+            mode : immediate,
+            size : 2,
+            execute(pc: number) {
+                var high = memory.readByte(pc + 1 & 0xFFFF);
+                var low = memory.readWord(pc);
+                var val = high << 8 | low;
+                registers.setA(val);
+            }
+        };
+
+        this.operations[0x02] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 2,
+            execute(pc: number) {
+                var addr = registers.getBC();
+                var val = registers.getA();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        this.operations[0x12] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 2,
+            execute(pc: number) {
+                var addr = registers.getDE();
+                var val = registers.getA();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        this.operations[0x77] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 3,
+            execute(pc: number) {
+                var addr = registers.getHL();
+                var val = registers.getA();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        this.operations[0xEA] = {
+            name :"LD",
+            cycle : 16,
+            mode : immediate,
+            size : 2,
+            execute(pc: number) {
+                //TODO this might be wrong (reverse?)
+                var high = memory.readByte(pc + 1 & 0xFFFF);
+                var low = memory.readByte(pc & 0xFFFF);
+                var addr = high << 8 | low;
+                var val = registers.getA();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        this.operations[0xF2] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 2,
+            execute(pc: number) {
+                var high = 0xff;
+                var low = registers.getC();
+                var addr = high << 8 | low;
+                var val = memory.readByte(addr);
+                registers.setA(val);
+            }
+        };
+
+        this.operations[0x3A] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 2,
+            execute(pc: number) {
+                var addr = registers.getHL();
+                var val = memory.readByte(addr);
+                registers.setHL(addr - 1 & 0xFFFF);
+            }
+        };
+
+        this.operations[0x2A] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 2,
+            execute(pc: number) {
+                var addr = registers.getHL();
+                var val = memory.readByte(addr);
+                registers.setHL(addr + 1 & 0xFFFF);
+            }
+        };
+
+        this.operations[0x22] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 2,
+            execute(pc: number) {
+                var val = registers.getA();
+                var addr = registers.getHL();
+                memory.writeByte(addr, val);
+                registers.setHL(addr + 1 & 0xFFFF);
+            }
+        };
+
+        this.operations[0xE0] = {
+            name :"LD",
+            cycle : 12,
+            mode : immediate,
+            size : 2,
+            execute(pc: number) {
+                var addr = 0xFF00 | pc;
+                memory.writeByte(addr, registers.getA());
+            }
+        };
+
+        this.operations[0xF0] = {
+            name :"LD",
+            cycle : 12,
+            mode : immediate,
+            size : 2,
+            execute(pc: number) {
+                var addr = 0xFF00 | pc;
+                var val = memory.readByte(addr);
+                registers.setA(val & 0xFFFF);
+            }
+        };
+
+        this.operations[0xE2] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 2,
+            execute(pc: number) {
+                var high = 0xff;
+                var low = registers.getC();
+                var addr = high << 8 | low;
+                memory.writeByte(addr, registers.getA());
+            }
+        };
+
+        this.operations[0x3E] = {
+            name :"LD",
+            cycle : 8,
+            mode : immediate,
+            size : 1,
+            execute(pc: number) {
+                var val = memory.readByte(pc);
+                registers.setAF(val);
             }
         };
 
@@ -721,7 +901,7 @@ export class Operations {
 
 
         //----------------------------------------
-        // LD - Load (16 bits)
+        // LD - Load (16 bits) page 76
         //----------------------------------------
 
     }
