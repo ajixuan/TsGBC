@@ -4,7 +4,6 @@ import {Memory} from "../../memory/memory";
  */
 export interface Controller {
     rom : number[];
-    memory: Memory;
     readByte(addr : number) : number;
     writeByte(addr : number, val : number) : void;
 }

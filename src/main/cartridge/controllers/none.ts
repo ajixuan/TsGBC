@@ -3,14 +3,11 @@
  */
 
 import {Controller} from "./controller";
-import {Memory} from "../../memory/memory";
 export class None implements Controller {
 
-    public memory : Memory;
     public rom : number[];
 
-    constructor( rom : number[], memory : Memory) {
-        this.memory = memory;
+    constructor( rom : number[]) {
         this.rom = rom;
     }
 

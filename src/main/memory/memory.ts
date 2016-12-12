@@ -7,7 +7,7 @@ import {Cartridge} from "../cartridge/cartridge";
 export class Memory {
 
     private io : number[] = [0x80];
-    private cartridge : Cartridge;
+    public cartridge : Cartridge;
 
     public ppu : any = new class {
         public vram : number[] = [0x2000];
@@ -20,13 +20,9 @@ export class Memory {
         public interrupt : number[] = [0x1];
     }
 
-    constructor(cartridge : Cartridge) {
-        this.cartridge = cartridge;
-    }
-
     public writeByte(addr: number, val : number): void {
         if (val == null  || val > 0xFF || addr == null || addr > 0xFFFF) {
-            throw "Invalid Write at 0x" + addr.toString(16) + " with " + val;
+            throw "Invalid write at 0x" + addr.toString(16) + " with " + val;
         }
 
         if (addr < 0x8000) {

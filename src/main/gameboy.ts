@@ -11,8 +11,8 @@ export class GameBoy {
     public cartridge : Cartridge;
 
     constructor() {
+        this.cartridge = null
         this.memory = new Memory();
-        this.cartridge = null;
         this.cpu = new Cpu(this.memory);
         this.ppu = new Ppu(this.memory);
     }
@@ -20,6 +20,7 @@ export class GameBoy {
 
     public load(url : string) : void{
         this.cartridge = Cartridge.load(url, this.memory);
+        this.memory.cartridge = this.cartridge;
 
     }
 

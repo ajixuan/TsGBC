@@ -37,7 +37,7 @@ export class Cartridge {
         5 : 64
     };
 
-    constructor(rom : number[], url : string, memory : Memory) {
+    constructor(rom : number[], url : string) {
         this.url = url;
 
         this.type  = this.types[rom[0x147]];
@@ -45,7 +45,7 @@ export class Cartridge {
         this.type.ramSize = this.ramSizes[rom[0x149]];
 
         if (this.type.id == 0) {
-            this.controller = new None(rom, memory);
+            this.controller = new None(rom);
         } else {
             throw "Unable to create cartridge for " + url;
         }
@@ -87,7 +87,7 @@ export class Cartridge {
             bytes.push(code & 0xFF);
         }
 
-        var cartridge = new Cartridge(bytes, url, memory);
+        var cartridge = new Cartridge(bytes, url);
         return cartridge;
     }
 }
