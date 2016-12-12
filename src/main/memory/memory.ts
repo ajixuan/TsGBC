@@ -1,4 +1,4 @@
-import {Cartridge} from "./cartridge";
+import {Cartridge} from "../cartridge/cartridge";
 /**
  * Created by hkamran on 12/5/2016.
  */
@@ -7,12 +7,7 @@ import {Cartridge} from "./cartridge";
 export class Memory {
 
     private io : number[] = [0x80];
-
-    public cartridge : any = new class {
-        public bank0 : number[] = [0x4000];
-        public bankn : number[] = [0x4000];
-        public external : number[] = [0x2000];
-    };
+    private cartridge : Cartridge;
 
     public ppu : any = new class {
         public vram : number[] = [0x2000];
@@ -25,21 +20,21 @@ export class Memory {
         public interrupt : number[] = [0x1];
     }
 
+    constructor(cartridge : Cartridge) {
+        this.cartridge = cartridge;
+    }
+
     public writeByte(addr: number, val : number): void {
         if (val == null  || val > 0xFF || addr == null || addr > 0xFFFF) {
             throw "Invalid Write at 0x" + addr.toString(16) + " with " + val;
         }
 
         if (addr < 0x8000) {
-            if (addr < 0x4000) {
-                this.cartridge.bank0[addr] = val;
-            } else if (addr < 0x8000) {
-                this.cartridge.bankn[addr - 0x4000] = val;
-            }
+            this.cartridge.writeByte(addr, val);
         } else if (addr < 0xA000) {
             this.ppu.vram[addr - 0x8000] = val;
         } else if (addr < 0xC000) {
-            this.cartridge.external[addr - 0xA000] = val;
+            this.cartridge.writeByte(addr, val);
         } else if (addr < 0xFE00) {
             this.cpu.ram[(addr - 0xC000) & 0x2000] = val;
         } else if (addr < 0xFEA0) {
@@ -68,15 +63,11 @@ export class Memory {
 
         var val = null;
         if (addr < 0x8000) {
-            if (addr < 0x4000) {
-                val = this.cartridge.bank0[addr];
-            } else if (addr < 0x8000) {
-                val = this.cartridge.bankn[addr - 0x4000];
-            }
+            return this.cartridge.readByte(addr);
         } else if (addr < 0xA000) {
             val = this.ppu.vram[addr - 0x8000];
         } else if (addr < 0xC000) {
-            val = this.cartridge.external[addr - 0xA000];
+            return this.cartridge.readByte(addr);
         } else if (addr < 0xFE00) {
             val = this.cpu.ram[(addr - 0xC000) & 0x2000];
         } else if (addr < 0xFEA0) {

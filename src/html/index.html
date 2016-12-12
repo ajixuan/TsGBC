@@ -15,12 +15,14 @@
             return;
         }
         console.info("Gameboy is loaded!");
+        gameboy.load("./roms/Tetris.gb");
     }).catch(
         function(err){
             console.error("Unable to load GameBoy");
             console.error(err);
         }
     );
+
 </script>
 </body>
 </html>
