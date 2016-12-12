@@ -53,7 +53,7 @@ export class Memory {
     }
 
     public readByte(addr: number): number {
-        if (addr == null  || addr > 0xFF) {
+        if (addr == null  || addr > 0xFFFF) {
             throw "Invalid read at 0x" + addr.toString(16);
         }
 
