@@ -43,7 +43,7 @@ gulp.task('package', function() {
 });
 
 gulp.task('build', function(callback) {
-    runSequence('html', 'src', callback);
+    runSequence('clean', 'src', 'html', callback);
 });
 
 gulp.task('watch', function() {
