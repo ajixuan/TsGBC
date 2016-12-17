@@ -141,8 +141,8 @@ export class Registers {
 
 
     public getF() : number {
-        //MAX is 0xF0
-        return this.f.zero << 7 | this.f.subtract << 6 | this.f.half << 5 | this.f.carry << 4;
+            //MAX is 0xF0
+            return this.f.zero << 7 | this.f.subtract << 6 | this.f.half << 5 | this.f.carry << 4;
     }
 
     /**
