@@ -46,8 +46,12 @@ export class Screen {
     }
 
     public setZoom(zoom : number) {
-        this.ZOOM = zoom;
+        this.ZOOM = zoom <= 0 ? 1 : zoom;
         this.reset();
+    }
+
+    public getZoom() : number {
+        return this.ZOOM;
     }
 
     public setSpacing(spacing : number) {

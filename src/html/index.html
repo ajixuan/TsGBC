@@ -9,9 +9,29 @@
 <body>
 
 <div style="display: flex; flex-direction: row;">
-    <div id="screenContainer">
-        <canvas id="screen"></canvas>
+    <div style="display: flex; flex-direction: column; ">
+        <div id="screenContainer">
+            <canvas id="screen"></canvas>
+        </div>
+        <div style="display: flex; flex-direction: row; margin-left: 10px; ">
+            <button onclick="tick()">Tick</button>
+            <div style="flex-grow: 1"></div>
+            <button onclick="grow()">+</button>
+            <button onclick="shrink()">-</button>
+        </div>
+
+        <div class="debugger" style="display: flex; flex-direction: row; margin-left: 10px; flex-grow: 1">
+            <fieldset style="width: 100%">
+                <legend>LOG</legend>
+                <div class="log" style="color: #bebebe; display: inline-block">
+                    <ul>
+
+                    </ul>
+                </div>
+            </fieldset>
+        </div>
     </div>
+
 
     <!-- Debugger -->
     <div class="debugger">
@@ -96,16 +116,7 @@
 
     </div>
 </div>
-<div class="debugger" style="display: flex; flex-direction: row; margin-left: 10px;">
-    <fieldset>
-        <legend>LOG</legend>
-        <div class="log" style="color: #bebebe; display: inline-block">
-            <ul>
 
-            </ul>
-        </div>
-    </fieldset>
-</div>
 
 
 <script>
@@ -153,6 +164,19 @@
     }
 
     loadGameBoy();
+
+    var tick = function() {
+        gameboy.tick();
+    }
+
+    var grow = function() {
+        gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() + 1);
+    }
+
+    var shrink = function() {
+        gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() - 1);
+    }
+
 </script>
 </body>
 </html>
