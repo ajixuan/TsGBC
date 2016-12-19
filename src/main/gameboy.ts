@@ -24,6 +24,10 @@ export class GameBoy {
 
     }
 
+    public reset() : void {
+        this.cpu.reset();
+    }
+
 
 
 }

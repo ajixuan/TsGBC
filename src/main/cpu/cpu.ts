@@ -20,7 +20,13 @@ export class Cpu {
      * Reset the CPU.
      */
     public reset(): void {
-        //TODO
+        this.registers.setAF(0x01B0);
+        this.registers.setBC(0x0013);
+        this.registers.setDE(0x00D8);
+        this.registers.setHL(0x014D);
+
+        this.registers.setSP(0xFFFE);
+        this.registers.setPC(0x100);
     }
 
     /**

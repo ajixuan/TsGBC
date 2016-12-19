@@ -18,7 +18,12 @@ export class Stack {
 
     public popByte() : number {
         var addr = this.register.getSP();
-        var val = this.memory.readByte(addr);
+
+        if (addr > 0x7F) {
+            throw "Stack pop error on addr 0x" + addr.toString(16);
+        }
+
+        var val = this.memory.cpu.stack[addr];
 
         var next = addr + 1 > 0xFFFE ? 0xFFFE : addr + 1;
         this.register.setSP(next);
@@ -34,7 +39,16 @@ export class Stack {
 
     public pushByte(val : number) : void {
         var addr = this.register.getSP();
-        this.memory.writeByte(addr, val);
+
+        if (addr > 0x7F) {
+            throw "Stack push error on addr 0x" + addr.toString(16);
+        }
+
+        if (val > 0xFF) {
+            throw "Stack push val is to big 0x" + val.toString(16);
+        }
+
+        this.memory.cpu.stack[addr] = val;
         var next = addr  - 1 < 0xFF80 ? 0xFF80 : addr - 1;
         this.register.setSP(next);
     }

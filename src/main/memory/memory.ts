@@ -6,7 +6,7 @@ import {Cartridge} from "../cartridge/cartridge";
 
 export class Memory {
 
-    private io : number[] = [0x80];
+    public io : number[] = [0x80];
     public cartridge : Cartridge;
 
     public ppu : any = new class {
