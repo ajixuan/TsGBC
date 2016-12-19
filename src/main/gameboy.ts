@@ -28,6 +28,12 @@ export class GameBoy {
         this.cpu.reset();
     }
 
+    public tick() : void {
+        this.cpu.tick();
+    }
 
+    public tickFor() : void {
+        //TODO
+    }
 
 }

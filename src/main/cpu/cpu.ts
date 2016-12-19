@@ -2,12 +2,16 @@ import {Registers} from "./registers";
 import {Operations} from "./operations";
 import {Memory} from "../memory/memory";
 import {Stack} from "../memory/stack";
+import {Debugger} from "../debugger";
+
 export class Cpu {
 
     public registers : Registers;
     public memory : Memory;
     public operations : Operations;
     public stack : Stack;
+
+    public cycles : number;
 
     constructor(memory : Memory) {
         this.registers = new Registers();
@@ -27,6 +31,10 @@ export class Cpu {
 
         this.registers.setSP(0xFFFE);
         this.registers.setPC(0x100);
+
+        this.cycles = 0;
+
+
     }
 
     /**
@@ -39,22 +47,26 @@ export class Cpu {
     /**
      * Performs a single CPU cycle.
      */
-    public tick(): void {
-        //TODO
+    public tick(): number {
 
-        var opaddr =  this.registers.getPC();
-        var opcode = this.memory.readByte(opaddr);
+        //TODO Interrupt
+
+        var cycles = 0;
+        var pc =  this.registers.getPC();
+
+        var opcode = this.memory.readByte(pc);
         var operation = this.operations.get(opcode);
-
+        if (operation == null) {
+            throw "Unknown opcode execution 0x" + opcode.toString(16).toUpperCase();
+        }
+        var opaddr = operation.mode.getValue(pc);
         operation.execute(opaddr);
+
+        this.registers.setPC(pc + operation.size & 0xFFFF);
+        cycles += operation.cycle;
+
+        this.cycles += cycles;
+        return cycles;
     }
 
-    /**
-     * Performs multiple CPU cycles
-     * @param num
-     *      number of CPU cycles to perform.
-     */
-    public tickFor(num : number) : void {
-        //TODO
-    }
 }

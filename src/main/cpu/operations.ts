@@ -50,6 +50,16 @@ export class Operations {
          * Instructions for Gameboy (Not Gameboy Color)
          */
 
+        this.operations[0x00] = {
+            name: "NOP",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                //NOTHING
+            }
+        };
+
         //----------------------------------------
         // LD nn,n - Load (8 bits)
         // pg 65

@@ -1,33 +1,97 @@
 <html>
 <head>
     <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js" type="application/javascript"></script>
+    <script src="./assets/jquery-3.1.1.min.js" type="application/javascript"></script>
     <script src="app.js" type="application/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="./css/debugger.css">
+    <link rel="stylesheet" type="text/css" href="./css/main.css">
 </head>
 <body>
 
-<canvas id="screen">
-</canvas>
+<div class="main" style="display: flex; flex-direction: row;">
+    <div id="screenContainer">
+        <canvas id="screen"></canvas>
+    </div>
+    <div id="debugger">
+        <fieldset>
+            <legend>Console</legend>
+            <div style="color: #bebebe; display: inline-block">
+                <ul style="list-style: none;">
+                    <li>
+                        <div>CPU Cycles:</div>
+                        <span id="cpucycles"></span></li>
+                    <li>
+                        <div>Ticks:</div>
+                        <span id="ticks"></span>
+                    </li>
+                </ul>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>CPU</legend>
+            <div style="color: #bebebe; display: inline-block">
+                <ul style="list-style: none;">
+                    <li>
+                        <div>PC:</div>
+                        <span id="pc"></span></li>
+                    <li>
+                        <div>SP:</div>
+                        <span id="sp"></span>
+                    </li>
+                </ul>
+            </div>
+        </fieldset>
+    </div>
+
+</div>
+
+
 
 <script>
     var gameboy = null;
-    System.import('gameboy').then(function(e) {
-        try {
-            gameboy = new e.GameBoy();
-        } catch (e) {
-            console.error("Unable to load GameBoy");
-            console.error(e);
-            return;
-        }
-        console.info("Gameboy is ready!");
-        gameboy.load("./roms/Tetris.gb");
-        gameboy.reset();
-    }).catch(
-        function(err){
-            console.error("Unable to load GameBoy");
-            console.error(err);
-        }
-    );
+    var debug = null;
 
+    var loadGameBoy = function() {
+        System.import('gameboy').then(function(e) {
+            try {
+                gameboy = new e.GameBoy();
+            } catch (e) {
+                console.error("Unable to load GameBoy");
+                console.error(e);
+                return;
+            }
+
+            gameboy.load("./roms/Tetris.gb");
+            gameboy.reset();
+            loadDebugger();
+            console.info("Gameboy is ready!");
+        }).catch(
+            function(err){
+                console.error("Unable to load GameBoy");
+                console.error(err);
+            }
+        );
+    }
+
+    var loadDebugger = function() {
+        System.import('debugger').then(function(e) {
+            try {
+                debug = e.Debugger;
+            } catch (e) {
+                console.error("Unable to load Debugger");
+                console.error(e);
+                return;
+            }
+            debug.init(gameboy);
+        }).catch(
+            function(err){
+                console.error("Unable to load Debugger");
+                console.error(err);
+            }
+        );
+    }
+
+    loadGameBoy();
 </script>
 </body>
 </html>
