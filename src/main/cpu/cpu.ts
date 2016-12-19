@@ -12,7 +12,7 @@ export class Cpu {
     public stack : Stack;
 
     public cycles : number
-    public lastOperation : any;
+    public last : {operation : Operation, opcode : number, opaddr: number};
 
     constructor(memory : Memory) {
         this.registers = new Registers();
@@ -35,9 +35,12 @@ export class Cpu {
 
         this.cycles = 0;
 
-        this.lastOperation = this.operations.get(0x00);
-        this.lastOperation.id = 0x00;
-        this.lastOperation.opaddr = 0x0000;
+
+        this.last = {
+            operation : this.operations.get(0x00),
+            opcode : 0x00,
+            opaddr : 0x0000
+        };
     }
 
     /**
@@ -70,9 +73,11 @@ export class Cpu {
         this.cycles += cycles;
 
         //Debug Information
-        this.lastOperation = operation;
-        this.lastOperation.id = opcode;
-        this.lastOperation.opaddr = opaddr;
+        this.last = {
+            operation : operation,
+            opcode : opcode,
+            opaddr : opaddr
+        };
         Debugger.display();
 
         return cycles;

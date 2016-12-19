@@ -28,10 +28,10 @@ export class Debugger {
         $('#de').html("0x" + gameboy.cpu.registers.getDE().toString(16).toUpperCase());
         $('#hl').html("0x" + gameboy.cpu.registers.getHL().toString(16).toUpperCase());
 
-        $('#opcode').html("0x" + gameboy.cpu.lastOperation.id.toString(16).toUpperCase());
-        $('#opname').html(gameboy.cpu.lastOperation.name.toUpperCase());
-        $('#opmode').html(gameboy.cpu.lastOperation.mode.name.toUpperCase());
-        $('#opaddr').html("0x" + gameboy.cpu.lastOperation.opaddr.toString(16).toUpperCase());
+        $('#opcode').html("0x" + gameboy.cpu.last.opcode.toString(16).toUpperCase());
+        $('#opname').html(gameboy.cpu.last.operation.name.toUpperCase());
+        $('#opmode').html(gameboy.cpu.last.operation.mode.name.toUpperCase());
+        $('#opaddr').html("0x" + gameboy.cpu.last.opaddr.toString(16).toUpperCase());
 
     }
 
