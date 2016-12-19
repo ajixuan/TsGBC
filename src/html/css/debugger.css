@@ -1,4 +1,4 @@
-#debugger ul {
+.debugger ul {
     margin: 0;
     padding: 0;
     color: #505050;
@@ -7,4 +7,18 @@
 
 fieldset {
     width: 170px;
+}
+
+.log {
+    width: 550px;
+    height: 300px;
+    overflow: auto;
+}
+
+.log ul {
+    list-style: none;
+}
+
+.log .error {
+    color: #ff3119;
 }

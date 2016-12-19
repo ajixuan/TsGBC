@@ -13,6 +13,7 @@ export class Screen {
         "#000000",
         "#515151",
         "#9e9e9e",
+
         "#dee0e2"
     ];
 

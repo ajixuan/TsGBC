@@ -8,11 +8,13 @@
 </head>
 <body>
 
-<div class="main" style="display: flex; flex-direction: row;">
+<div style="display: flex; flex-direction: row;">
     <div id="screenContainer">
         <canvas id="screen"></canvas>
     </div>
-    <div id="debugger">
+
+    <!-- Debugger -->
+    <div class="debugger">
         <div style="display: flex; flex-direction: row;">
             <fieldset>
                 <legend>CONSOLE</legend>
@@ -38,7 +40,7 @@
                 </div>
             </fieldset>
             <fieldset>
-                <legend>Operation</legend>
+                <legend>OPERATION</legend>
                 <div style="color: #bebebe; display: inline-block">
                     <ul style="list-style: none;">
                         <li>
@@ -93,9 +95,17 @@
         </fieldset>
 
     </div>
-
 </div>
+<div class="debugger" style="display: flex; flex-direction: row; margin-left: 10px;">
+    <fieldset>
+        <legend>LOG</legend>
+        <div class="log" style="color: #bebebe; display: inline-block">
+            <ul>
 
+            </ul>
+        </div>
+    </fieldset>
+</div>
 
 
 <script>

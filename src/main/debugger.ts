@@ -18,6 +18,14 @@ export class Debugger {
 
         var gameboy = Debugger.gameboy;
 
+        if (gameboy.cpu.last == null) {
+            var eventStr = "ERROR";
+            var eventElement = $(".log ul");
+            eventElement.append("<li class='error'>" + eventStr + "</li>");
+            $(".log").scrollTop($(".log").prop("scrollHeight"));
+            return;
+        }
+
         $('#cpucycles').html(gameboy.cpu.cycles.toString());
         $('#ticks').html(gameboy.ticks.toString());
         $('#pc').html("0x" + gameboy.cpu.registers.getPC().toString(16).toUpperCase());
@@ -33,6 +41,13 @@ export class Debugger {
         $('#opmode').html(gameboy.cpu.last.operation.mode.name.toUpperCase());
         $('#opaddr').html("0x" + gameboy.cpu.last.opaddr.toString(16).toUpperCase());
 
+
+        //Add to log
+        var eventStr = "PC:" + gameboy.cpu.registers.getPC().toString(16).toUpperCase()
+            + " SP:" + gameboy.cpu.registers.getSP().toString(16).toUpperCase();
+        var eventElement = $(".log ul");
+        eventElement.append("<li>"+eventStr+"</li>");
+        $(".log").scrollTop($(".log").prop("scrollHeight"));
     }
 
     public static init(gameboy : GameBoy) {

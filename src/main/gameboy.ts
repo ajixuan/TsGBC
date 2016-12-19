@@ -32,7 +32,6 @@ export class GameBoy {
     }
 
     public tick() : void {
-        console.log("TEST");
         this.cpu.tick();
         this.ticks++;
     }

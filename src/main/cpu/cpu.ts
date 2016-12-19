@@ -63,6 +63,8 @@ export class Cpu {
         var opcode = this.memory.readByte(pc);
         var operation = this.operations.get(opcode);
         if (operation == null) {
+            this.last =  null;
+            Debugger.display();
             throw "Unknown opcode execution 0x" + opcode.toString(16).toUpperCase();
         }
         var opaddr = operation.mode.getValue(pc);
