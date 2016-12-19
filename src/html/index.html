@@ -14,14 +14,14 @@
     </div>
     <div id="debugger">
         <fieldset>
-            <legend>Console</legend>
+            <legend>CONSOLE</legend>
             <div style="color: #bebebe; display: inline-block">
                 <ul style="list-style: none;">
                     <li>
-                        <div>CPU Cycles:</div>
+                        <span class="header">CPU Cycles:</span>
                         <span id="cpucycles"></span></li>
                     <li>
-                        <div>Ticks:</div>
+                        <span class="header">Ticks:</span>
                         <span id="ticks"></span>
                     </li>
                 </ul>
@@ -32,11 +32,50 @@
             <div style="color: #bebebe; display: inline-block">
                 <ul style="list-style: none;">
                     <li>
-                        <div>PC:</div>
+                        <span class="header">PC:</span>
                         <span id="pc"></span></li>
                     <li>
-                        <div>SP:</div>
+                        <span class="header">SP:</span>
                         <span id="sp"></span>
+                    </li>
+                    <br />
+                    <li>
+                        <span class="header">AF:</span>
+                        <span id="af"></span>
+                    </li>
+                    <li>
+                        <span class="header">BC:</span>
+                        <span id="bc"></span>
+                    </li>
+                    <li>
+                        <span class="header">DE:</span>
+                        <span id="de"></span>
+                    </li>
+                    <li>
+                        <span class="header">HL:</span>
+                        <span id="hl"></span>
+                    </li>
+                </ul>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Operation</legend>
+            <div style="color: #bebebe; display: inline-block">
+                <ul style="list-style: none;">
+                    <li>
+                        <span class="header">Code:</span>
+                        <span id="opcode"></span></li>
+                    <li>
+                    <li>
+                        <span class="header">Name:</span>
+                        <span id="opname"></span></li>
+                    <li>
+                        <span class="header">Mode:</span>
+                        <span id="opmode"></span>
+                    </li>
+                    <li>
+                        <span class="header">Address:</span>
+                        <span id="opaddr"></span>
                     </li>
                 </ul>
             </div>

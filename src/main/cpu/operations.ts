@@ -1088,12 +1088,12 @@ export class Operations {
 
 }
 
-interface Mode {
+export interface Mode {
     name : string;
     getValue(addr:number): number;
 }
 
-interface Operation {
+export interface Operation {
     name: string;
     cycle: number;
     mode: Mode;

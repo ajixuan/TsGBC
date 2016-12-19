@@ -1,5 +1,5 @@
 import {Registers} from "./registers";
-import {Operations} from "./operations";
+import {Operations, Operation} from "./operations";
 import {Memory} from "../memory/memory";
 import {Stack} from "../memory/stack";
 import {Debugger} from "../debugger";
@@ -11,7 +11,8 @@ export class Cpu {
     public operations : Operations;
     public stack : Stack;
 
-    public cycles : number;
+    public cycles : number
+    public lastOperation : any;
 
     constructor(memory : Memory) {
         this.registers = new Registers();
@@ -34,7 +35,9 @@ export class Cpu {
 
         this.cycles = 0;
 
-
+        this.lastOperation = this.operations.get(0x00);
+        this.lastOperation.id = 0x00;
+        this.lastOperation.opaddr = 0x0000;
     }
 
     /**
@@ -64,8 +67,14 @@ export class Cpu {
 
         this.registers.setPC(pc + operation.size & 0xFFFF);
         cycles += operation.cycle;
-
         this.cycles += cycles;
+
+        //Debug Information
+        this.lastOperation = operation;
+        this.lastOperation.id = opcode;
+        this.lastOperation.opaddr = opaddr;
+        Debugger.display();
+
         return cycles;
     }
 

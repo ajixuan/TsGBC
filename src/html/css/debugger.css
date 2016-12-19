@@ -4,3 +4,7 @@
     color: #505050;
     font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
+fieldset {
+    width: 170px;
+}

@@ -10,6 +10,8 @@ export class GameBoy {
     public memory : Memory;
     public cartridge : Cartridge;
 
+    public ticks : number = 0;
+
     constructor() {
         this.cartridge = null
         this.memory = new Memory();
@@ -26,10 +28,13 @@ export class GameBoy {
 
     public reset() : void {
         this.cpu.reset();
+        this.ticks = 0;
     }
 
     public tick() : void {
+        console.log("TEST");
         this.cpu.tick();
+        this.ticks++;
     }
 
     public tickFor() : void {
