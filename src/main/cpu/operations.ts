@@ -42,7 +42,7 @@ export class Operations {
             name:string = "Immediate";
 
             getValue(addr:number):number {
-                return memory.readByte(addr);
+                return memory.readByte(addr + 1 & 0xFFFF);
             }
         };
 
