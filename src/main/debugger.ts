@@ -41,6 +41,10 @@ export class Debugger {
         $('#opmode').html(gameboy.cpu.last.operation.mode.name.toUpperCase());
         $('#opaddr').html("0x" + gameboy.cpu.last.opaddr.toString(16).toUpperCase());
 
+        if (gameboy.cartridge.type) {
+            $('#url').html(gameboy.cartridge.url);
+            $('#type').html(gameboy.cartridge.type.name);
+        }
 
         //Add to log
         var eventStr = "PC:" + gameboy.cpu.registers.getPC().toString(16).toUpperCase()
