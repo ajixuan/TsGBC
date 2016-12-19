@@ -18,7 +18,15 @@ export class Memory {
         public ram : number[] = [0x2000];
         public stack : number[] = [0x7F];
         public interrupt : number[] = [0x1];
-    }
+    };
+
+    public interrupts : any = new class {
+        public if : number = 0x0;
+        public ie : number = 0x0;
+        public ime : number = 0x0;
+    };
+
+
 
     public writeByte(addr: number, val : number): void {
         if (val == null  || val > 0xFF || addr == null || addr > 0xFFFF) {
