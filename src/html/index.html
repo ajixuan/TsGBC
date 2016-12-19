@@ -13,20 +13,53 @@
         <canvas id="screen"></canvas>
     </div>
     <div id="debugger">
-        <fieldset>
-            <legend>CONSOLE</legend>
-            <div style="color: #bebebe; display: inline-block">
-                <ul style="list-style: none;">
-                    <li>
-                        <span class="header">CPU Cycles:</span>
-                        <span id="cpucycles"></span></li>
-                    <li>
-                        <span class="header">Ticks:</span>
-                        <span id="ticks"></span>
-                    </li>
-                </ul>
-            </div>
-        </fieldset>
+        <div style="display: flex; flex-direction: row;">
+            <fieldset>
+                <legend>CONSOLE</legend>
+                <div style="color: #bebebe; display: inline-block">
+                    <ul style="list-style: none;">
+                        <li>
+                            <span class="header">CPU Cycles:</span>
+                            <span id="cpucycles"></span>
+                        </li>
+                        <li>
+                            <span class="header">PPU Cycles:</span>
+                            <span id="ppuCycles">0</span>
+                        </li>
+                        <li>
+                            <span class="header">Scanlines:</span>
+                            <span id="scanlunes">0</span>
+                        </li>
+                        <li>
+                            <span class="header">Ticks:</span>
+                            <span id="ticks"></span>
+                        </li>
+                    </ul>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Operation</legend>
+                <div style="color: #bebebe; display: inline-block">
+                    <ul style="list-style: none;">
+                        <li>
+                            <span class="header">Code:</span>
+                            <span id="opcode"></span></li>
+                        <li>
+                        <li>
+                            <span class="header">Name:</span>
+                            <span id="opname"></span></li>
+                        <li>
+                            <span class="header">Mode:</span>
+                            <span id="opmode"></span>
+                        </li>
+                        <li>
+                            <span class="header">Address:</span>
+                            <span id="opaddr"></span>
+                        </li>
+                    </ul>
+                </div>
+            </fieldset>
+        </div>
         <fieldset>
             <legend>CPU</legend>
             <div style="color: #bebebe; display: inline-block">
@@ -58,28 +91,7 @@
                 </ul>
             </div>
         </fieldset>
-        <fieldset>
-            <legend>Operation</legend>
-            <div style="color: #bebebe; display: inline-block">
-                <ul style="list-style: none;">
-                    <li>
-                        <span class="header">Code:</span>
-                        <span id="opcode"></span></li>
-                    <li>
-                    <li>
-                        <span class="header">Name:</span>
-                        <span id="opname"></span></li>
-                    <li>
-                        <span class="header">Mode:</span>
-                        <span id="opmode"></span>
-                    </li>
-                    <li>
-                        <span class="header">Address:</span>
-                        <span id="opaddr"></span>
-                    </li>
-                </ul>
-            </div>
-        </fieldset>
+
     </div>
 
 </div>
