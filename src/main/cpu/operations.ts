@@ -46,6 +46,35 @@ export class Operations {
             }
         };
 
+        var setCarryFlags = function (first:number, second:number, short:boolean):void{
+
+            //Default short is true
+            var mask = 0xFF;
+            var low = 4;
+            var high = 8;
+
+            //If short is false
+            if(short === false){
+                mask = 0xFFF;
+                low = 12;
+                high = 16;
+            }
+
+            var half =(first & mask) + (second & mask);
+            var full = first + second;
+
+            if(half >> low == 1){
+                console.log("set half carry:");
+                console.log(half);
+            }
+
+            if(full >> high == 1){
+                console.log("set full carry");
+                console.log(full);
+            }
+        };
+
+
         /**
          * Instructions for Gameboy (Not Gameboy Color)
          */
@@ -1062,36 +1091,160 @@ export class Operations {
                 var val = memory.readByte(addr) + registers.getSP();
                 var orig = registers.getHL();
 
-                var result = (val + orig) & 0xFFFF;
-
                 //Set flags
                 registers.setZeroFlag(0);
                 registers.setSubtractFlag(0);
 
-                if((result & 0xFFF) >= 16){
-                    registers.setHalfFlag(1);
-                }
+                setCarryFlags(val, orig, false);
 
-                if(result >= 32){
-                    registers.setCarryFlag(1);
-                    result = 0
-                }
 
+                var result = (val + orig) & 0xFFFF;
                 memory.writeByte(result, val);
             }
         };
 
+        //----------------------------------------
+        // LD (nn), SP - Put SP at address (nn)
+        // page 78
+        //----------------------------------------
 
+        this.operations[0x08] = {
+            name: "LD",
+            cycle: 20,
+            mode: immediate,
+            size: 3,
+            execute(pc:number) {
+                var addr = this.mode.getValue(pc) + 1;
+                memory.writeByte(addr, registers.getSP());
+            }
+        };
+
+        //----------------------------------------
+        // PUSH nn - push register pair nn onto stack
+        //      Decrement stack pointer twice
+        // page 78
+        //----------------------------------------
+
+        this.operations[0xF5] = {
+            name: "PUSH",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                this.cpu.stack.pushWord(registers.getAF());
+            }
+        };
+
+        this.operations[0xC5] = {
+            name: "PUSH",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                this.cpu.stack.pushWord(registers.getBC());
+            }
+        };
+
+        this.operations[0xD5] = {
+            name: "PUSH",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                this.cpu.stack.pushWord(registers.getDE());
+            }
+        };
+
+        this.operations[0xE5] = {
+            name: "PUSH",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                this.cpu.stack.pushWord(registers.getHL());
+            }
+        };
+
+
+        //----------------------------------------
+        // POP nn - pop two bytes off stack
+        //      Increment stack pointer twice
+        // page 79
+        //----------------------------------------
+
+        this.operations[0xF1] = {
+            name: "POP",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                this.cpu.stack.popWord(registers.getAF());
+            }
+        };
+
+        this.operations[0xC1] = {
+            name: "POP",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                this.cpu.stack.popWord(registers.getBC());
+            }
+        };
+
+        this.operations[0xD1] = {
+            name: "POP",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                this.cpu.stack.popWord(registers.getDE());
+            }
+        };
+
+        this.operations[0xE1] = {
+            name: "POP",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                this.cpu.stack.popWord(registers.getHL());
+            }
+        };
+
+        /************************
+         * 8-Bit ALU
+         ************************/
+
+            //----------------------------------------
+            // ADD A, n - Add n to A
+            // page 80
+            //----------------------------------------
+
+        this.operations[0x87] = {
+            name: "ADD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var addr = registers.getA();
+                var val = memory.readByte(addr);
+                var result = val + val;
+
+                registers.setSubtractFlag(0);
+                result = setCarryFlags(val, val, false);
+                memory.writeByte(registers.getA(), val);
+                registers.setSP(addr + 2);
+            }
+        };
 
     }
-
-
 }
 
 export interface Mode {
     name : string;
     getValue(addr:number): number;
-}
+};
 
 export interface Operation {
     name: string;

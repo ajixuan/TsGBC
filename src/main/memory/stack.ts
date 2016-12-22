@@ -59,5 +59,4 @@ export class Stack {
         this.pushByte(high);
         this.pushByte(low);
     }
-
 }
