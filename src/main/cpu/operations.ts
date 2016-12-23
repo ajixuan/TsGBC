@@ -24,6 +24,40 @@ export class Operations {
         return this.operations[opcode];
     }
 
+
+    /**
+     * Helper function for setting carry flags depending on number of bits
+     * @param first
+     * @param second
+     * @param short
+     */
+    private setCarryFlags(first:number, second:number, short:boolean):void {
+        //Default short is true
+        var mask = 0xFF;
+        var low = 4;
+        var high = 8;
+
+        //If short is false
+        if(short === false){
+            mask = 0xFFF;
+            low = 12;
+            high = 16;
+        }
+
+        var half =(first & mask) + (second & mask);
+        var full = first + second;
+
+        if(half >> low == 1){
+            console.log("set half carry:");
+            console.log(half);
+        }
+
+        if(full >> high == 1){
+            console.log("set full carry");
+            console.log(full);
+        }
+    }
+
     /**
      * Create a list of opcodes with their respective addressing modes.
      */
@@ -43,34 +77,6 @@ export class Operations {
 
             getValue(addr:number):number {
                 return memory.readByte(addr + 1 & 0xFFFF);
-            }
-        };
-
-        var setCarryFlags = function (first:number, second:number, short:boolean):void{
-
-            //Default short is true
-            var mask = 0xFF;
-            var low = 4;
-            var high = 8;
-
-            //If short is false
-            if(short === false){
-                mask = 0xFFF;
-                low = 12;
-                high = 16;
-            }
-
-            var half =(first & mask) + (second & mask);
-            var full = first + second;
-
-            if(half >> low == 1){
-                console.log("set half carry:");
-                console.log(half);
-            }
-
-            if(full >> high == 1){
-                console.log("set full carry");
-                console.log(full);
             }
         };
 
@@ -160,317 +166,12 @@ export class Operations {
             }
         };
 
-        //----------------------------------------
-        // LD r1, r2 - Put value r2 into r1
-        // LD A, n - Load n into A
-        // Pg 66 - 68
-        //----------------------------------------
-
-
-        this.operations[0x7F] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc:number) {
-                //WHY!?!?! is this created!!!!!
-            }
-        };
-
-        this.operations[0x78] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc:number) {
-                registers.setA(registers.getB());
-            }
-        };
-
-        this.operations[0x79] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc:number) {
-                registers.setA(registers.getC());
-            }
-        };
-
-        this.operations[0x7A] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc:number) {
-                registers.setA(registers.getD());
-            }
-        };
-
-        this.operations[0x7B] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc:number) {
-                registers.setA(registers.getE());
-            }
-        };
-
-        this.operations[0x7C] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc:number) {
-                registers.setA(registers.getH());
-            }
-        };
-
-        this.operations[0x7D] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc:number) {
-                registers.setA(registers.getL());
-            }
-        };
-
-        this.operations[0x0A] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 1,
-            execute(pc:number) {
-                var val = memory.readByte(registers.getBC());
-                registers.setA(val);
-            }
-        };
-
-        this.operations[0x1A] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 1,
-            execute(pc:number) {
-                var val = memory.readByte(registers.getDE());
-                registers.setA(val);
-            }
-        };
-
-        this.operations[0xFA] = {
-            name: "LD",
-            cycle: 16,
-            mode: immediate,
-            size: 2,
-            execute(pc:number) {
-                var high = memory.readByte(pc + 1 & 0xFFFF);
-                var low = memory.readWord(pc);
-                var val = high << 8 | low;
-                registers.setA(val);
-            }
-        };
-
-        //----------------------------------------
-        // LD n, A - Load  value A into n
-        // Pg 69
-        //----------------------------------------
-
-
-        this.operations[0x02] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc:number) {
-                var addr = registers.getBC();
-                var val = registers.getA();
-                memory.writeByte(addr, val);
-            }
-        };
-
-        this.operations[0x12] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc:number) {
-                var addr = registers.getDE();
-                var val = registers.getA();
-                memory.writeByte(addr, val);
-            }
-        };
-
-        this.operations[0x77] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 3,
-            execute(pc:number) {
-                var addr = registers.getHL();
-                var val = registers.getA();
-                memory.writeByte(addr, val);
-            }
-        };
-
-        this.operations[0xEA] = {
-            name: "LD",
-            cycle: 16,
-            mode: immediate,
-            size: 2,
-            execute(pc:number) {
-                //TODO this might be wrong (reverse?)
-                var high = memory.readByte(pc + 1 & 0xFFFF);
-                var low = memory.readByte(pc & 0xFFFF);
-                var addr = high << 8 | low;
-                var val = registers.getA();
-                memory.writeByte(addr, val);
-            }
-        };
-
-        //----------------------------------------
-        // LD A, (C) - Put value at address 0xFF00 + C
-        // into A
-        // pg 70
-        //----------------------------------------
-
-
-        this.operations[0xF2] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc:number) {
-                var high = 0xff;
-                var low = registers.getC();
-                var addr = high << 8 | low;
-                var val = memory.readByte(addr);
-                registers.setA(val);
-            }
-        };
-
-        //----------------------------------------
-        // LD (C),A - Put value at address A to HL
-        // Pg 70
-        //----------------------------------------
-
-
-        this.operations[0xE2] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc:number) {
-                var high = 0xff;
-                var low = registers.getC();
-                var addr = high << 8 | low;
-                memory.writeByte(addr, registers.getA());
-            }
-        };
 
 
         //----------------------------------------
-        // LD A, (HL) - Put value at address HL into A.
-        // Decrement HL
+        // LD r1, r2
+        // Pg 66
         //----------------------------------------
-
-
-        this.operations[0x3A] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc:number) {
-                var addr = registers.getHL();
-                var val = memory.readByte(addr);
-                registers.setHL(addr - 1 & 0xFFFF);
-            }
-        };
-
-        //----------------------------------------
-        // LD A, (HL) - Put value at address HL into A
-        // Pg 73
-        //----------------------------------------
-
-
-        this.operations[0x2A] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc:number) {
-                var addr = registers.getHL();
-                var val = memory.readByte(addr);
-                registers.setHL(addr + 1 & 0xFFFF);
-            }
-        };
-
-
-        //----------------------------------------
-        // LD (HL), A - Put value at address A to HL
-        // Pg 74
-        //----------------------------------------
-
-
-        this.operations[0x22] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc:number) {
-                var val = registers.getA();
-                var addr = registers.getHL();
-                memory.writeByte(addr, val);
-                registers.setHL(addr + 1 & 0xFFFF);
-            }
-        };
-
-        //----------------------------------------
-        // LD (n), A - Put A  into address 0xFF00 + n
-        // Pg 74
-        //----------------------------------------
-
-        this.operations[0xE0] = {
-            name: "LD",
-            cycle: 12,
-            mode: immediate,
-            size: 2,
-            execute(pc:number) {
-                var addr = 0xFF00 | pc;
-                memory.writeByte(addr, registers.getA());
-            }
-        };
-
-        //----------------------------------------
-        // LDH A, (n) - Put memory address 0xFF00+n into A
-        // Pg 74
-        //----------------------------------------
-
-
-        this.operations[0xF0] = {
-            name: "LD",
-            cycle: 12,
-            mode: immediate,
-            size: 2,
-            execute(pc:number) {
-                var addr = 0xFF00 | pc;
-                var val = memory.readByte(addr);
-                registers.setA(val & 0xFFFF);
-            }
-        };
-
-
-        this.operations[0x3E] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 1,
-            execute(pc:number) {
-                var val = memory.readByte(pc);
-                registers.setAF(val);
-            }
-        };
 
         this.operations[0x7E] = {
             name: "LD",
@@ -1000,6 +701,324 @@ export class Operations {
 
 
         //----------------------------------------
+        // LD r1, r2 - Put value r2 into r1
+        // LD A, n - Load n into A
+        // Pg 66 - 68
+        //----------------------------------------
+
+
+        this.operations[0x7F] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                //WHY!?!?! is this created!!!!!
+            }
+        };
+
+        this.operations[0x78] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                registers.setA(registers.getB());
+            }
+        };
+
+        this.operations[0x79] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                registers.setA(registers.getC());
+            }
+        };
+
+        this.operations[0x7A] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                registers.setA(registers.getD());
+            }
+        };
+
+        this.operations[0x7B] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                registers.setA(registers.getE());
+            }
+        };
+
+        this.operations[0x7C] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                registers.setA(registers.getH());
+            }
+        };
+
+        this.operations[0x7D] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                registers.setA(registers.getL());
+            }
+        };
+
+        this.operations[0x0A] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var val = memory.readByte(registers.getBC());
+                registers.setA(val);
+            }
+        };
+
+        this.operations[0x1A] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var val = memory.readByte(registers.getDE());
+                registers.setA(val);
+            }
+        };
+
+        this.operations[0xFA] = {
+            name: "LD",
+            cycle: 16,
+            mode: immediate,
+            size: 2,
+            execute(pc:number) {
+                var high = memory.readByte(pc + 1 & 0xFFFF);
+                var low = memory.readWord(pc);
+                var val = high << 8 | low;
+                registers.setA(val);
+            }
+        };
+
+
+        this.operations[0x3E] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var val = memory.readByte(pc);
+                registers.setAF(val);
+            }
+        };
+
+
+        //----------------------------------------
+        // LD n, A - Load  value A into n
+        // Pg 69
+        //----------------------------------------
+
+
+        this.operations[0x02] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc:number) {
+                var addr = registers.getBC();
+                var val = registers.getA();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        this.operations[0x12] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc:number) {
+                var addr = registers.getDE();
+                var val = registers.getA();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        this.operations[0x77] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 3,
+            execute(pc:number) {
+                var addr = registers.getHL();
+                var val = registers.getA();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        this.operations[0xEA] = {
+            name: "LD",
+            cycle: 16,
+            mode: immediate,
+            size: 2,
+            execute(pc:number) {
+                //TODO this might be wrong (reverse?)
+                var high = memory.readByte(pc + 1 & 0xFFFF);
+                var low = memory.readByte(pc & 0xFFFF);
+                var addr = high << 8 | low;
+                var val = registers.getA();
+                memory.writeByte(addr, val);
+            }
+        };
+
+        //----------------------------------------
+        // LD A, (C) - Put value at address 0xFF00 + C
+        // into A
+        // pg 70
+        //----------------------------------------
+
+
+        this.operations[0xF2] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc:number) {
+                var high = 0xff;
+                var low = registers.getC();
+                var addr = high << 8 | low;
+                var val = memory.readByte(addr);
+                registers.setA(val);
+            }
+        };
+
+        //----------------------------------------
+        // LD (C),A - Put value at address A to HL
+        // Pg 70
+        //----------------------------------------
+
+
+        this.operations[0xE2] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc:number) {
+                var high = 0xff;
+                var low = registers.getC();
+                var addr = high << 8 | low;
+                memory.writeByte(addr, registers.getA());
+            }
+        };
+
+
+        //----------------------------------------
+        // LD A, (HL) - Put value at address HL into A.
+        // Decrement HL
+        // Pg 71
+        //----------------------------------------
+
+
+        this.operations[0x3A] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc:number) {
+                var addr = registers.getHL();
+                var val = memory.readByte(addr);
+                registers.setA(val);
+                registers.setHL(addr - 1 & 0xFFFF);
+            }
+        };
+
+        //----------------------------------------
+        // LD A, (HL) - Put value at address HL into A
+        // Pg 73
+        //----------------------------------------
+
+
+        this.operations[0x2A] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc:number) {
+                var addr = registers.getHL();
+                var val = memory.readByte(addr);
+                registers.setA(val);
+                registers.setHL(addr + 1 & 0xFFFF);
+            }
+        };
+
+
+        //----------------------------------------
+        // LD (HL), A - Put value at address A to HL
+        // Pg 74
+        //----------------------------------------
+
+
+        this.operations[0x22] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc:number) {
+                var addr = registers.getHL();
+                memory.writeByte(addr, registers.getA());
+                registers.setHL(addr + 1 & 0xFFFF);
+            }
+        };
+
+        //----------------------------------------
+        // LD (n), A - Put A  into address 0xFF00 + n
+        // Pg 75
+        //----------------------------------------
+
+        this.operations[0xE0] = {
+            name: "LD",
+            cycle: 12,
+            mode: immediate,
+            size: 2,
+            execute(pc:number) {
+                //Immediate value means immediate value of pc??
+                var addr = 0xFF00 | this.mode.getValue(pc);
+                memory.writeByte(addr, registers.getA());
+            }
+        };
+
+        //----------------------------------------
+        // LDH A, (n) - Put memory address 0xFF00+n into A
+        // Pg 75
+        //----------------------------------------
+
+
+        this.operations[0xF0] = {
+            name: "LD",
+            cycle: 12,
+            mode: immediate,
+            size: 2,
+            execute(pc:number) {
+                var addr = 0xFF00 | this.mode.getValue(pc);
+                var val = memory.readByte(addr);
+                registers.setA(val & 0xFFFF);
+            }
+        };
+
+
+
+        //----------------------------------------
         // LD - Load (16 bits) page 76
         //----------------------------------------
         //----------------------------------------
@@ -1095,7 +1114,7 @@ export class Operations {
                 registers.setZeroFlag(0);
                 registers.setSubtractFlag(0);
 
-                setCarryFlags(val, orig, false);
+                this.setCarryFlags(val, orig, false);
 
 
                 var result = (val + orig) & 0xFFFF;
@@ -1232,11 +1251,208 @@ export class Operations {
                 var result = val + val;
 
                 registers.setSubtractFlag(0);
-                result = setCarryFlags(val, val, false);
-                memory.writeByte(registers.getA(), val);
-                registers.setSP(addr + 2);
+                this.setCarryFlags(val, val, false);
+                memory.writeByte(registers.getA(), result);
             }
         };
+
+        this.operations[0x80] = {
+            name: "ADD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var addr = registers.getA();
+                var val = memory.readByte(addr);
+                addr = registers.getB();
+                var oper = memory.readByte(addr);
+
+                var result = val + oper;
+
+                registers.setSubtractFlag(0);
+                this.setCarryFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                memory.writeByte(registers.getA(), result);
+            }
+        };
+
+        this.operations[0x81] = {
+            name: "ADD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var addr = registers.getA();
+                var val = memory.readByte(addr);
+                addr = registers.getC();
+                var oper = memory.readByte(addr);
+
+                var result = val + oper;
+
+                registers.setSubtractFlag(0);
+                this.setCarryFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                memory.writeByte(registers.getA(), result);
+            }
+        };
+
+
+        this.operations[0x82] = {
+            name: "ADD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var addr = registers.getA();
+                var val = memory.readByte(addr);
+                addr = registers.getD();
+                var oper = memory.readByte(addr);
+
+                var result = val + oper;
+
+                registers.setSubtractFlag(0);
+                this.setCarryFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                memory.writeByte(registers.getA(), result);
+            }
+        };
+
+
+        this.operations[0x83] = {
+            name: "ADD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var addr = registers.getA();
+                var val = memory.readByte(addr);
+                addr = registers.getE();
+                var oper = memory.readByte(addr);
+
+                var result = val + oper;
+
+                registers.setSubtractFlag(0);
+                this.setCarryFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                memory.writeByte(registers.getA(), result);
+            }
+        };
+
+        this.operations[0x84] = {
+            name: "ADD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var addr = registers.getA();
+                var val = memory.readByte(addr);
+                addr = registers.getH();
+                var oper = memory.readByte(addr);
+
+                var result = val + oper;
+
+                registers.setSubtractFlag(0);
+                this.setCarryFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                memory.writeByte(registers.getA(), result);
+            }
+        };
+
+
+        this.operations[0x85] = {
+            name: "ADD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var addr = registers.getA();
+                var val = memory.readByte(addr);
+                addr = registers.getL();
+                var oper = memory.readByte(addr);
+
+                var result = val + oper;
+
+                registers.setSubtractFlag(0);
+                this.setCarryFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                memory.writeByte(registers.getA(), result);
+            }
+        };
+
+
+        this.operations[0x86] = {
+            name: "ADD",
+            cycle: 8,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var addr = registers.getA();
+                var val = memory.readByte(addr);
+                addr = registers.getHL();
+                var oper = memory.readByte(addr);
+
+                var result = val + oper;
+
+                registers.setSubtractFlag(0);
+                this.setCarryFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                memory.writeByte(registers.getA(), result);
+            }
+        };
+
+
+        this.operations[0xC6] = {
+            name: "ADD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var addr = registers.getA();
+                var val = memory.readByte(addr);
+                addr = registers.getB();
+                var oper = memory.readByte(addr);
+
+                var result = val + oper;
+
+                registers.setSubtractFlag(0);
+                this.setCarryFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                memory.writeByte(registers.getA(), result);
+            }
+        };
+
 
     }
 }
