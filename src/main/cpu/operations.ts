@@ -830,6 +830,68 @@ export class Operations {
         // Pg 69
         //----------------------------------------
 
+        this.operations[0x47] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                registers.setB(registers.getA());
+            }
+        };
+
+        this.operations[0x4F] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                registers.setC(registers.getA());
+            }
+        };
+
+        this.operations[0x57] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                registers.setD(registers.getA());
+            }
+        };
+
+        this.operations[0x5F] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                registers.setE(registers.getA());
+            }
+        };
+
+
+        this.operations[0x67] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                registers.setH(registers.getA());
+            }
+        };
+
+        this.operations[0x6F] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                registers.setL(registers.getA());
+            }
+        };
+
+
 
         this.operations[0x02] = {
             name: "LD",
@@ -939,6 +1001,25 @@ export class Operations {
                 var addr = registers.getHL();
                 var val = memory.readByte(addr);
                 registers.setA(val);
+                registers.setHL(addr - 1 & 0xFFFF);
+            }
+        };
+
+        //----------------------------------------
+        // LD (HLD), A - Put A int memory address HL.
+        // Decrement HL
+        // Pg 72
+        //----------------------------------------
+
+        this.operations[0x32] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var addr = registers.getHL();
+                var val = registers.getA();
+                memory.writeByte(addr, val);
                 registers.setHL(addr - 1 & 0xFFFF);
             }
         };
