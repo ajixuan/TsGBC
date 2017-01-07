@@ -29,15 +29,15 @@ export class Operations {
      * Helper function for setting carry flags depending on number of bits
      * @param first
      * @param second
-     * @param short
+     * @param short whether or not the operation is between 8bit or 16bit
      */
     private setCarryFlags(first:number, second:number, short:boolean):void {
-        //Default short is true
+        //Default short is true (8bit operation by default)
         var mask = 0xFF;
         var low = 4;
         var high = 8;
 
-        //If short is false
+        //If short is false (if it is 16bit operation)
         if(short === false){
             mask = 0xFFF;
             low = 12;
@@ -1516,11 +1516,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc:number) {
-                var addr = registers.getA();
-                var val = memory.readByte(addr);
-                addr = registers.getB();
-                var oper = memory.readByte(addr);
-
+                var val = memory.readByte(registers.getA());
+                var oper = memory.readByte(registers.getB());
                 var result = val + oper;
 
                 registers.setSubtractFlag(0);
