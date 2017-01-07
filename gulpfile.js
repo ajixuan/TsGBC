@@ -3,17 +3,26 @@ var ts = require('gulp-typescript');
 var del = require('del');
 var runSequence = require('run-sequence');
 var tar = require('gulp-tar');
-var p = require('./package.json')
+var p = require('./package.json');
+var mocha = require('gulp-mocha');
 var Builder = require('systemjs-builder');
 
 var dir = {
   src: 		'./src/main/**/*.ts',
+  test: './src/test/**.*.ts',
   html: 	'./src/html/**/*',
   target:	'./target/**/*'
 };
 
 gulp.task('clean', function() {
   return del(['target']);
+});
+
+gulp.task('test', function(){
+    return gulp.src(dir.test)
+        .pipe(mocha({
+            reporter: 'progress'
+        }));
 });
 
 gulp.task('src', function() {
@@ -26,14 +35,13 @@ gulp.task('src', function() {
             outFile : 'app.js',
             target: "es5",
         }))
-        .pipe(gulp.dest('target/'));
+        .pipe(gulp.dest('target/test'));
 });
 
 gulp.task('html', function() {
 	return gulp.src(dir.html)
 		.pipe(gulp.dest('target/'));
 });
-
 
 gulp.task('package', function() {
 	var name = "RTCJS-" + p.version + ".tar";
