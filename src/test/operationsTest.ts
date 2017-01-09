@@ -4,51 +4,43 @@
 import {GameBoy} from '../main/gameboy';
 import { suite, test, slow, timeout, skip, only} from "mocha-typescript";
 
-import assert = ts.Debug.assert;
-
-var gameboy = null;
-var cpu = null;
-var memory = null;
-
 try {
-    gameboy = new GameBoy();
+    var gameboy = new GameBoy();
 } catch (e) {
     console.error("Unable to load GameBoy");
     console.error(e);
-    return;
 }
 
-cpu= gameboy.cpu;
-memory = gameboy.memory;
+var cpu = gameboy.cpu;
+var memory = gameboy.memory;
 
 
-@suite("ALU 8Bit")
-class OperationsTest {
+describe("ALU 8Bit", function(){
+    describe("0xC6 ALU ADD test", function(){
+        //Write the test byte to the position in memory
+        memory.writeByte(1, 20);
+        memory.writeByte(2, 20);
 
-    @test("0xC6 ALU ADD test")
-    testOutput() {
+        cpu.registers.setA(1);
+        cpu.registers.setB(2);
+
         var a = memory.readByte(cpu.registers.getA());
         var b = memory.readByte(cpu.registers.getB());
         var result = a + b;
-        console.log(a); console.log(b);
+        console.log(a); console.log(b); console.log(result);
         cpu.operations.get(0xC6).execute(0);
 
-
-
         //Check if flags are set
-        assert(cpu.registers.getSubtractFlag() == 0, "Subtract flag is not reset");
-        if()
-        assert(cpu.registers.getSubtractFlag() == 0, "Subtract flag is not reset");
-
+        it("should reset subtractflag", ()=>{
+            if(cpu.registers.getSubtractFlag() == 0){
+                throw new Error("Subtractflag is not reset");
+            }
+        });
 
         //Check if the correct value is set
         memory.readByte(cpu.registers.getA());
 
-    }
+    })
 
-    @test("should pass when promise resolved")
-    promise_pass_resolved() {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => resolve(), 1);
-        });
-    }
+})
+
