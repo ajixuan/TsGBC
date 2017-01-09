@@ -9,7 +9,7 @@ var Builder = require('systemjs-builder');
 
 var dir = {
   src: 		'./src/main/**/*.ts',
-  test: './src/test/**.*.ts',
+  test: './src/test/**/*.ts',
   html: 	'./src/html/**/*',
   target:	'./target/**/*'
 };
@@ -20,6 +20,13 @@ gulp.task('clean', function() {
 
 gulp.task('test', function(){
     return gulp.src(dir.test)
+        .pipe(ts({
+            outFile:'test.js',
+            moduleResolution: 'Node',
+            module: 'system',
+            experimentalDecorators: true
+        }))
+        .pipe(gulp.dest('.'))
         .pipe(mocha({
             reporter: 'progress'
         }));
