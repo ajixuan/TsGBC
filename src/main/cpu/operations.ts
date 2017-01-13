@@ -31,9 +31,9 @@ export class Operations {
      * @param second
      * @param short whether or not the operation is between 8bit or 16bit
      */
-    private setCarryFlags(first:number, second:number, short:boolean):void {
+    private setAddFlags(first:number, second:number, short:boolean):void {
         //Default short is true (8bit operation by default)
-        var mask = 0xFF;
+        var mask = 0xF;
         var low = 4;
         var high = 8;
 
@@ -53,6 +53,38 @@ export class Operations {
         }
 
         if(full >> high == 1){
+            console.log("set full carry");
+            console.log(full);
+        }
+    }
+
+
+    /**
+     * Helper function for setting carry flags depending on number of bits
+     * @param first
+     * @param second
+     * @param short whether or not the operation is between 8bit or 16bit
+     */
+    private setSubtractFlags(first:number, second:number, short:boolean):void {
+        //Default short is true (8bit operation by default)
+        // The half flag (low) is set if there is a borrow on bit 4
+        var mask = 0xF;
+
+        //If short is false (if it is 16bit operation)
+        // The half flag (low) is set if there is a borrow at bit 12
+        if(short === false){
+            mask = 0xFFF;
+        }
+
+        var half =(first & mask) - (second & mask);
+        var full = first - second;
+
+        if(half < 0){
+            console.log("set half carry:");
+            console.log(half);
+        }
+
+        if(full < 0){
             console.log("set full carry");
             console.log(full);
         }
@@ -1195,7 +1227,7 @@ export class Operations {
                 registers.setZeroFlag(0);
                 registers.setSubtractFlag(0);
 
-                this.setCarryFlags(val, orig, false);
+                this.setAddFlags(val, orig, false);
 
 
                 var result = (val + orig) & 0xFFFF;
@@ -1332,7 +1364,7 @@ export class Operations {
                 var result = val + val;
 
                 registers.setSubtractFlag(0);
-                this.setCarryFlags(val, val, false);
+                this.setAddFlags(val, val, false);
                 memory.writeByte(registers.getA(), result);
             }
         };
@@ -1351,7 +1383,7 @@ export class Operations {
                 var result = val + oper;
 
                 registers.setSubtractFlag(0);
-                this.setCarryFlags(val, oper, false);
+                this.setAddFlags(val, oper, false);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -1375,7 +1407,7 @@ export class Operations {
                 var result = val + oper;
 
                 registers.setSubtractFlag(0);
-                this.setCarryFlags(val, oper, false);
+                this.setAddFlags(val, oper, false);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -1400,7 +1432,7 @@ export class Operations {
                 var result = val + oper;
 
                 registers.setSubtractFlag(0);
-                this.setCarryFlags(val, oper, false);
+                this.setAddFlags(val, oper, false);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -1425,7 +1457,7 @@ export class Operations {
                 var result = val + oper;
 
                 registers.setSubtractFlag(0);
-                this.setCarryFlags(val, oper, false);
+                this.setAddFlags(val, oper, false);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -1449,7 +1481,7 @@ export class Operations {
                 var result = val + oper;
 
                 registers.setSubtractFlag(0);
-                this.setCarryFlags(val, oper, false);
+                this.setAddFlags(val, oper, false);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -1474,7 +1506,7 @@ export class Operations {
                 var result = val + oper;
 
                 registers.setSubtractFlag(0);
-                this.setCarryFlags(val, oper, false);
+                this.setAddFlags(val, oper, false);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -1499,7 +1531,7 @@ export class Operations {
                 var result = val + oper;
 
                 registers.setSubtractFlag(0);
-                this.setCarryFlags(val, oper, false);
+                this.setAddFlags(val, oper, false);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -1521,7 +1553,7 @@ export class Operations {
                 var result = val + oper;
 
                 registers.setSubtractFlag(0);
-                this.setCarryFlags(val, oper, false);
+                this.setAddFlags(val, oper, false);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -1531,6 +1563,796 @@ export class Operations {
             }
         };
 
+        //----------------------------------------
+        // ADC A, n - Add n + Carry flag to A
+        // page 81
+        //----------------------------------------
+
+        this.operations[0x8F] = {
+            name: "ADC",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var val = registers.getA();
+                var result = val + val + registers.getCarryFlag();
+
+                registers.setSubtractFlag(0);
+                this.setAddFlags(val, val, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x88] = {
+            name: "ADC",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getB();
+                var result = val + oper + registers.getCarryFlag();
+
+                registers.setSubtractFlag(0);
+                this.setAddFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x89] = {
+            name: "ADC",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getC();
+                var result = val + oper + registers.getCarryFlag();
+
+                registers.setSubtractFlag(0);
+                this.setAddFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x8A] = {
+            name: "ADC",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getD();
+                var result = val + oper + registers.getCarryFlag();
+
+                registers.setSubtractFlag(0);
+                this.setAddFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        this.operations[0x8B] = {
+            name: "ADC",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getE();
+                var result = val + oper + registers.getCarryFlag();
+
+                registers.setSubtractFlag(0);
+                this.setAddFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x8C] = {
+            name: "ADC",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getH();
+                var result = val + oper + registers.getCarryFlag();
+
+                registers.setSubtractFlag(0);
+                this.setAddFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+
+        this.operations[0x8D] = {
+            name: "ADC",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getL();
+                var result = val + oper + registers.getCarryFlag();
+
+                registers.setSubtractFlag(0);
+                this.setAddFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        this.operations[0x8E] = {
+            name: "ADC",
+            cycle: 8,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = memory.readWord(registers.getHL());
+                var result = val + oper + registers.getCarryFlag();
+
+                registers.setSubtractFlag(0);
+                this.setAddFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        //TODO: I htink this is immediate value???
+        this.operations[0xCE] = {
+            name: "ADC",
+            cycle: 8,
+            mode: immediate,
+            size: 1,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = this.mode.getValue(pc)
+                var result = val + oper + registers.getCarryFlag();
+
+                registers.setSubtractFlag(0);
+                this.setAddFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        //----------------------------------------
+        // SUB n - Subtract n from A
+        // page 82
+        //----------------------------------------
+
+        this.operations[0x97] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var result = val - val;
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, val, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x90] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getB();
+                var result = val - oper;
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x91] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getC();
+                var result = val - oper;
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        this.operations[0x92] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getD();
+                var result = val - oper;
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x93] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getE();
+                var result = val - oper;
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x94] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getH();
+                var result = val - oper;
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x95] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getL();
+                var result = val - oper;
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x96] = {
+            name: "SUB",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = memory.readWord(registers.getHL());
+                var result = val - oper;
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        //TODO: Not sure if # means immediate value
+        this.operations[0xD6] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = this.mode.getValue(pc)
+                var result = val - oper;
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        //----------------------------------------
+        // SBC n - Subtract n + Carryflag from A
+        // page 83
+        //----------------------------------------
+
+        this.operations[0x9F] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var result = val - val - registers.getCarryFlag();
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, val, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x98] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getB();
+                var result = val - oper - registers.getCarryFlag();
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x99] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getC();
+                var result = val - oper - registers.getCarryFlag();
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        this.operations[0x9A] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getD();
+                var result = val - oper - registers.getCarryFlag();
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x9B] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getE();
+                var result = val - oper - registers.getCarryFlag();
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x9C] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getH();
+                var result = val - oper - registers.getCarryFlag();
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x9D] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getL();
+                var result = val - oper;
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x96] = {
+            name: "SUB",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = memory.readWord(registers.getHL());
+                var result = val - oper - registers.getCarryFlag();
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        //TODO: Not sure if # means immediate value
+        this.operations[0xD6] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = this.mode.getValue(pc)
+                var result = val - oper;
+
+                registers.setSubtractFlag(1);
+                this.setSubtractFlags(val, oper, false);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        //----------------------------------------
+        // AND n - Logically AND n with A, result in A
+        // page 84
+        //----------------------------------------
+
+
+        this.operations[0xA7] = {
+            name: "AND",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var result = val & val;
+
+                //reset all flags
+                registers.setFlags(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xA0] = {
+            name: "AND",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getB();
+                var result = val & oper;
+
+                //reset all flags
+                registers.setFlags(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xA1] = {
+            name: "AND",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getC();
+                var result = val & oper;
+
+                //reset all flags
+                registers.setFlags(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        this.operations[0xA2] = {
+            name: "AND",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getD();
+                var result = val & oper;
+
+                //reset all flags
+                registers.setFlags(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xA3] = {
+            name: "AND",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getE();
+                var result = val & oper;
+
+                //reset all flags
+                registers.setFlags(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
+            }
+        };
+
+        this.operations[0xA4] = {
+            name: "AND",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getH();
+                var result = val & oper;
+
+                //reset all flags
+                registers.setFlags(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
+            }
+        };
+
+        this.operations[0xA5] = {
+            name: "AND",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getL();
+                var result = val & oper;
+
+                //reset all flags
+                registers.setFlags(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xA6] = {
+            name: "AND",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = memory.readWord(registers.getHL());
+                var result = val & oper;
+
+                //reset all flags
+                registers.setFlags(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        //TODO: Not sure if # means immediate value
+        this.operations[0xE6] = {
+            name: "AND",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = this.mode.getValue(pc)
+                var result = val & oper;
+
+                //reset all flags
+                registers.setFlags(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
+            }
+        };
 
     }
 }
