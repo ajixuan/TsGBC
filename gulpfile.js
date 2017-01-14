@@ -9,27 +9,28 @@ var Builder = require('systemjs-builder');
 
 var dir = {
   src: 		'./src/main/**/*.ts',
-  test: './src/test/**/*.ts',
+  test:     './src/test/**/*.ts',
   html: 	'./src/html/**/*',
   target:	'./target/**/*'
 };
 
-gulp.task('clean', function() {
-  return del(['target']);
-});
+    gulp.task('clean', function() {
+        return del(['target']);
+    });
 
-gulp.task('test', function(){
-    return gulp.src(dir.test)
-        .pipe(ts({
-            outFile:'test.js',
-            moduleResolution: 'Node',
-            module: 'system',
-            experimentalDecorators: true
-        }))
-        .pipe(gulp.dest('.'))
-        .pipe(mocha({
-            reporter: 'progress'
-        }));
+    gulp.task('test', function() {
+        return gulp.src(dir.test)
+            .pipe(ts({
+                outFile:'test.js',
+                removeComments: false,
+                preserveConstEnums: true,
+                sourceMap: true,
+                experimentalDecorators: true,
+                declaration: true,
+                module: 'system'
+            }))
+            .pipe(gulp.dest('target'))
+            .pipe(mocha());
 });
 
 gulp.task('src', function() {
@@ -40,9 +41,9 @@ gulp.task('src', function() {
             experimentalDecorators: true,
             emitDecoratorMetadata: true,
             outFile : 'app.js',
-            target: "es5",
+            target: "es5"
         }))
-        .pipe(gulp.dest('target/test'));
+        .pipe(gulp.dest('target'));
 });
 
 gulp.task('html', function() {

@@ -2,7 +2,6 @@
  * Created by aji on 12/22/2016.
  */
 import {GameBoy} from '../main/gameboy';
-import { suite, test, slow, timeout, skip, only} from "mocha-typescript";
 
 try {
     var gameboy = new GameBoy();
@@ -14,9 +13,8 @@ try {
 var cpu = gameboy.cpu;
 var memory = gameboy.memory;
 
-
-describe("ALU 8Bit", function(){
-    describe("0xC6 ALU ADD test", function(){
+describe("ALU 8Bit", () => {
+    describe("0xC6 ALU ADD test", () => {
         //Write the test byte to the position in memory
         memory.writeByte(1, 20);
         memory.writeByte(2, 20);
@@ -40,7 +38,7 @@ describe("ALU 8Bit", function(){
         //Check if the correct value is set
         memory.readByte(cpu.registers.getA());
 
-    })
+    });
 
-})
+});
 
