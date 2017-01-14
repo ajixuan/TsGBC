@@ -41,7 +41,7 @@ export class Interrupts {
     }
 
     public isInterruptEnabled() : boolean {
-        return this.memory.interrupts.ime & 0x1 == 1;
+        return ((this.memory.interrupts.ime & 0x1) == 1);
     }
 
 }
