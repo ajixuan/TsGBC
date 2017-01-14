@@ -92,7 +92,7 @@ export class Cartridge {
     }
 }
 
-interface Type {
+export interface Type {
     name : string;
     id : number;
     hasRom : boolean;
