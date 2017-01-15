@@ -2170,7 +2170,7 @@ export class Operations {
                 var result = val & val;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2191,7 +2191,7 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2212,7 +2212,7 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2234,7 +2234,7 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2255,7 +2255,7 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2277,7 +2277,7 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2299,7 +2299,7 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2320,7 +2320,7 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2343,7 +2343,7 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
