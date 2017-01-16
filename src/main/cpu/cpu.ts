@@ -93,6 +93,7 @@ export class Cpu {
 
         if (this.halt) {
             opcode = 0x00; //NOP
+
         }
 
         //Get Operation
