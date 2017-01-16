@@ -1,4 +1,6 @@
 import {Cartridge} from "../cartridge/cartridge";
+import {Interrupts} from "../io/interrupts";
+
 /**
  * Created by hkamran on 12/5/2016.
  */
@@ -8,6 +10,7 @@ export class Memory {
 
     public io : number[] = [0x80];
     public cartridge : Cartridge;
+    public interrupt : Interrupts = new Interrupts();
 
     public ppu : any = new class {
         public vram : number[] = [0x2000];
@@ -19,14 +22,6 @@ export class Memory {
         public stack : number[] = [0x7F];
         public interrupt : number[] = [0x1];
     };
-
-    public interrupts : any = new class {
-        public if : number = 0x0;
-        public ie : number = 0x0;
-        public ime : number = 0x0;
-    };
-
-
 
     public writeByte(addr: number, val : number): void {
         if (val == null  || val > 0xFF || addr == null || addr > 0xFFFF) {

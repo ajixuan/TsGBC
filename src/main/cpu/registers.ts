@@ -132,7 +132,7 @@ export class Registers {
     }
 
     public setFlags(num : number): void {
-        this.isValid(num, 0xF, "Register argument to large for F: " + num);
+        this.isValid(num, 0xFF, "Register argument to large for F: " + num);
         this.f.zero = num >> 3 & 0x1;
         this.f.subtract = num >> 2 & 0x1;
         this.f.half = num >> 1 & 0x1;

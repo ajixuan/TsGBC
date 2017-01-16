@@ -3,6 +3,7 @@ import {Operations, Operation} from "./operations";
 import {Memory} from "../memory/memory";
 import {Stack} from "../memory/stack";
 import {Debugger} from "../debugger";
+import {Interrupts, Interrupt} from "../io/interrupts";
 
 export class Cpu {
 
@@ -10,8 +11,11 @@ export class Cpu {
     public memory : Memory;
     public operations : Operations;
     public stack : Stack;
+    public interrupts : Interrupts;
 
-    public cycles : number
+    public cycles : number;
+    public halt : boolean;
+
     public last : {operation : Operation, opcode : number, opaddr: number};
 
     constructor(memory : Memory) {
@@ -19,6 +23,7 @@ export class Cpu {
         this.memory = memory;
         this.stack = new Stack(this.memory, this.registers);
         this.operations = new Operations(this);
+        this.interrupts = this.memory.interrupt;
     }
 
     /**
@@ -46,8 +51,30 @@ export class Cpu {
     /**
      * Handler for the CPU interrupts.
      */
-    private handleInterrupts() : void {
-        //TODO
+    private handledInterrupts() : void {
+        if (!this.interrupts.hasInterrupts()) {
+            return;
+        }
+
+        var interrupt : Interrupt = this.interrupts.getInterrupt();
+
+        if (interrupt == null) {
+            this.interrupts.enableAllInterrupts();
+            return;
+        }
+
+        this.halt = false;
+        this.interrupts.disableAllInterrupts();
+
+        this.stack.pushWord(this.registers.getHL());
+        this.stack.pushWord(this.registers.getAF());
+        this.stack.pushWord(this.registers.getBC());
+        this.stack.pushWord(this.registers.getDE());
+
+        this.stack.pushWord(this.registers.getSP());
+        this.stack.pushWord(this.registers.getPC());
+
+        this.registers.setPC(interrupt.address);
     }
 
     /**
@@ -55,20 +82,35 @@ export class Cpu {
      */
     public tick(): number {
 
-        //TODO Interrupt
+        this.handledInterrupts();
 
         var cycles = 0;
         var pc =  this.registers.getPC();
 
+        //Get opcode
+
         var opcode = this.memory.readByte(pc);
+
+        if (this.halt) {
+            opcode = 0x00; //NOP
+        }
+
+        //Get Operation
+
         var operation = this.operations.get(opcode);
+
         if (operation == null) {
             this.last =  null;
             Debugger.display();
             throw "Unknown opcode execution 0x" + opcode.toString(16).toUpperCase();
         }
+
+        //Execute Operation
+
         var opaddr = operation.mode.getValue(pc);
         operation.execute(opaddr);
+
+        //Update Infromation
 
         this.registers.setPC(pc + operation.size & 0xFFFF);
         cycles += operation.cycle;
