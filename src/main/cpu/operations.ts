@@ -31,7 +31,7 @@ export class Operations {
      * @param second
      * @param short whether or not the operation is between 8bit or 16bit
      */
-    private setAddFlags(first:number, second:number, short:boolean):void {
+    private calcAddFlags(first:number, second:number, short:boolean):number {
         //Default short is true (8bit operation by default)
         var mask = 0xF;
         var low = 4;
@@ -50,12 +50,21 @@ export class Operations {
         if(half >> low == 1){
             console.log("set half carry:");
             console.log(half);
+            this.cpu.registers.setHalfFlag(1);
         }
 
         if(full >> high == 1){
             console.log("set full carry");
             console.log(full);
+            this.cpu.registers.setCarryFlag(1);
         }
+
+        //Set 0 flag
+        if(full == 0){
+            this.cpu.registers.setZeroFlag(1);
+        }
+
+        return full & 0xFFFF;
     }
 
 
@@ -65,7 +74,7 @@ export class Operations {
      * @param second
      * @param short whether or not the operation is between 8bit or 16bit
      */
-    private setSubtractFlags(first:number, second:number, short:boolean):void {
+    private calcSubtractFlags(first:number, second:number, short:boolean = true):number {
         //Default short is true (8bit operation by default)
         // The half flag (low) is set if there is a borrow on bit 4
         var mask = 0xF;
@@ -82,12 +91,21 @@ export class Operations {
         if(half < 0){
             console.log("set half carry:");
             console.log(half);
+            this.cpu.registers.setHalfFlag(1);
         }
 
         if(full < 0){
             console.log("set full carry");
             console.log(full);
+            this.cpu.registers.setCarryFlag(1);
         }
+
+        //Set 0 flag
+        if(full == 0){
+            this.cpu.registers.setZeroFlag(1);
+        }
+
+        return full & 0xFFFF;
     }
 
     /**
@@ -1226,11 +1244,7 @@ export class Operations {
                 //Set flags
                 registers.setZeroFlag(0);
                 registers.setSubtractFlag(0);
-
-                this.setAddFlags(val, orig, false);
-
-
-                var result = (val + orig) & 0xFFFF;
+                var result = this.calcAddFlags(val, orig, false);
                 memory.writeByte(result, val);
             }
         };
@@ -1361,10 +1375,8 @@ export class Operations {
             execute(pc:number) {
                 var addr = registers.getA();
                 var val = memory.readByte(addr);
-                var result = val + val;
-
+                var result = this.calcAddFlags(val, val, false);
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, val, false);
                 memory.writeByte(registers.getA(), result);
             }
         };
@@ -1379,16 +1391,9 @@ export class Operations {
                 var val = memory.readByte(addr);
                 addr = registers.getB();
                 var oper = memory.readByte(addr);
-
-                var result = val + oper;
+                var result = this.calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 memory.writeByte(registers.getA(), result);
             }
         };
@@ -1403,16 +1408,9 @@ export class Operations {
                 var val = memory.readByte(addr);
                 addr = registers.getC();
                 var oper = memory.readByte(addr);
-
-                var result = val + oper;
+                var result = this.calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 memory.writeByte(registers.getA(), result);
             }
         };
@@ -1429,15 +1427,8 @@ export class Operations {
                 addr = registers.getD();
                 var oper = memory.readByte(addr);
 
-                var result = val + oper;
-
+                var result = this.calcAddFlags(val, oper, false);
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 memory.writeByte(registers.getA(), result);
             }
         };
@@ -1453,16 +1444,9 @@ export class Operations {
                 var val = memory.readByte(addr);
                 addr = registers.getE();
                 var oper = memory.readByte(addr);
-
-                var result = val + oper;
+                var result = this.calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 memory.writeByte(registers.getA(), result);
             }
         };
@@ -1477,16 +1461,9 @@ export class Operations {
                 var val = memory.readByte(addr);
                 addr = registers.getH();
                 var oper = memory.readByte(addr);
-
-                var result = val + oper;
+                var result = this.calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 memory.writeByte(registers.getA(), result);
             }
         };
@@ -1502,16 +1479,9 @@ export class Operations {
                 var val = memory.readByte(addr);
                 addr = registers.getL();
                 var oper = memory.readByte(addr);
-
-                var result = val + oper;
+                var result = this.calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 memory.writeByte(registers.getA(), result);
             }
         };
@@ -1527,16 +1497,9 @@ export class Operations {
                 var val = memory.readByte(addr);
                 addr = registers.getHL();
                 var oper = memory.readByte(addr);
-
-                var result = val + oper;
+                var result = this.calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 memory.writeByte(registers.getA(), result);
             }
         };
@@ -1550,15 +1513,9 @@ export class Operations {
             execute(pc:number) {
                 var val = memory.readByte(registers.getA());
                 var oper = memory.readByte(registers.getB());
-                var result = val + oper;
+                var result = this.calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 memory.writeByte(registers.getA(), result);
             }
         };
@@ -1575,15 +1532,9 @@ export class Operations {
             size: 1,
             execute(pc:number) {
                 var val = registers.getA();
-                var result = val + val + registers.getCarryFlag();
+                var result = this.calcAddFlags(val, val + registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, val, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1596,15 +1547,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getB();
-                var result = val + oper + registers.getCarryFlag();
+                var result = this.calcAddFlags(val, oper + registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1617,15 +1562,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getC();
-                var result = val + oper + registers.getCarryFlag();
+                var result = this.calcAddFlags(val, oper + registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1638,15 +1577,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getD();
-                var result = val + oper + registers.getCarryFlag();
+                var result = this.calcAddFlags(val, oper + registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1660,15 +1593,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getE();
-                var result = val + oper + registers.getCarryFlag();
+                var result = this.calcAddFlags(val, oper + registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1681,15 +1608,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getH();
-                var result = val + oper + registers.getCarryFlag();
+                var result = this.calcAddFlags(val, oper + registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1704,15 +1625,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getL();
-                var result = val + oper + registers.getCarryFlag();
+                var result = this.calcAddFlags(val, oper + registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1726,15 +1641,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = memory.readWord(registers.getHL());
-                var result = val + oper + registers.getCarryFlag();
+                var result = this.calcAddFlags(val, oper+ registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1749,15 +1658,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = this.mode.getValue(pc)
-                var result = val + oper + registers.getCarryFlag();
+                var result = this.calcAddFlags(val, oper+ registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(0);
-                this.setAddFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1774,15 +1677,9 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var val = registers.getA();
-                var result = val - val;
+                var result =this.calcSubtractFlags(val, val, false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, val, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1795,15 +1692,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getB();
-                var result = val - oper;
+                var result = this.calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1816,15 +1707,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getC();
-                var result = val - oper;
+                var result = this.calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1838,15 +1723,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getD();
-                var result = val - oper;
+                var result = this.calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1859,15 +1738,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getE();
-                var result = val - oper;
+                var result = this.calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1880,15 +1753,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getH();
-                var result = val - oper;
+                var result = this.calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1901,15 +1768,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getL();
-                var result = val - oper;
+                var result = this.calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1922,15 +1783,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = memory.readWord(registers.getHL());
-                var result = val - oper;
+                var result = this.calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1945,15 +1800,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = this.mode.getValue(pc)
-                var result = val - oper;
+                var result = this.calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1970,15 +1819,9 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var val = registers.getA();
-                var result = val - val - registers.getCarryFlag();
+                var result =this.calcSubtractFlags(val, val- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, val, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -1991,15 +1834,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getB();
-                var result = val - oper - registers.getCarryFlag();
+                var result =this.calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -2012,15 +1849,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getC();
-                var result = val - oper - registers.getCarryFlag();
+                var result =this.calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -2034,15 +1865,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getD();
-                var result = val - oper - registers.getCarryFlag();
+                var result = this.calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -2055,15 +1880,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getE();
-                var result = val - oper - registers.getCarryFlag();
+                var result = this.calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -2076,15 +1895,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getH();
-                var result = val - oper - registers.getCarryFlag();
+                var result =this.calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -2097,15 +1910,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getL();
-                var result = val - oper;
+                var result =this.calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -2118,15 +1925,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = memory.readWord(registers.getHL());
-                var result = val - oper - registers.getCarryFlag();
+                var result = this.calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -2141,15 +1942,9 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = this.mode.getValue(pc)
-                var result = val - oper;
+                var result =this.calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
-                this.setSubtractFlags(val, oper, false);
-
-                if(result == 0){
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setA(result);
             }
         };
@@ -2170,7 +1965,8 @@ export class Operations {
                 var result = val & val;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
+                registers.setSubtractFlag(1);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2191,7 +1987,8 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
+                registers.setSubtractFlag(1);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2212,7 +2009,8 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
+                registers.setSubtractFlag(1);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2234,7 +2032,8 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
+                registers.setSubtractFlag(1);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2255,7 +2054,8 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
+                registers.setSubtractFlag(1);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2277,7 +2077,8 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
+                registers.setSubtractFlag(1);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2299,7 +2100,8 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
+                registers.setSubtractFlag(1);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2320,7 +2122,8 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
+                registers.setSubtractFlag(1);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2343,7 +2146,8 @@ export class Operations {
                 var result = val & oper;
 
                 //reset all flags
-                registers.setFlags(0);
+                registers.setF(0);
+                registers.setSubtractFlag(1);
 
                 if(result == 0){
                     registers.setZeroFlag(1);
@@ -2353,6 +2157,542 @@ export class Operations {
 
             }
         };
+
+
+        //----------------------------------------
+        // OR n - Logically OR n with A, result in A
+        // page 85
+        //----------------------------------------
+
+        this.operations[0xB7] = {
+            name: "OR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var result = val | val;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xB0] = {
+            name: "OR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getB();
+                var result = val | oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xB1] = {
+            name: "OR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getC();
+                var result = val | oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        this.operations[0xB2] = {
+            name: "OR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getD();
+                var result = val | oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xB3] = {
+            name: "OR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getE();
+                var result = val | oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
+            }
+        };
+
+        this.operations[0xB4] = {
+            name: "OR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getH();
+                var result = val | oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
+            }
+        };
+
+        this.operations[0xB5] = {
+            name: "OR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getL();
+                var result = val | oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xB6] = {
+            name: "OR",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = memory.readWord(registers.getHL());
+                var result = val | oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        //TODO: Not sure if # means immediate value
+        this.operations[0xF6] = {
+            name: "OR",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = this.mode.getValue(pc)
+                var result = val | oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
+            }
+        };
+
+
+        //----------------------------------------
+        // XOR n - Logically exclusive OR n with A, result in A
+        // page 86
+        //----------------------------------------
+
+        /*
+        * who dafaq xors themselves
+        * */
+        this.operations[0xAF] = {
+            name: "XOR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                registers.setF(0);
+                registers.setZeroFlag(1);
+                registers.setA(0);
+            }
+        };
+
+        this.operations[0xA8] = {
+            name: "XOR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getB();
+                var result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xA9] = {
+            name: "XOR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getC();
+                var result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        this.operations[0xAA] = {
+            name: "XOR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getD();
+                var result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xAB] = {
+            name: "XOR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getE();
+                var result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
+            }
+        };
+
+        this.operations[0xAC] = {
+            name: "XOR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getH();
+                var result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
+            }
+        };
+
+        this.operations[0xAD] = {
+            name: "XOR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getL();
+                var result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xAE] = {
+            name: "XOR",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = memory.readWord(registers.getHL());
+                var result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        //TODO: Not sure if # means immediate value
+        this.operations[0xEE] = {
+            name: "XOR",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = this.mode.getValue(pc)
+                var result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
+            }
+        };
+
+         //-----------------------------------------------
+        // CP n - Compare A with n: A - n, discard results
+        // page 87
+        //------------------------------------------------
+
+        this.operations[0xBF] = {
+            name: "CP",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                registers.setF(0);
+                registers.setSubtractFlag(1);
+                registers.setZeroFlag(1);
+            }
+        };
+
+        this.operations[0xB8] = {
+            name: "CP",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getB();
+
+                registers.setF(0);
+                registers.setSubtractFlag(1);
+            }
+        };
+
+        this.operations[0xB9] = {
+            name: "CP",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getC();
+                this.calcSubtractFlags(val, oper, false);
+
+                registers.setF(0);
+                registers.setSubtractFlag(1);
+            }
+        };
+
+
+        this.operations[0xBA] = {
+            name: "CP",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getD();
+                this.calcSubtractFlags(val, oper, false);
+
+                registers.setF(0);
+                registers.setSubtractFlag(1);
+            }
+        };
+
+        this.operations[0xBB] = {
+            name: "CP",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getE();
+                this.calcSubtractFlags(val, oper, false);
+
+                registers.setF(0);
+                registers.setSubtractFlag(1);
+            }
+        };
+
+        this.operations[0xBC] = {
+            name: "CP",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getH();
+                this.calcSubtractFlags(val, oper, false);
+
+                registers.setF(0);
+                registers.setSubtractFlag(1);
+            }
+        };
+
+        this.operations[0xBD] = {
+            name: "CP",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = registers.getL();
+                this.calcSubtractFlags(val, oper, false);
+
+                registers.setF(0);
+                registers.setSubtractFlag(1);
+            }
+        };
+
+        this.operations[0xBE] = {
+            name: "CP",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = memory.readWord(registers.getHL());
+                this.calcSubtractFlags(val, oper, false);
+
+                registers.setF(0);
+                registers.setSubtractFlag(1);
+            }
+        };
+
+
+        //TODO: Not sure if # means immediate value
+        this.operations[0xFE] = {
+            name: "CP",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var oper = this.mode.getValue(pc)
+                this.calcSubtractFlags(val, oper, false);
+
+                registers.setF(0);
+                registers.setSubtractFlag(1);
+            }
+        };
+
+
 
     }
 }

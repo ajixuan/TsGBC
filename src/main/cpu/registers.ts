@@ -77,11 +77,11 @@ export class Registers {
     public setAF(num : number) : void {
         this.isValid(num, 0xFFFF, "Register argument to large for AF: " + num);
         this.setA(num >> 8);  //high
-        this.setFlags(num & 0xFF);    //low
+        this.setF(num & 0xFF);    //low
     }
 
     public getAF() : number {
-        return this.getA() << 8 | this.getFlags() & 0xFF;
+        return this.getA() << 8 | this.getF() & 0xFF;
     }
 
     /**
@@ -131,18 +131,18 @@ export class Registers {
         return this.f.carry;
     }
 
-    public setFlags(num : number): void {
+    public setF(num : number): void {
         this.isValid(num, 0xFF, "Register argument to large for F: " + num);
-        this.f.zero = num >> 3 & 0x1;
-        this.f.subtract = num >> 2 & 0x1;
-        this.f.half = num >> 1 & 0x1;
-        this.f.carry = num & 0x1;
+        this.f.zero = num >> 7 & 0x1;
+        this.f.subtract = num >> 6 & 0x1;
+        this.f.half = num >> 5 & 0x1;
+        this.f.carry = num >> 4 & 0x1;
     }
 
 
-    public getFlags() : number {
+    public getF() : number {
         //MAX is 0xF0
-        return this.f.zero << 3 | this.f.subtract << 2 | this.f.half << 1 | this.f.carry << 0;
+        return this.f.zero << 7 | this.f.subtract << 6 | this.f.half << 5 | this.f.carry << 4;
     }
 
     /**
