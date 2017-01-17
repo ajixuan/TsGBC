@@ -20,7 +20,6 @@ export class Memory {
     public cpu : any = new class {
         public ram : number[] = [0x2000];
         public stack : number[] = [0x7F];
-        public interrupt : number[] = [0x1];
     };
 
     public writeByte(addr: number, val : number): void {
@@ -41,6 +40,8 @@ export class Memory {
         } else if (addr < 0xFF80) {
             if (addr < 0xFF00) {
                 throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
+            } else if (addr == 0xFF0F) {
+                this.interrupt.if = val & 0xFF;
             } else if (addr < 0xFF4C) {
                 this.io[addr - 0xFF00] = val;
             } else if (addr < 0xFF80) {
@@ -49,7 +50,7 @@ export class Memory {
         } else if (addr < 0xFFFF) {
             this.cpu.stack[addr - 0xFF80] = val;
         } else if (addr == 0xFFFF) {
-            this.cpu.interrupt[addr - 0xFFFF] = val;
+            this.interrupt.ie = val & 0xFF;
         } else {
             throw "Invalid write led to unknown address at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
         }
@@ -74,6 +75,8 @@ export class Memory {
         } else if (addr < 0xFF80) {
             if (addr < 0xFF00) {
                 throw "Invalid read on unused i/o at 0x" + addr.toString(16);
+            } else if (addr == 0xFF0F) {
+                return this.interrupt.if & 0xFF;
             } else if (addr < 0xFF4C) {
                 val = this.io[addr - 0xFF00];
             } else if (addr < 0xFF80) {
@@ -82,7 +85,7 @@ export class Memory {
         } else if (addr < 0xFFFF) {
             val = this.cpu.stack[addr - 0xFF80];
         } else if (addr == 0xFFFF) {
-            val = this.cpu.interrupt[addr - 0xFFFF];
+            val = this.interrupt.ie;
         } else {
             throw "Invalid read led to unknown address at 0x" + addr.toString(16);
         }
