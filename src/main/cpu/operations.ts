@@ -3068,6 +3068,193 @@ export class Operations {
                 registers.setSP(result);
             }
         };
+
+        //-----------------------------------------------
+        // SWAP n - Swap upper & lower nibbles of  n
+        // page 94
+        //------------------------------------------------
+        this.operations[0xCB37] = {
+            name: "SWAP",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var lower = val & 0xF;
+                var upper = (val & 0xF0) >> 4;
+                var result = lower << 4 + upper;
+
+                if (result === 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xCB30] = {
+            name: "SWAP",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getB();
+                var lower = val & 0xF;
+                var upper = (val & 0xF0) >> 4;
+                var result = lower << 4 + upper;
+
+                if (result === 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setB(result);
+            }
+        };
+
+        this.operations[0xCB31] = {
+            name: "SWAP",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getC();
+                var lower = val & 0xF;
+                var upper = (val & 0xF0) >> 4;
+                var result = lower << 4 + upper;
+
+                if (result === 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setC(result);
+            }
+        };
+
+
+        this.operations[0xCB32] = {
+            name: "SWAP",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getD();
+                var lower = val & 0xF;
+                var upper = (val & 0xF0) >> 4;
+                var result = lower << 4 + upper;
+
+                if (result === 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setD(result);
+            }
+        };
+
+        this.operations[0xCB33] = {
+            name: "SWAP",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getE();
+                var lower = val & 0xF;
+                var upper = (val & 0xF0) >> 4;
+                var result = lower << 4 + upper;
+
+                if (result === 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setE(result);
+            }
+        };
+
+        this.operations[0xCB34] = {
+            name: "SWAP",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getH();
+                var lower = val & 0xF;
+                var upper = (val & 0xF0) >> 4;
+                var result = lower << 4 + upper;
+
+                if (result === 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setH(result);
+            }
+        };
+
+        this.operations[0xCB35] = {
+            name: "SWAP",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getL();
+                var lower = val & 0xF;
+                var upper = (val & 0xF0) >> 4;
+                var result = lower << 4 + upper;
+
+                if (result === 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setL(result);
+            }
+        };
+
+        this.operations[0xCB36] = {
+            name: "SWAP",
+            cycle: 16,
+            size: 2,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getHL();
+                var lower = val & 0xFF;
+                var upper = (val & 0xFF00) >> 8;
+                var result = lower << 8 + upper;
+
+                if (result === 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setHL(result);
+            }
+        };
+
+        //-----------------------------------------------
+        // DAA - Decimal adjust register A.
+        // This instruction adjusts register A so that the
+        // correct representation of Binary Coded Decimal (BCD)
+        // is obtained.
+        // page 95
+        //------------------------------------------------
+
+        this.operations[0x27] = {
+            name: "DAA",
+            cycle: 16,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getHL();
+                var lower = val & 0xFF;
+                var upper = (val & 0xFF00) >> 8;
+                var result = lower << 8 + upper;
+
+                if (result === 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setHL(result);
+            }
+        };
+
+
+
     }
 }
 

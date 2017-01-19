@@ -97,7 +97,6 @@ export class Cpu {
         }
 
         //Get Operation
-
         var operation = this.operations.get(opcode);
 
         if (operation == null) {
@@ -107,12 +106,10 @@ export class Cpu {
         }
 
         //Execute Operation
-
         var opaddr = operation.mode.getValue(pc);
         operation.execute(opaddr);
 
         //Update Infromation
-
         this.registers.setPC(pc + operation.size & 0xFFFF);
         cycles += operation.cycle;
         this.cycles += cycles;
