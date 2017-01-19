@@ -31,7 +31,7 @@ export class Operations {
      * @param second
      * @param short whether or not the operation is between 8bit or 16bit
      */
-    private calcAddFlags(first:number, second:number, short:boolean):number {
+    private calcAddFlags(first:number, second:number, short:boolean = true):number {
         //Default short is true (8bit operation by default)
         var mask = 0xF;
         var low = 4;
@@ -46,6 +46,9 @@ export class Operations {
 
         var half =(first & mask) + (second & mask);
         var full = first + second;
+
+        //Reset subtract flag everytime when we add
+        this.cpu.registers.setSubtractFlag(0);
 
         if(half >> low == 1){
             console.log("set half carry:");
@@ -88,6 +91,9 @@ export class Operations {
         var half =(first & mask) - (second & mask);
         var full = first - second;
 
+        //Set subtract flag everytime when we add
+        this.cpu.registers.setSubtractFlag(1);
+
         if(half < 0){
             console.log("set half carry:");
             console.log(half);
@@ -105,6 +111,7 @@ export class Operations {
             this.cpu.registers.setZeroFlag(1);
         }
 
+        if (short) {full = 0xFF - full } else { full = 0xFFFF - full };
         return full & 0xFFFF;
     }
 
@@ -2693,7 +2700,374 @@ export class Operations {
         };
 
 
+        //-----------------------------------------------
+        // INC n - Increment register n
+        // page 88
+        //------------------------------------------------
 
+        this.operations[0x3C] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcAddFlags(registers.getA(), 1);
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x04] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcAddFlags(registers.getB(), 1);
+                registers.setB(result);
+            }
+        };
+
+        this.operations[0x0C] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcAddFlags(registers.getC(), 1);
+                registers.setC(result);
+            }
+        };
+
+
+        this.operations[0x14] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcAddFlags(registers.getD(), 1);
+                registers.setD(result);
+            }
+        };
+
+        this.operations[0x1C] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcAddFlags(registers.getE(), 1);
+                registers.setE(result);
+            }
+        };
+
+        this.operations[0x24] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcAddFlags(registers.getH(), 1);
+                registers.setH(result);
+            }
+        };
+
+        this.operations[0x2C] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcAddFlags(registers.getL(), 1);
+                registers.setL(result);
+            }
+        };
+
+        this.operations[0x34] = {
+            name: "INC",
+            cycle: 12,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcAddFlags(registers.getHL(), 1, false);
+                memory.writeWord(registers.getHL(), result);
+            }
+        };
+
+        //-----------------------------------------------
+        // DEC n - Decrement register n
+        // page 89
+        //------------------------------------------------
+
+        this.operations[0x3D] = {
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcSubtractFlags(registers.getA(), 1);
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x05] = {
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcSubtractFlags(registers.getB(), 1);
+                registers.setB(result);
+            }
+        };
+
+        this.operations[0x0D] = {
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcSubtractFlags(registers.getC(), 1);
+                registers.setC(result);
+            }
+        };
+
+
+        this.operations[0x15] = {
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcSubtractFlags(registers.getD(), 1);
+                registers.setD(result);
+            }
+        };
+
+        this.operations[0x1D] = {
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcSubtractFlags(registers.getE(), 1);
+                registers.setE(result);
+            }
+        };
+
+        this.operations[0x25] = {
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcSubtractFlags(registers.getH(), 1);
+                registers.setH(result);
+            }
+        };
+
+        this.operations[0x2D] = {
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcSubtractFlags(registers.getL(), 1);
+                registers.setL(result);
+            }
+        };
+
+        this.operations[0x35] = {
+            name: "DEC",
+            cycle: 12,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcSubtractFlags(registers.getHL(), 1, false);
+                memory.writeWord(registers.getHL(), result);
+            }
+        };
+
+        /**
+         * 16 Bit Arithmetic
+         */
+        //-----------------------------------------------
+        // ADD HL, n - Add n to HL
+        // page 90
+        //------------------------------------------------
+
+        this.operations[0x09] = {
+            name: "ADD",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getHL();
+                var oper = registers.getBC();
+
+                var result = this.calcAddFlags(val, oper, false);
+                registers.setHL(result);
+            }
+        };
+
+        this.operations[0x19] = {
+            name: "ADD",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getHL();
+                var oper = registers.getDE();
+
+                var result = this.calcAddFlags(val, oper, false);
+                registers.setHL(result);
+            }
+        };
+
+        this.operations[0x29] = {
+            name: "ADD",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getHL();
+
+                var result = this.calcAddFlags(val, val, false);
+                registers.setHL(result);
+            }
+        };
+
+        this.operations[0x39] = {
+            name: "ADD",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getHL();
+                var oper = registers.getSP();
+
+                var result = this.calcAddFlags(val, oper, false);
+                registers.setHL(result);
+            }
+        };
+
+        //-----------------------------------------------
+        // ADD SP, n - Add n to stackpointer
+        // page 91
+        //------------------------------------------------
+
+        this.operations[0xE8] = {
+            name: "ADD",
+            cycle: 16,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getSP();
+                var oper = this.mode.getValue(pc);
+                var result = this.calcAddFlags(val, oper, false);
+                registers.setSP(result);
+            }
+        };
+
+        //-----------------------------------------------
+        // INC nn - Increment register nn
+        // page 92
+        //------------------------------------------------
+
+        this.operations[0x03] = {
+            name: "INC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcAddFlags(registers.getBC(), 1, false);
+                registers.setBC(result);
+            }
+        };
+
+        this.operations[0x13] = {
+            name: "INC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcAddFlags(registers.getDE(), 1, false);
+                registers.setDE(result);
+            }
+        };
+
+        this.operations[0x23] = {
+            name: "INC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcAddFlags(registers.getHL(), 1, false);
+                registers.setHL(result);
+            }
+        };
+
+
+        this.operations[0x33] = {
+            name: "INC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcAddFlags(registers.getSP(), 1, false);
+                registers.setSP(result);
+            }
+        };
+
+            //-----------------------------------------------
+            // DEC nn - Decrement register nn
+            // page 93
+            //------------------------------------------------
+
+            this.operations[0x0B] = {
+            name: "DEC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcSubtractFlags(registers.getBC(), 1, false);
+                registers.setBC(result);
+            }
+        };
+
+        this.operations[0x1B] = {
+            name: "DEC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcSubtractFlags(registers.getDE(), 1, false);
+                registers.setDE(result);
+            }
+        };
+
+        this.operations[0x2B] = {
+            name: "DEC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcSubtractFlags(registers.getHL(), 1, false);
+                registers.setHL(result);
+            }
+        };
+
+
+        this.operations[0x3B] = {
+            name: "DEC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var result = this.calcSubtractFlags(registers.getSP(), 1, false);
+                registers.setSP(result);
+            }
+        };
     }
 }
 
