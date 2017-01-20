@@ -34,7 +34,7 @@ export class Memory {
         } else if (addr < 0xC000) {
             this.cartridge.writeByte(addr, val);
         } else if (addr < 0xFE00) {
-            this.cpu.ram[(addr - 0xC000) & 0x2000] = val;
+            this.cpu.ram[(addr - 0xC000) % 0x2000] = val;
         } else if (addr < 0xFEA0) {
             this.ppu.oam[addr - 0xFE00] = val;
         } else if (addr < 0xFF80) {
@@ -69,7 +69,7 @@ export class Memory {
         } else if (addr < 0xC000) {
             return this.cartridge.readByte(addr);
         } else if (addr < 0xFE00) {
-            val = this.cpu.ram[(addr - 0xC000) & 0x2000];
+            val = this.cpu.ram[(addr - 0xC000) % 0x2000];
         } else if (addr < 0xFEA0) {
             val = this.ppu.oam[addr - 0xFE00];
         } else if (addr < 0xFF80) {
