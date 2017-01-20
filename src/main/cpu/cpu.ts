@@ -110,7 +110,7 @@ export class Cpu {
         operation.execute(opaddr);
 
         //Update Infromation
-        this.registers.setPC(pc + operation.size & 0xFFFF);
+        this.registers.setPC(this.registers.getPC() + operation.size & 0xFFFF);
         cycles += operation.cycle;
         this.cycles += cycles;
 
