@@ -137,7 +137,7 @@ export class Operations {
             name:string = "Immediate";
 
             getValue(addr:number):number {
-                return memory.readByte(addr + 1 & 0xFFFF);
+                return (addr + 1) & 0xFFFF;
             }
         };
 
@@ -3295,7 +3295,12 @@ export class Operations {
             size: 3,
             mode: immediate,
             execute(pc:number) {
-                var val = this.mode.getValue(pc);
+                var addr = this.mode.getValue(pc);
+                console.log(addr);
+
+                var val = memory.readWord(addr);
+
+                console.log(val);
                 registers.setPC(val);
             }
         };
