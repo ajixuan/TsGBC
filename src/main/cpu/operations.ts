@@ -33,12 +33,14 @@ export class Operations {
      */
     private calcAddFlags(first:number, second:number, short:boolean = true):number {
         //Default short is true (8bit operation by default)
+        var garb = 0xFF;
         var mask = 0xF;
         var low = 4;
         var high = 8;
 
         //If short is false (if it is 16bit operation)
         if(short === false){
+            var garb = 0xFFFF;
             mask = 0xFFF;
             low = 12;
             high = 16;
@@ -67,7 +69,9 @@ export class Operations {
             this.cpu.registers.setZeroFlag(1);
         }
 
-        return full & 0xFFFF;
+
+
+        return full & garb;
     }
 
 
@@ -136,6 +140,9 @@ export class Operations {
                 return memory.readByte(addr + 1 & 0xFFFF);
             }
         };
+
+        let calcAddFlags = this.calcAddFlags.bind(this);
+        let calcSubtractFlags = this.calcSubtractFlags.bind(this);
 
 
         /**
@@ -1539,7 +1546,7 @@ export class Operations {
             size: 1,
             execute(pc:number) {
                 var val = registers.getA();
-                var result = this.calcAddFlags(val, val + registers.getCarryFlag(), false);
+                var result = this.calcAddFlags(val, val + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1554,7 +1561,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getB();
-                var result = this.calcAddFlags(val, oper + registers.getCarryFlag(), false);
+                var result = this.calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1569,7 +1576,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getC();
-                var result = this.calcAddFlags(val, oper + registers.getCarryFlag(), false);
+                var result = this.calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1584,7 +1591,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getD();
-                var result = this.calcAddFlags(val, oper + registers.getCarryFlag(), false);
+                var result = this.calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1600,7 +1607,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getE();
-                var result = this.calcAddFlags(val, oper + registers.getCarryFlag(), false);
+                var result = this.calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1615,7 +1622,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getH();
-                var result = this.calcAddFlags(val, oper + registers.getCarryFlag(), false);
+                var result = this.calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1632,7 +1639,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getL();
-                var result = this.calcAddFlags(val, oper + registers.getCarryFlag(), false);
+                var result = this.calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1648,7 +1655,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = memory.readWord(registers.getHL());
-                var result = this.calcAddFlags(val, oper+ registers.getCarryFlag(), false);
+                var result = this.calcAddFlags(val, oper+ registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1657,6 +1664,7 @@ export class Operations {
 
 
         //TODO: I htink this is immediate value???
+
         this.operations[0xCE] = {
             name: "ADC",
             cycle: 8,
@@ -1664,8 +1672,10 @@ export class Operations {
             size: 1,
             execute(pc:number) {
                 var val = registers.getA();
-                var oper = this.mode.getValue(pc)
-                var result = this.calcAddFlags(val, oper+ registers.getCarryFlag(), false);
+                var oper = this.mode.getValue(pc);
+                console.log(this);
+
+                var result = calcAddFlags(val, oper+ registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -3240,7 +3250,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var val = registers.getHL();
+                var val = registers.getA();
                 var lower = val & 0xFF;
                 var upper = (val & 0xFF00) >> 8;
                 var result = lower << 8 + upper;
@@ -3249,11 +3259,46 @@ export class Operations {
                     registers.setZeroFlag(1);
                 }
 
-                registers.setHL(result);
+                registers.setA(result);
             }
         };
 
 
+        //-----------------------------------------------
+        // CPL - Complement register A(flip all bits).
+        // page 95
+        //------------------------------------------------
+
+        this.operations[0x2F] = {
+            name: "CPL",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var result = val ^ 0xFF;
+                registers.setSubtractFlag(1);
+                registers.setHalfFlag(1);
+                registers.setA(result);
+            }
+        };
+
+
+        //-----------------------------------------------
+        // JP nn - Jump to address nn
+        // page 111
+        //------------------------------------------------
+
+        this.operations[0xC3] = {
+            name: "JP",
+            cycle: 12,
+            size: 3,
+            mode: immediate,
+            execute(pc:number) {
+                var val = this.mode.getValue(pc);
+                registers.setPC(val);
+            }
+        };
 
     }
 }
