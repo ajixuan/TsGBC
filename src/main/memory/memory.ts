@@ -13,13 +13,13 @@ export class Memory {
     public interrupt : Interrupts = new Interrupts();
 
     public ppu : any = new class {
-        public vram : number[] = [0x2000];
-        public oam : number[] = [0xA0];
+        public vram : Array<number> = Array.apply(null, Array(0x2000)).map(Number.prototype.valueOf, 0);
+        public oam : Array<number> = Array.apply(null, Array(0xA0)).map(Number.prototype.valueOf, 0);
     };
 
     public cpu : any = new class {
-        public ram : number[] = [0x2000];
-        public stack : number[] = [0x7F];
+        public ram : Array<number> = Array.apply(null, Array(0x2000)).map(Number.prototype.valueOf, 0);
+        public stack : Array<number> = Array.apply(null, Array(0x7F)).map(Number.prototype.valueOf, 0);
     };
 
     public writeByte(addr: number, val : number): void {
@@ -69,6 +69,7 @@ export class Memory {
         } else if (addr < 0xC000) {
             return this.cartridge.readByte(addr);
         } else if (addr < 0xFE00) {
+            console.log(addr);
             val = this.cpu.ram[(addr - 0xC000) % 0x2000];
         } else if (addr < 0xFEA0) {
             val = this.ppu.oam[addr - 0xFE00];
