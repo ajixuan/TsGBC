@@ -2860,7 +2860,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcSubtractFlags(registers.getE(), 1);
+                var result = calcSubtractFlags(registers.getE(), 1);
                 registers.setE(result);
             }
         };
@@ -2956,7 +2956,7 @@ export class Operations {
                 var val = registers.getHL();
                 var oper = registers.getSP();
 
-                var result = this.calcAddFlags(val, oper, false);
+                var result = calcAddFlags(val, oper, false);
                 registers.setHL(result);
             }
         };
@@ -3296,12 +3296,10 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var addr = this.mode.getValue(pc);
-                console.log(addr);
-
                 var val = memory.readWord(addr);
-
-                console.log(val);
-                registers.setPC(val);
+                var lower = (addr & 0xFF00) >> 8;
+                var higher = (addr & 0xFF) << 8;
+                registers.setPC(lower + higher);
             }
         };
 
