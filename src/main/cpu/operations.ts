@@ -1258,7 +1258,7 @@ export class Operations {
                 //Set flags
                 registers.setZeroFlag(0);
                 registers.setSubtractFlag(0);
-                var result = this.calcAddFlags(val, orig, false);
+                var result = calcAddFlags(val, orig, false);
                 memory.writeByte(result, val);
             }
         };
@@ -1389,7 +1389,7 @@ export class Operations {
             execute(pc:number) {
                 var addr = registers.getA();
                 var val = memory.readByte(addr);
-                var result = this.calcAddFlags(val, val, false);
+                var result = calcAddFlags(val, val, false);
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
             }
@@ -1405,7 +1405,7 @@ export class Operations {
                 var val = memory.readByte(addr);
                 addr = registers.getB();
                 var oper = memory.readByte(addr);
-                var result = this.calcAddFlags(val, oper, false);
+                var result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1422,7 +1422,7 @@ export class Operations {
                 var val = memory.readByte(addr);
                 addr = registers.getC();
                 var oper = memory.readByte(addr);
-                var result = this.calcAddFlags(val, oper, false);
+                var result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1441,7 +1441,7 @@ export class Operations {
                 addr = registers.getD();
                 var oper = memory.readByte(addr);
 
-                var result = this.calcAddFlags(val, oper, false);
+                var result = calcAddFlags(val, oper, false);
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
             }
@@ -1458,7 +1458,7 @@ export class Operations {
                 var val = memory.readByte(addr);
                 addr = registers.getE();
                 var oper = memory.readByte(addr);
-                var result = this.calcAddFlags(val, oper, false);
+                var result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1475,7 +1475,7 @@ export class Operations {
                 var val = memory.readByte(addr);
                 addr = registers.getH();
                 var oper = memory.readByte(addr);
-                var result = this.calcAddFlags(val, oper, false);
+                var result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1493,7 +1493,7 @@ export class Operations {
                 var val = memory.readByte(addr);
                 addr = registers.getL();
                 var oper = memory.readByte(addr);
-                var result = this.calcAddFlags(val, oper, false);
+                var result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1511,7 +1511,7 @@ export class Operations {
                 var val = memory.readByte(addr);
                 addr = registers.getHL();
                 var oper = memory.readByte(addr);
-                var result = this.calcAddFlags(val, oper, false);
+                var result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1527,7 +1527,7 @@ export class Operations {
             execute(pc:number) {
                 var val = memory.readByte(registers.getA());
                 var oper = memory.readByte(registers.getB());
-                var result = this.calcAddFlags(val, oper, false);
+                var result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1546,7 +1546,7 @@ export class Operations {
             size: 1,
             execute(pc:number) {
                 var val = registers.getA();
-                var result = this.calcAddFlags(val, val + registers.getCarryFlag());
+                var result = calcAddFlags(val, val + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1561,7 +1561,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getB();
-                var result = this.calcAddFlags(val, oper + registers.getCarryFlag());
+                var result = calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1576,7 +1576,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getC();
-                var result = this.calcAddFlags(val, oper + registers.getCarryFlag());
+                var result = calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1591,7 +1591,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getD();
-                var result = this.calcAddFlags(val, oper + registers.getCarryFlag());
+                var result = calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1607,7 +1607,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getE();
-                var result = this.calcAddFlags(val, oper + registers.getCarryFlag());
+                var result = calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1622,7 +1622,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getH();
-                var result = this.calcAddFlags(val, oper + registers.getCarryFlag());
+                var result = calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1639,7 +1639,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getL();
-                var result = this.calcAddFlags(val, oper + registers.getCarryFlag());
+                var result = calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1655,7 +1655,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = memory.readWord(registers.getHL());
-                var result = this.calcAddFlags(val, oper+ registers.getCarryFlag());
+                var result = calcAddFlags(val, oper+ registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1694,7 +1694,7 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var val = registers.getA();
-                var result =this.calcSubtractFlags(val, val, false);
+                var result =calcSubtractFlags(val, val, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1709,7 +1709,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getB();
-                var result = this.calcSubtractFlags(val, oper, false);
+                var result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1724,7 +1724,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getC();
-                var result = this.calcSubtractFlags(val, oper, false);
+                var result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1740,7 +1740,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getD();
-                var result = this.calcSubtractFlags(val, oper, false);
+                var result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1755,7 +1755,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getE();
-                var result = this.calcSubtractFlags(val, oper, false);
+                var result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1770,7 +1770,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getH();
-                var result = this.calcSubtractFlags(val, oper, false);
+                var result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1785,7 +1785,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getL();
-                var result = this.calcSubtractFlags(val, oper, false);
+                var result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1800,7 +1800,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = memory.readWord(registers.getHL());
-                var result = this.calcSubtractFlags(val, oper, false);
+                var result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1817,7 +1817,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = this.mode.getValue(pc)
-                var result = this.calcSubtractFlags(val, oper, false);
+                var result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1836,7 +1836,7 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var val = registers.getA();
-                var result =this.calcSubtractFlags(val, val- registers.getCarryFlag(), false);
+                var result =calcSubtractFlags(val, val- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1851,7 +1851,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getB();
-                var result =this.calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
+                var result =calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1866,7 +1866,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getC();
-                var result =this.calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
+                var result =calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1882,7 +1882,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getD();
-                var result = this.calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
+                var result = calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1897,7 +1897,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getE();
-                var result = this.calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
+                var result = calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1912,7 +1912,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getH();
-                var result =this.calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
+                var result =calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1927,7 +1927,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getL();
-                var result =this.calcSubtractFlags(val, oper, false);
+                var result =calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1942,7 +1942,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = memory.readWord(registers.getHL());
-                var result = this.calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
+                var result = calcSubtractFlags(val, oper- registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1959,7 +1959,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = this.mode.getValue(pc)
-                var result =this.calcSubtractFlags(val, oper, false);
+                var result =calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -2609,7 +2609,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getC();
-                this.calcSubtractFlags(val, oper, false);
+                calcSubtractFlags(val, oper, false);
 
                 registers.setF(0);
                 registers.setSubtractFlag(1);
@@ -2625,7 +2625,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getD();
-                this.calcSubtractFlags(val, oper, false);
+                calcSubtractFlags(val, oper, false);
 
                 registers.setF(0);
                 registers.setSubtractFlag(1);
@@ -2640,7 +2640,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getE();
-                this.calcSubtractFlags(val, oper, false);
+                calcSubtractFlags(val, oper, false);
 
                 registers.setF(0);
                 registers.setSubtractFlag(1);
@@ -2655,7 +2655,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getH();
-                this.calcSubtractFlags(val, oper, false);
+                calcSubtractFlags(val, oper, false);
 
                 registers.setF(0);
                 registers.setSubtractFlag(1);
@@ -2670,7 +2670,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = registers.getL();
-                this.calcSubtractFlags(val, oper, false);
+                calcSubtractFlags(val, oper, false);
 
                 registers.setF(0);
                 registers.setSubtractFlag(1);
@@ -2685,7 +2685,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = memory.readWord(registers.getHL());
-                this.calcSubtractFlags(val, oper, false);
+                calcSubtractFlags(val, oper, false);
 
                 registers.setF(0);
                 registers.setSubtractFlag(1);
@@ -2702,7 +2702,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var oper = this.mode.getValue(pc)
-                this.calcSubtractFlags(val, oper, false);
+                calcSubtractFlags(val, oper, false);
 
                 registers.setF(0);
                 registers.setSubtractFlag(1);
@@ -2721,7 +2721,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcAddFlags(registers.getA(), 1);
+                var result = calcAddFlags(registers.getA(), 1);
                 registers.setA(result);
             }
         };
@@ -2732,7 +2732,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcAddFlags(registers.getB(), 1);
+                var result = calcAddFlags(registers.getB(), 1);
                 registers.setB(result);
             }
         };
@@ -2743,7 +2743,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcAddFlags(registers.getC(), 1);
+                var result = calcAddFlags(registers.getC(), 1);
                 registers.setC(result);
             }
         };
@@ -2755,7 +2755,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcAddFlags(registers.getD(), 1);
+                var result = calcAddFlags(registers.getD(), 1);
                 registers.setD(result);
             }
         };
@@ -2766,7 +2766,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcAddFlags(registers.getE(), 1);
+                var result = calcAddFlags(registers.getE(), 1);
                 registers.setE(result);
             }
         };
@@ -2777,7 +2777,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcAddFlags(registers.getH(), 1);
+                var result = calcAddFlags(registers.getH(), 1);
                 registers.setH(result);
             }
         };
@@ -2788,7 +2788,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcAddFlags(registers.getL(), 1);
+                var result = calcAddFlags(registers.getL(), 1);
                 registers.setL(result);
             }
         };
@@ -2799,7 +2799,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcAddFlags(registers.getHL(), 1, false);
+                var result = calcAddFlags(registers.getHL(), 1, false);
                 memory.writeWord(registers.getHL(), result);
             }
         };
@@ -2815,7 +2815,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcSubtractFlags(registers.getA(), 1);
+                var result = calcSubtractFlags(registers.getA(), 1);
                 registers.setA(result);
             }
         };
@@ -2826,7 +2826,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcSubtractFlags(registers.getB(), 1);
+                var result = calcSubtractFlags(registers.getB(), 1);
                 registers.setB(result);
             }
         };
@@ -2837,7 +2837,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcSubtractFlags(registers.getC(), 1);
+                var result = calcSubtractFlags(registers.getC(), 1);
                 registers.setC(result);
             }
         };
@@ -2849,7 +2849,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcSubtractFlags(registers.getD(), 1);
+                var result = calcSubtractFlags(registers.getD(), 1);
                 registers.setD(result);
             }
         };
@@ -2871,7 +2871,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcSubtractFlags(registers.getH(), 1);
+                var result = calcSubtractFlags(registers.getH(), 1);
                 registers.setH(result);
             }
         };
@@ -2882,7 +2882,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcSubtractFlags(registers.getL(), 1);
+                var result = calcSubtractFlags(registers.getL(), 1);
                 registers.setL(result);
             }
         };
@@ -2893,7 +2893,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcSubtractFlags(registers.getHL(), 1, false);
+                var result = calcSubtractFlags(registers.getHL(), 1, false);
                 memory.writeWord(registers.getHL(), result);
             }
         };
@@ -2915,7 +2915,7 @@ export class Operations {
                 var val = registers.getHL();
                 var oper = registers.getBC();
 
-                var result = this.calcAddFlags(val, oper, false);
+                var result = calcAddFlags(val, oper, false);
                 registers.setHL(result);
             }
         };
@@ -2929,7 +2929,7 @@ export class Operations {
                 var val = registers.getHL();
                 var oper = registers.getDE();
 
-                var result = this.calcAddFlags(val, oper, false);
+                var result = calcAddFlags(val, oper, false);
                 registers.setHL(result);
             }
         };
@@ -2942,7 +2942,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getHL();
 
-                var result = this.calcAddFlags(val, val, false);
+                var result = calcAddFlags(val, val, false);
                 registers.setHL(result);
             }
         };
@@ -2974,7 +2974,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getSP();
                 var oper = this.mode.getValue(pc);
-                var result = this.calcAddFlags(val, oper, false);
+                var result = calcAddFlags(val, oper, false);
                 registers.setSP(result);
             }
         };
@@ -2990,7 +2990,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcAddFlags(registers.getBC(), 1, false);
+                var result = calcAddFlags(registers.getBC(), 1, false);
                 registers.setBC(result);
             }
         };
@@ -3001,7 +3001,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcAddFlags(registers.getDE(), 1, false);
+                var result = calcAddFlags(registers.getDE(), 1, false);
                 registers.setDE(result);
             }
         };
@@ -3012,7 +3012,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcAddFlags(registers.getHL(), 1, false);
+                var result = calcAddFlags(registers.getHL(), 1, false);
                 registers.setHL(result);
             }
         };
@@ -3024,7 +3024,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcAddFlags(registers.getSP(), 1, false);
+                var result = calcAddFlags(registers.getSP(), 1, false);
                 registers.setSP(result);
             }
         };
@@ -3040,7 +3040,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcSubtractFlags(registers.getBC(), 1, false);
+                var result = calcSubtractFlags(registers.getBC(), 1, false);
                 registers.setBC(result);
             }
         };
@@ -3051,7 +3051,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcSubtractFlags(registers.getDE(), 1, false);
+                var result = calcSubtractFlags(registers.getDE(), 1, false);
                 registers.setDE(result);
             }
         };
@@ -3062,7 +3062,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcSubtractFlags(registers.getHL(), 1, false);
+                var result = calcSubtractFlags(registers.getHL(), 1, false);
                 registers.setHL(result);
             }
         };
@@ -3074,7 +3074,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var result = this.calcSubtractFlags(registers.getSP(), 1, false);
+                var result = calcSubtractFlags(registers.getSP(), 1, false);
                 registers.setSP(result);
             }
         };
