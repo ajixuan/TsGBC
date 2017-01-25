@@ -3283,6 +3283,34 @@ export class Operations {
             }
         };
 
+        //-----------------------------------------------
+        // RLCA - Rotate A left
+        // page 99
+        //------------------------------------------------
+
+        this.operations[0x07] = {
+            name: "RLCA",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var val = registers.getA();
+                var msb = (val & 0x80) >> 7;
+                var result = (val << 1) + msb;
+
+                //Set flags
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(0);
+                registers.setCarryFlag(msb);
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
 
         //-----------------------------------------------
         // JP nn - Jump to address nn
