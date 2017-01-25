@@ -3296,7 +3296,7 @@ export class Operations {
             execute(pc:number) {
                 var val = registers.getA();
                 var msb = (val & 0x80) >> 7;
-                var result = (val << 1) + msb;
+                var result = ((val << 1) & 0xFF) + msb;
 
                 //Set flags
                 registers.setSubtractFlag(0);
