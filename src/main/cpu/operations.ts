@@ -128,6 +128,7 @@ export class Operations {
         //System Pointers
         let registers = this.cpu.registers;
         let memory = this.cpu.memory;
+        let stack = this.cpu.stack;
 
         /**
          * Modes
@@ -141,9 +142,9 @@ export class Operations {
             }
         };
 
+        //Helper functions
         let calcAddFlags = this.calcAddFlags.bind(this);
         let calcSubtractFlags = this.calcSubtractFlags.bind(this);
-
 
         /**
          * Instructions for Gameboy (Not Gameboy Color)
@@ -1291,7 +1292,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc:number) {
-                this.cpu.stack.pushWord(registers.getAF());
+               stack.pushWord(registers.getAF());
             }
         };
 
@@ -1301,7 +1302,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc:number) {
-                this.cpu.stack.pushWord(registers.getBC());
+                stack.pushWord(registers.getBC());
             }
         };
 
@@ -1311,7 +1312,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc:number) {
-                this.cpu.stack.pushWord(registers.getDE());
+                stack.pushWord(registers.getDE());
             }
         };
 
@@ -1321,13 +1322,13 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc:number) {
-                this.cpu.stack.pushWord(registers.getHL());
+                stack.pushWord(registers.getHL());
             }
         };
 
 
         //----------------------------------------
-        // POP nn - pop two bytes off stack
+        // POP nn - pop two bytes off stack into register pair
         //      Increment stack pointer twice
         // page 79
         //----------------------------------------
@@ -1338,7 +1339,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc:number) {
-                this.cpu.stack.popWord(registers.getAF());
+                registers.setAF(stack.popWord());
             }
         };
 
@@ -1348,7 +1349,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc:number) {
-                this.cpu.stack.popWord(registers.getBC());
+                registers.setBC(stack.popWord());
             }
         };
 
@@ -1358,7 +1359,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc:number) {
-                this.cpu.stack.popWord(registers.getDE());
+                registers.setDE(stack.popWord());
             }
         };
 
@@ -1368,7 +1369,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc:number) {
-                this.cpu.stack.popWord(registers.getHL());
+                registers.setHL(stack.popWord());
             }
         };
 
@@ -3324,13 +3325,38 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var addr = this.mode.getValue(pc);
-                var val = memory.readWord(addr);
                 var lower = (addr & 0xFF00) >> 8;
                 var higher = (addr & 0xFF) << 8;
                 registers.setPC(lower + higher);
             }
         };
 
+        //-----------------------------------------------
+        // RET cc - Return cc if condition is true
+        // page 111
+        //------------------------------------------------
+
+        this.operations[0xC0] = {
+            name: "RET",
+            cycle: 12,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                if(registers.getZeroFlag() == 0){
+                    //Pop from stack pointer to pc
+                    var sp = registers.getSP();
+
+                    var lower = stack.popByte();
+                    registers.setSP(sp + 1);
+
+                    var higher = stack.popByte();
+                    registers.setSP(sp + 1);
+
+                    var result = lower & (higher << 8);
+                    registers.setPC(result);
+                }
+            }
+        };
     }
 }
 
