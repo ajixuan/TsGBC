@@ -3288,6 +3288,21 @@ export class Operations {
         };
 
         //-----------------------------------------------
+        // EI - Enable interrupts after next instruction.
+        // page 98
+        //------------------------------------------------
+        this.operations[0xFB] = {
+            name: "EI",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                //Create async observer
+
+            }
+        };
+
+        //-----------------------------------------------
         // RLCA - Rotate A left
         // page 99
         //------------------------------------------------
