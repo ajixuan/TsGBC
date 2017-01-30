@@ -66,6 +66,7 @@ export class Cpu {
         this.halt = false;
         this.interrupts.disableAllInterrupts();
 
+        //Push all registers on to the stack
         this.stack.pushWord(this.registers.getHL());
         this.stack.pushWord(this.registers.getAF());
         this.stack.pushWord(this.registers.getBC());
@@ -88,7 +89,6 @@ export class Cpu {
         var pc =  this.registers.getPC();
 
         //Get opcode
-
         var opcode = this.memory.readByte(pc);
 
         if (this.halt) {

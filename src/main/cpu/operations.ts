@@ -67,9 +67,9 @@ export class Operations {
         //Set 0 flag
         if(full == 0){
             this.cpu.registers.setZeroFlag(1);
+        } else {
+            this.cpu.registers.setZeroFlag(0);
         }
-
-
 
         return full & garb;
     }
@@ -113,6 +113,8 @@ export class Operations {
         //Set 0 flag
         if(full == 0){
             this.cpu.registers.setZeroFlag(1);
+        } else {
+            this.cpu.registers.setZeroFlag(0);
         }
 
         if (short) {full = 0xFF - full } else { full = 0xFFFF - full };
@@ -126,6 +128,7 @@ export class Operations {
         this.operations = [];
 
         //System Pointers
+        let cpu = this.cpu;
         let registers = this.cpu.registers;
         let memory = this.cpu.memory;
         let stack = this.cpu.stack;
@@ -136,9 +139,9 @@ export class Operations {
 
         let immediate:Mode = new class {
             name:string = "Immediate";
-
+            memory:Memory = cpu.memory;
             getValue(addr:number):number {
-                return (addr + 1) & 0xFFFF;
+                return this.memory.readByte(addr + 1 & 0xFFFF);
             }
         };
 
@@ -3325,9 +3328,10 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var addr = this.mode.getValue(pc);
-                var lower = (addr & 0xFF00) >> 8;
-                var higher = (addr & 0xFF) << 8;
-                registers.setPC(lower + higher);
+                registers.setPC(addr);
+                // var lower = (addr & 0xFF00) >> 8;
+                // var higher = (addr & 0xFF) << 8;
+                // registers.setPC(lower + higher);
             }
         };
 
@@ -3357,11 +3361,35 @@ export class Operations {
                 }
             }
         };
+
+        this.operations[0xC8] = {
+            name: "RET",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                var poo = registers.getZeroFlag();
+                if(registers.getZeroFlag() == 1){
+                    //Pop from stack pointer to pc
+                    var sp = registers.getSP();
+
+                    var lower = stack.popByte();
+                    registers.setSP(sp + 1);
+
+                    var higher = stack.popByte();
+                    registers.setSP(sp + 1);
+
+                    var result = lower & (higher << 8);
+                    registers.setPC(result);
+                }
+            }
+        };
     }
 }
 
 export interface Mode {
     name : string;
+    memory : Memory;
     getValue(addr:number): number;
 };
 
