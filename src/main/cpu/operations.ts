@@ -3342,11 +3342,8 @@ export class Operations {
             size: 3,
             mode: immediate,
             execute(pc:number) {
-                var addr = this.mode.getValue(pc);
-                registers.setPC(addr);
-                // var lower = (addr & 0xFF00) >> 8;
-                // var higher = (addr & 0xFF) << 8;
-                // registers.setPC(lower + higher);
+                var val = this.mode.getValue(pc) + this.mode.getValue(pc + 1);
+                registers.setPC(val);
             }
         };
 
@@ -3383,7 +3380,6 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc:number) {
-                var poo = registers.getZeroFlag();
                 if(registers.getZeroFlag() == 1){
                     //Pop from stack pointer to pc
                     var sp = registers.getSP();
@@ -3399,7 +3395,56 @@ export class Operations {
                 }
             }
         };
+
+        //-----------------------------------------------
+        // CALL cc,nn - Call address n based on conditions
+        // page 115
+        //------------------------------------------------
+
+        this.operations[0xCC] = {
+            name: "CALL",
+            cycle: 12,
+            size: 3,
+            mode: immediate,
+            execute(pc:number) {
+                if(registers.getZeroFlag() == 1){
+                    var val = this.mode.getValue(pc);
+                    registers.setSP(registers.getSP() - 2);
+                    stack.pushWord(pc +2);
+
+                    registers.setPC(this.mode.getValue(pc));
+                }
+            }
+        };
+
+
+        //-----------------------------------------------
+        // RST n - Push present address onto stack
+        // page 116
+        //------------------------------------------------
+
+        this.operations[0xFF] = {
+            name: "RST",
+            cycle: 16,
+            size: 1,
+            mode: immediate,
+            execute(pc:number) {
+                //Push onto stack
+                registers.setSP(registers.getSP() - 2);
+                stack.pushWord(pc);
+
+                registers.setPC(0x38);
+            }
+        };
     }
+
+
+
+
+
+
+
+
 }
 
 export interface Mode {
