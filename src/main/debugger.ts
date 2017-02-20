@@ -31,15 +31,20 @@ export class Debugger {
         $('#pc').html("0x" + gameboy.cpu.registers.getPC().toString(16).toUpperCase());
         $('#sp').html("0x" + gameboy.cpu.registers.getSP().toString(16).toUpperCase());
 
+        $('#flags').html(Number(gameboy.cpu.registers.getF() >> 4).toString(2));
+
+
         $('#af').html("0x" + gameboy.cpu.registers.getAF().toString(16).toUpperCase());
         $('#bc').html("0x" + gameboy.cpu.registers.getBC().toString(16).toUpperCase());
         $('#de').html("0x" + gameboy.cpu.registers.getDE().toString(16).toUpperCase());
         $('#hl').html("0x" + gameboy.cpu.registers.getHL().toString(16).toUpperCase());
 
+
         $('#opcode').html("0x" + gameboy.cpu.last.opcode.toString(16).toUpperCase());
         $('#opname').html(gameboy.cpu.last.operation.name.toUpperCase());
         $('#opmode').html(gameboy.cpu.last.operation.mode.name.toUpperCase());
         $('#opaddr').html("0x" + gameboy.cpu.last.opaddr.toString(16).toUpperCase());
+        $('#operand').html(gameboy.cpu.last.opaddr.toString(16).toUpperCase());
 
         if (gameboy.cartridge.type) {
             $('#url').html(gameboy.cartridge.url);
