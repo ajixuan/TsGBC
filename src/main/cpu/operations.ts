@@ -84,15 +84,15 @@ export class Operations {
     private calcSubtractFlags(first:number, second:number, short:boolean = true):number {
         //Default short is true (8bit operation by default)
         // The half flag (low) is set if there is a borrow on bit 4
-        var mask = 0xF;
+        var mask = 0xFF;
 
         //If short is false (if it is 16bit operation)
         // The half flag (low) is set if there is a borrow at bit 12
         if(short === false){
-            mask = 0xFFF;
+            mask = 0xFFFF;
         }
 
-        var half =(first & mask) - (second & mask);
+        var half = (first & mask) - (second & mask);
         var full = first - second;
 
         //Set subtract flag everytime when we add
@@ -108,6 +108,9 @@ export class Operations {
             console.log("set full carry");
             console.log(full);
             this.cpu.registers.setCarryFlag(1);
+
+            full = Math.abs(full) & 0xFFFF;
+            full = 0 - full;
         }
 
         //Set 0 flag
@@ -117,8 +120,7 @@ export class Operations {
             this.cpu.registers.setZeroFlag(0);
         }
 
-        if (short) {full = 0xFF - full } else { full = 0xFFFF - full };
-        return full & 0xFFFF;
+        return full;
     }
 
     /**
@@ -141,7 +143,7 @@ export class Operations {
             name:string = "Immediate";
             memory:Memory = cpu.memory;
             getValue(addr:number):number {
-                return this.memory.readByte(addr + 1 & 0xFFFF);
+                return this.memory.readWord(addr & 0xFFFF);
             }
         };
 
@@ -174,8 +176,7 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc:number) {
-                var addr = this.mode.getValue(pc)
-                registers.setB(memory.readByte(addr));
+                registers.setB(pc);
             }
         };
 
@@ -185,8 +186,7 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc:number)  {
-                var addr = this.mode.getValue(pc)
-                registers.setC(memory.readByte(addr));
+                registers.setC(pc);
             }
         };
 
@@ -196,8 +196,7 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc:number) {
-                var addr = this.mode.getValue(pc)
-                registers.setD(memory.readByte(addr));
+                registers.setD(pc);
             }
         };
 
@@ -207,8 +206,7 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc:number) {
-                var addr = this.mode.getValue(pc)
-                registers.setE(memory.readByte(addr));
+                registers.setE(pc);
             }
         };
 
@@ -218,8 +216,7 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc:number) {
-                var addr = this.mode.getValue(pc)
-                registers.setH(memory.readByte(addr));
+                registers.setH(pc);
             }
         };
 
@@ -229,8 +226,7 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc:number) {
-                var addr = this.mode.getValue(pc)
-                registers.setL(memory.readByte(addr));
+                registers.setL(pc);
             }
         };
 
@@ -761,9 +757,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc:number) {
-                var addr = this.mode.getValue(pc);
-                var val = memory.readByte(addr);
-                memory.writeByte(registers.getHL(), val);
+                memory.writeByte(registers.getHL(), pc);
             }
         };
 
@@ -1142,7 +1136,7 @@ export class Operations {
             size: 2,
             execute(pc:number) {
                 //Immediate value means immediate value of pc??
-                var addr = 0xFF00 | this.mode.getValue(pc);
+                var addr = 0xFF00 | pc;
                 memory.writeByte(addr, registers.getA());
             }
         };
@@ -1159,7 +1153,7 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc:number) {
-                var addr = 0xFF00 | this.mode.getValue(pc);
+                var addr = 0xFF00 | pc;
                 var val = memory.readByte(addr);
                 registers.setA(val & 0xFFFF);
             }
@@ -1182,9 +1176,7 @@ export class Operations {
             mode: immediate,
             size: 3,
             execute(pc:number) {
-                var addr = this.mode.getValue(pc);
-                var val = memory.readByte(addr);
-                memory.writeByte(registers.getBC(), val);
+                registers.setBC(pc);
             }
         };
 
@@ -1194,9 +1186,7 @@ export class Operations {
             mode: immediate,
             size: 3,
             execute(pc:number) {
-                var addr = this.mode.getValue(pc);
-                var val = memory.readByte(addr);
-                memory.writeByte(registers.getDE(), val);
+                registers.setDE(pc);
             }
         };
 
@@ -1206,9 +1196,7 @@ export class Operations {
             mode: immediate,
             size: 3,
             execute(pc:number) {
-                var addr = this.mode.getValue(pc);
-                var val = memory.readByte(addr);
-                memory.writeByte(registers.getHL(), val);
+                registers.setHL(pc);
             }
         };
 
@@ -1219,9 +1207,7 @@ export class Operations {
             mode: immediate,
             size: 3,
             execute(pc:number) {
-                var addr = this.mode.getValue(pc);
-                var val = memory.readByte(addr);
-                memory.writeByte(registers.getSP(), val);
+                registers.setSP(pc);
             }
         };
 
@@ -1237,9 +1223,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc:number) {
-                var addr = registers.getHL();
-                var val = memory.readByte(addr);
-                memory.writeByte(registers.getSP(), val);
+                registers.setSP(registers.getHL());
             }
         };
 
@@ -1255,14 +1239,15 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc:number) {
-                var addr = this.mode.getValue(pc);
-                var val = memory.readByte(addr) + registers.getSP();
+
+                var val = pc + registers.getSP();
                 var orig = registers.getHL();
 
                 //Set flags
                 registers.setZeroFlag(0);
                 registers.setSubtractFlag(0);
                 var result = calcAddFlags(val, orig, false);
+
                 memory.writeByte(result, val);
             }
         };
@@ -1278,8 +1263,7 @@ export class Operations {
             mode: immediate,
             size: 3,
             execute(pc:number) {
-                var addr = this.mode.getValue(pc) + 1;
-                memory.writeByte(addr, registers.getSP());
+                memory.writeByte(pc + 1, registers.getSP());
             }
         };
 
@@ -1676,10 +1660,8 @@ export class Operations {
             size: 1,
             execute(pc:number) {
                 var val = registers.getA();
-                var oper = this.mode.getValue(pc);
-                console.log(this);
 
-                var result = calcAddFlags(val, oper+ registers.getCarryFlag());
+                var result = calcAddFlags(val, pc + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1820,8 +1802,7 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var val = registers.getA();
-                var oper = this.mode.getValue(pc)
-                var result = calcSubtractFlags(val, oper, false);
+                var result = calcSubtractFlags(val, pc, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1962,8 +1943,7 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var val = registers.getA();
-                var oper = this.mode.getValue(pc)
-                var result =calcSubtractFlags(val, oper, false);
+                var result =calcSubtractFlags(val, pc, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -2163,8 +2143,7 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var val = registers.getA();
-                var oper = this.mode.getValue(pc)
-                var result = val & oper;
+                var result = val & pc;
 
                 //reset all flags
                 registers.setF(0);
@@ -2364,8 +2343,7 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var val = registers.getA();
-                var oper = this.mode.getValue(pc)
-                var result = val | oper;
+                var result = val | pc;
 
                 //reset all flags
                 registers.setF(0);
@@ -2559,8 +2537,7 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var val = registers.getA();
-                var oper = this.mode.getValue(pc)
-                var result = val ^ oper;
+                var result = val ^ pc;
 
                 //reset all flags
                 registers.setF(0);
@@ -2705,8 +2682,7 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var val = registers.getA();
-                var oper = this.mode.getValue(pc)
-                calcSubtractFlags(val, oper, false);
+                calcSubtractFlags(val, pc, false);
 
                 registers.setF(0);
                 registers.setSubtractFlag(1);
@@ -2977,8 +2953,7 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 var val = registers.getSP();
-                var oper = this.mode.getValue(pc);
-                var result = calcAddFlags(val, oper, false);
+                var result = calcAddFlags(val, pc, false);
                 registers.setSP(result);
             }
         };
@@ -3339,11 +3314,10 @@ export class Operations {
         this.operations[0xC3] = {
             name: "JP",
             cycle: 12,
-            size: 3,
+            size: 0,
             mode: immediate,
             execute(pc:number) {
-                var val = this.mode.getValue(pc) + this.mode.getValue(pc + 1);
-                registers.setPC(val);
+                registers.setPC(pc);
             }
         };
 
@@ -3355,7 +3329,7 @@ export class Operations {
         this.operations[0xC0] = {
             name: "RET",
             cycle: 12,
-            size: 1,
+            size: 0,
             mode: immediate,
             execute(pc:number) {
                 if(registers.getZeroFlag() == 0){
@@ -3377,7 +3351,7 @@ export class Operations {
         this.operations[0xC8] = {
             name: "RET",
             cycle: 8,
-            size: 1,
+            size: 0,
             mode: immediate,
             execute(pc:number) {
                 if(registers.getZeroFlag() == 1){
@@ -3404,15 +3378,14 @@ export class Operations {
         this.operations[0xCC] = {
             name: "CALL",
             cycle: 12,
-            size: 3,
+            size: 0,
             mode: immediate,
             execute(pc:number) {
                 if(registers.getZeroFlag() == 1){
-                    var val = this.mode.getValue(pc);
                     registers.setSP(registers.getSP() - 2);
                     stack.pushWord(pc +2);
 
-                    registers.setPC(this.mode.getValue(pc));
+                    registers.setPC(pc);
                 }
             }
         };
@@ -3430,20 +3403,26 @@ export class Operations {
             mode: immediate,
             execute(pc:number) {
                 //Push onto stack
-                registers.setSP(registers.getSP() - 2);
+                registers.setSP(registers.getSP() - 1);
                 stack.pushWord(pc);
-
                 registers.setPC(0x38);
             }
         };
+
+        this.operations[0x20] = {
+            name: "JR",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc:number) {
+                //Push onto stack
+                if(registers.getZeroFlag() == 1){
+                    registers.setSP(registers.getSP() + pc);
+                }
+            }
+        };
+
     }
-
-
-
-
-
-
-
 
 }
 

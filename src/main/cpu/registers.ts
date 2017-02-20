@@ -26,6 +26,10 @@ export class Registers {
 
 
     constructor() {
+        //Set flags to initial state
+        this.setZeroFlag(1);
+        this.setCarryFlag(1);
+        this.setHalfFlag(1);
 
     }
 

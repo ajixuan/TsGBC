@@ -30,7 +30,7 @@ export class Cpu {
      * Reset the CPU.
      */
     public reset(): void {
-        this.registers.setAF(0x01B0);
+            this.registers.setAF(0x01B0);
         this.registers.setBC(0x0013);
         this.registers.setDE(0x00D8);
         this.registers.setHL(0x014D);
@@ -48,11 +48,11 @@ export class Cpu {
         };
     }
 
-    /**
-     * Handler for the CPU interrupts.
-     */
+        /**
+         * Handler for the CPU interrupts.
+         */
     private handledInterrupts() : void {
-        if (!this.interrupts.hasInterrupts()) {
+            if (!this.interrupts.hasInterrupts()) {
             return;
         }
 
@@ -89,7 +89,7 @@ export class Cpu {
         var pc =  this.registers.getPC();
 
         //Get opcode
-        var opcode = this.memory.readByte(pc);
+        var opcode = this.memory.readByte(pc++);
 
         if (this.halt) {
             opcode = 0x00; //NOP
@@ -110,7 +110,7 @@ export class Cpu {
         operation.execute(opaddr);
 
         //Update Infromation
-        this.registers.setPC(this.registers.getPC() + operation.size & 0xFFFF);
+        this.registers.setPC((this.registers.getPC() + operation.size) & 0xFFFF);
         cycles += operation.cycle;
         this.cycles += cycles;
 
