@@ -40,7 +40,7 @@ export class Stack {
     public pushByte(val : number) : void {
         var addr = this.register.getSP();
 
-        if (addr > 0x7F) {
+        if (addr < 0xFF80) {
             throw "Stack push error on addr 0x" + addr.toString(16);
         }
 

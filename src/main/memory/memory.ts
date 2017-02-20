@@ -95,7 +95,7 @@ export class Memory {
             throw "Invalid read led to unknown value at 0x" + addr.toString(16) + " with " + val;
         }
 
-        return null;
+        return val;
     }
 
     public writeWord(addr: number, val : number): void {
@@ -110,8 +110,9 @@ export class Memory {
     public readWord(addr: number): number {
         var high = this.readByte(addr + 1);
         var low = this.readByte(addr);
-        var word = high << 8 || low;
+        var word = high << 8 | low;
 
+        console.log(high + " + "+ low );
         return word;
     }
 
