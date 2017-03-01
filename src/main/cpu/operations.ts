@@ -140,14 +140,14 @@ export class Operations {
 
         let immediate: Mode = new class {
             name: string = "Immediate";
-            cpu: CPU = cpu;
+            memory: Memory = memory;
 
             getValue(addr: number, size: number): number {
                 if (size == 2) {
-                    return this.cpu.memory.readWord(addr);
+                    return this.memory.readWord(addr);
                 }
 
-                return this.cpu.memory.readByte(addr);
+                return this.memory.readByte(addr);
             }
         };
 
@@ -3429,7 +3429,7 @@ export class Operations {
 export interface Mode {
     name: string;
     memory: Memory;
-    getValue(addr: number, addr: number): number;
+    getValue(addr: number, size: number): number;
 }
 ;
 
