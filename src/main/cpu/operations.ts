@@ -92,11 +92,11 @@ export class Operations {
             mask = 0xFFFF;
         }
 
-        var half = (first & mask) - (second & mask);
-        var full = first - second;
-
         //Set subtract flag everytime when we add
         this.cpu.registers.setSubtractFlag(1);
+
+        var half = (first & mask) - (second & mask);
+        var full = first - second;
 
         if (half < 0) {
             console.log("set half carry:");
@@ -104,12 +104,10 @@ export class Operations {
             this.cpu.registers.setHalfFlag(1);
         }
 
-        if (full < 0) {
+        if (full < 0 && short === false) {
             console.log("set full carry");
             console.log(full);
             this.cpu.registers.setCarryFlag(1);
-
-            full &= mask;
         }
 
         //Set 0 flag
@@ -119,6 +117,7 @@ export class Operations {
             this.cpu.registers.setZeroFlag(0);
         }
 
+        full &= mask;
         return full;
     }
 
