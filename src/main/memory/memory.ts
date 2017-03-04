@@ -110,10 +110,7 @@ export class Memory {
     public readWord(addr: number): number {
         var high = this.readByte(addr + 1);
         var low = this.readByte(addr);
-        var word = high << 8 | low;
-
-        console.log(high + " + "+ low );
-        return word;
+        return high << 8 | low;
     }
 
 }
