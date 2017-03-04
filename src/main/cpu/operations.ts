@@ -142,11 +142,26 @@ export class Operations {
             memory: Memory = memory;
 
             getValue(addr: number, size: number): number {
+
+                var val;
+                var shift = 7; // Shift to check last bit
+
+
                 if (size == 2) {
-                    return this.memory.readWord(addr);
+                    //For a full word it is possible for the value to be negative
+                    shift = 15;
+                    val = this.memory.readWord(addr);
+                } else {
+                    val = this.memory.readByte(addr);
                 }
 
-                return this.memory.readByte(addr);
+                //if val is negative
+                if((val >> shift) === 1){
+                    val -= (1 << shift + 1); //Sign extension trick
+                }
+
+                console.log(val);
+                return val
             }
         };
 
@@ -1136,7 +1151,6 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                //Immediate value means immediate value of pc??
                 var addr = 0xFF00 | pc;
                 memory.writeByte(addr, registers.getA());
             }
@@ -1176,7 +1190,7 @@ export class Operations {
             mode: immediate,
             size: 3,
             execute(pc: number) {
-                registers.setBC(pc);
+                registers.setBC(pc & 0xFFFF);
             }
         };
 
@@ -1186,7 +1200,7 @@ export class Operations {
             mode: immediate,
             size: 3,
             execute(pc: number) {
-                registers.setDE(pc);
+                registers.setDE(pc & 0xFFFF);
             }
         };
 
@@ -1196,7 +1210,7 @@ export class Operations {
             mode: immediate,
             size: 3,
             execute(pc: number) {
-                registers.setHL(pc);
+                registers.setHL(pc & 0xFFFF);
             }
         };
 
@@ -3415,8 +3429,8 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 //Push onto stack
-                if (registers.getZeroFlag() == 1) {
-                    registers.setSP(registers.getSP() + pc);
+                if (registers.getZeroFlag() == 0) {
+                    registers.setPC(registers.getPC() + pc + this.size);
                 }
             }
         };
