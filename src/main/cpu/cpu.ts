@@ -106,14 +106,18 @@ export class Cpu {
         }
 
         //Update Infromation
-        this.registers.setPC(this.registers.getPC() + operation.size & 0xFFFF);
+        var oldPC = this.registers.getPC();
         cycles += operation.cycle;
         this.cycles += cycles;
-
 
         //Execute Operation
         var opaddr = operation.mode.getValue(pc, operation.size - 1);
         operation.execute(opaddr);
+
+        //If pc did not change during op execution, increment pc
+        if(oldPC === this.registers.getPC()){
+            this.registers.setPC(this.registers.getPC() + operation.size & 0xFFFF);
+        }
 
 
         //Debug Information
