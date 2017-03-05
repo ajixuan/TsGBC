@@ -84,19 +84,22 @@ export class Operations {
     private calcSubtractFlags(first: number, second: number, short: boolean = true): number {
         //Default short is true (8bit operation by default)
         // The half flag (low) is set if there is a borrow on bit 4
-        var mask = 0xFF;
+        var mask = 0xF;
 
         //If short is false (if it is 16bit operation)
         // The half flag (low) is set if there is a borrow at bit 12
         if (short === false) {
-            mask = 0xFFFF;
+            mask = 0xFFF;
         }
 
         //Set subtract flag everytime when we add
         this.cpu.registers.setSubtractFlag(1);
+        this.cpu.registers.setHalfFlag(0);
+        this.cpu.registers.setZeroFlag(0);
 
         var half = (first & mask) - (second & mask);
         var full = first - second;
+
 
         if (half < 0) {
             console.log("set half carry:");
@@ -110,14 +113,11 @@ export class Operations {
             this.cpu.registers.setCarryFlag(1);
         }
 
-        //Set 0 flag
         if (full == 0) {
             this.cpu.registers.setZeroFlag(1);
-        } else {
-            this.cpu.registers.setZeroFlag(0);
         }
 
-        full &= mask;
+        full &= ((mask << 4) + 0xF);
         return full;
     }
 
