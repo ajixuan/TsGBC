@@ -1,4 +1,4 @@
-# Jiba
+# jsGba
 Gameboy Emulator
 
 ## NPM commands
