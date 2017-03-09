@@ -1,5 +1,5 @@
-# RCTJS
-Roller Coaster Tycoon emulated in Javascript
+# jsGba
+Gameboy Emulator
 
 ## NPM commands
 - start 
