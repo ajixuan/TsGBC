@@ -31,6 +31,7 @@ export class Memory {
             this.cartridge.writeByte(addr, val);
         } else if (addr < 0xA000) {
             this.ppu.vram[addr - 0x8000] = val;
+            this.ppu.updateTile(addr);
         } else if (addr < 0xC000) {
             this.cartridge.writeByte(addr, val);
         } else if (addr < 0xFE00) {
