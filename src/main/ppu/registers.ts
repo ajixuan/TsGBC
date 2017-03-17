@@ -3,10 +3,24 @@ import {Memory} from "../memory/memory";
  * Created by hkamran on 12/16/2016.
  */
 export class Registers {
-    private scrollX : number;
-    private scrollY : number;
-    private WNDPOSX : number;
-    private WNDPOSY : number;
+    public scx : number = 0;
+    public scy: number = 0;
+    public wx: number = 0;
+    public wy: number = 0;
+
+    public lcdc: number = 0;
+    public stat: number = 0;
+    public ly: number = 0;
+    public lyc: number = 0;
+    public bcps: number = 0;
+    public bcpd: number = 0;
+    public ocps: number = 0;
+    public ocpd: number = 0;
+
+    public dma: number = 0;
+    public bgp: number = 0;
+    public obp0: number = 0;
+    public obp1: number = 0;
 
     private memory : Memory;
 

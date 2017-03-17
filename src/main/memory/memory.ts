@@ -1,5 +1,6 @@
 import {Cartridge} from "../cartridge/cartridge";
 import {Interrupts} from "../io/interrupts";
+import {Registers} from "../ppu/registers"
 
 /**
  * Created by hkamran on 12/5/2016.
@@ -8,22 +9,23 @@ import {Interrupts} from "../io/interrupts";
 
 export class Memory {
 
-    public io : number[] = [0x80];
-    public cartridge : Cartridge;
-    public interrupt : Interrupts = new Interrupts();
+    public io: number[] = [0x80];
+    public cartridge: Cartridge;
+    public interrupt: Interrupts = new Interrupts();
 
-    public ppu : any = new class {
-        public vram : Array<number> = Array.apply(null, Array(0x2000)).map(Number.prototype.valueOf, 0);
-        public oam : Array<number> = Array.apply(null, Array(0xA0)).map(Number.prototype.valueOf, 0);
+    public ppu: any = new class {
+        public vram: Array<number> = Array.apply(null, Array(0x2000)).map(Number.prototype.valueOf, 0);
+        public oam: Array<number> = Array.apply(null, Array(0xA0)).map(Number.prototype.valueOf, 0);
+        public registers: Registers = new Registers(this);
     };
 
-    public cpu : any = new class {
-        public ram : Array<number> = Array.apply(null, Array(0x2000)).map(Number.prototype.valueOf, 0);
-        public stack : Array<number> = Array.apply(null, Array(0x7F)).map(Number.prototype.valueOf, 0);
+    public cpu: any = new class {
+        public ram: Array<number> = Array.apply(null, Array(0x2000)).map(Number.prototype.valueOf, 0);
+        public stack: Array<number> = Array.apply(null, Array(0x7F)).map(Number.prototype.valueOf, 0);
     };
 
-    public writeByte(addr: number, val : number): void {
-        if (val == null  || val > 0xFF || addr == null || addr > 0xFFFF) {
+    public writeByte(addr: number, val: number): void {
+        if (val == null || val > 0xFF || addr == null || addr > 0xFFFF) {
             throw "Invalid write at 0x" + addr.toString(16) + " with " + val;
         }
 
@@ -43,9 +45,38 @@ export class Memory {
                 throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
             } else if (addr == 0xFF0F) {
                 this.interrupt.if = val & 0xFF;
+            }
+
+            //GPU registers
+            else if (addr == 0xFF40) {
+                this.ppu.registers.lcdc = val;
+            } else if (addr == 0xFF41) {
+                this.ppu.registers.stat = val;
+            } else if (addr == 0xFF42) {
+                this.ppu.registers.scy = val;
+            } else if (addr == 0xFF43) {
+                this.ppu.registers.scx = val;
+            } else if (addr == 0xFF44) {
+                this.ppu.registers.ly = val;
+            } else if (addr == 0xFF45) {
+                this.ppu.registers.lyc = val;
+            } else if (addr == 0xFF4A) {
+                this.ppu.registers.wy= val;
+            } else if (addr == 0xFF4B) {
+                this.ppu.registers.wx = val;
             } else if (addr < 0xFF4C) {
                 this.io[addr - 0xFF00] = val;
-            } else if (addr < 0xFF80) {
+            } else if (addr == 0xFF68) {
+                this.ppu.registers.bcps = val;
+            } else if (addr == 0xFF69) {
+                this.ppu.registers.bcpd= val;
+            } else if (addr == 0xFF6A) {
+                this.ppu.registers.ocps = val;
+            } else if (addr == 0xFF6B) {
+                this.ppu.registers.ocpd = val;
+            }
+
+            else if (addr < 0xFF80) {
                 throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
             }
         } else if (addr < 0xFFFF) {
@@ -58,7 +89,7 @@ export class Memory {
     }
 
     public readByte(addr: number): number {
-        if (addr == null  || addr > 0xFFFF) {
+        if (addr == null || addr > 0xFFFF) {
             throw "Invalid read at 0x" + addr.toString(16);
         }
 
@@ -70,7 +101,6 @@ export class Memory {
         } else if (addr < 0xC000) {
             return this.cartridge.readByte(addr);
         } else if (addr < 0xFE00) {
-            console.log(addr);
             val = this.cpu.ram[(addr - 0xC000) % 0x2000];
         } else if (addr < 0xFEA0) {
             val = this.ppu.oam[addr - 0xFE00];
@@ -79,9 +109,38 @@ export class Memory {
                 throw "Invalid read on unused i/o at 0x" + addr.toString(16);
             } else if (addr == 0xFF0F) {
                 return this.interrupt.if & 0xFF;
+            }
+
+            //GPU registers
+            else if (addr == 0xFF40) {
+                return this.ppu.registers.lcdc;
+            } else if (addr == 0xFF41) {
+                return this.ppu.registers.stat;
+            } else if (addr == 0xFF42) {
+                return this.ppu.registers.scy;
+            } else if (addr == 0xFF43) {
+                return this.ppu.registers.scx;
+            } else if (addr == 0xFF44) {
+                return this.ppu.registers.ly;
+            } else if (addr == 0xFF45) {
+                return this.ppu.registers.lyc;
+            } else if (addr == 0xFF4A) {
+                return this.ppu.registers.wy;
+            } else if (addr == 0xFF4B) {
+                return this.ppu.registers.wx;
             } else if (addr < 0xFF4C) {
                 val = this.io[addr - 0xFF00];
-            } else if (addr < 0xFF80) {
+            } else if (addr == 0xFF68) {
+                return this.ppu.registers.bcps;
+            } else if (addr == 0xFF69) {
+                return this.ppu.registers.bcpd;
+            } else if (addr == 0xFF6A) {
+                return this.ppu.registers.ocps;
+            } else if (addr == 0xFF6B) {
+                return this.ppu.registers.ocpd;
+            }
+
+            else if (addr < 0xFF80) {
                 throw "Invalid write on unused i/o at 0x" + addr.toString(16);
             }
         } else if (addr < 0xFFFF) {
@@ -99,7 +158,7 @@ export class Memory {
         return val;
     }
 
-    public writeWord(addr: number, val : number): void {
+    public writeWord(addr: number, val: number): void {
         //TODO this might be wrong
         var high = val >> 8;
         var low = val & 0xFF;
