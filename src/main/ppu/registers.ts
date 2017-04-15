@@ -5,13 +5,20 @@ import {Memory} from "../memory/memory";
 export class Registers {
     public scx : number = 0;
     public scy: number = 0;
+
+    //Window overlay
     public wx: number = 0;
     public wy: number = 0;
 
-    public lcdc: number = 0;
+    public lcdc: number;
+
+    // Status of LCD Controller pg 55
+    // 00 : hblank
+    // 01 : vblank
+    // 02 : OAM read mode
+    // 03 : VRAM read mode
     public stat: number = 0;
-    public ly: number = 0;
-    public lyc: number = 0;
+
     public bcps: number = 0;
     public bcpd: number = 0;
     public ocps: number = 0;
@@ -22,6 +29,9 @@ export class Registers {
     public obp0: number = 0;
     public obp1: number = 0;
 
+    public ly : number = 0;
+    public lyc : number = 0;
+
     private memory : Memory;
 
     constructor(memory : Memory) {
@@ -30,7 +40,16 @@ export class Registers {
 
     public getControl() {
         return this.memory.io[40];
+    }
 
+    public reset(){
+        this.lcdc = 0x91;
+        this.scy = 0x00;
+        this.scx = 0x00;
+        this.lyc = 0x00;
+        this.bgp = 0xFC;
+        this.wx = 0x00;
+        this.wy = 0x00;
     }
 
     private control : {

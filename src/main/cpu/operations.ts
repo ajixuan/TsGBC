@@ -157,7 +157,7 @@ export class Operations {
 
                 //if val is negative
                 if((val >> shift) === 1){
-                    val -= (1 << shift + 1); //Sign extension trick
+                    val -= (1 << (shift + 1)); //Sign extension trick
                 }
 
                 console.log(val);

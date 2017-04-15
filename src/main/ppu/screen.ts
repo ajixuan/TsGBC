@@ -75,7 +75,20 @@ export class Screen {
         }
     }
 
+    public printRow(tile : Array<Array<number>>, x : number, y : number){
+        for(var cell = 0; cell<tile.length; cell++){
+            var row = Math.floor(y % 8);
+            this.setBufferPixel(x+cell, y, tile[row][x]);
+        }
+    }
 
+
+    /**
+     * Sets up a buffer of pixels to be printed according to the color
+     * @param x coordinate
+     * @param y coordinate
+     * @param index the color scheme
+     */
     private setBufferPixel(x : number, y : number, index : number) : void {
         this.FRAME[(y * this.WIDTH) + x] = index;
     }
