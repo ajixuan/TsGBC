@@ -1,3 +1,6 @@
+import {Macros} from "./macros";
+
+
 export class Screen {
 
     private canvas : any;
@@ -76,10 +79,23 @@ export class Screen {
     }
 
     public printRow(tile : Array<Array<number>>, x : number, y : number){
+
         for(var cell = 0; cell<tile.length; cell++){
-            var row = Math.floor(y % 8);
-            this.setBufferPixel(x+cell, y, tile[row][x]);
+            x += cell;
+            var row = Math.floor(y % Macros.PIXELS);
+            var index = tile[row][x];
+            var hex = this.COLORS[index]
+
+            this.setBufferPixel(x, y, index);
+            this.context.fillStyle = hex;
+            this.context.fillRect(
+                x * (this.ZOOM + this.SPACING),
+                y * (this.ZOOM + this.SPACING),
+                (this.ZOOM),
+                (this.ZOOM)
+            );
         }
+
     }
 
 

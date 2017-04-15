@@ -1,6 +1,7 @@
 import {Memory} from "../memory/memory";
 import {Screen} from "./screen";
 import {Registers} from "./registers";
+import {Macros} from "./macros";
 
 export class Ppu {
     private screen: Screen;
@@ -18,16 +19,13 @@ export class Ppu {
     private lcdon: number;
     private winbase: number;
 
-    //Macros
-    private PIXELNUM: number = 8;
-
-    private
 
 
     constructor(memory: Memory) {
         this.screen = new Screen();
         this.memory = memory;
         this.registers = new Registers(this.memory);
+        this.memory.setPpu(this);
         this.reset();
     }
 
@@ -138,12 +136,12 @@ export class Ppu {
                     this.registers.ly++;
                 } else {
                     //Get the tile of our current ly
-                    var ycoor = ((32 * Math.floor((this.registers.ly + this.registers.scy) / 8)) ) % 32;
+                    var ycoor = ((Macros.TILES *Math.floor((this.registers.ly + this.registers.scy) / Macros.PIXELS)) ) % Macros.TILES;
 
                     for (var x = 0; x < this.screen.WIDTH; x++) {
 
                         //Get the tile number
-                        var xcoor = (Math.floor((this.registers.scx + x) / 8)) % 32;
+                        var xcoor = (Math.floor((this.registers.scx + x) / Macros.PIXELS)) % Macros.TILES;
 
                         //Get the tile number
                         var tile = this.getVramTile(xcoor + ycoor);
