@@ -38,9 +38,9 @@ export class Screen {
         this.canvas.height = this.HEIGHT * (this.ZOOM + this.SPACING);
         this.context = this.canvas.getContext('2d');
 
-        for (var y = 0; y < this.HEIGHT; y++) {
-            for (var x = 0; x < this.WIDTH; x++) {
-                var random : number = Math.floor(Math.random() * this.COLORS.length);
+        for (let y = 0; y < this.HEIGHT; y++) {
+            for (let x = 0; x < this.WIDTH; x++) {
+                let random : number = Math.floor(Math.random() * this.COLORS.length);
                 this.setBufferPixel(x, y, random);
             }
         }
@@ -62,10 +62,10 @@ export class Screen {
     }
 
     public printBuffer() : void {
-        for (var y = 0; y < this.HEIGHT; y++) {
-            for (var x = 0; x < this.WIDTH; x++) {
-                var index = this.FRAME[(y * this.WIDTH) + x];
-                var hex = this.COLORS[index];
+        for (let y = 0; y < this.HEIGHT; y++) {
+            for (let x = 0; x < this.WIDTH; x++) {
+                let index = this.FRAME[(y * this.WIDTH) + x];
+                let hex = this.COLORS[index];
 
                 this.context.fillStyle = hex;
                 this.context.fillRect(
@@ -80,16 +80,15 @@ export class Screen {
 
     public printRow(tile : Array<Array<number>>, x : number, y : number){
 
-        for(var cell = 0; cell<tile.length; cell++){
-            x += cell;
-            var row = Math.floor(y % Macros.PIXELS);
-            var index = tile[row][x];
-            var hex = this.COLORS[index]
+        for(let cell = 0; cell<tile.length; cell++){
+            let row = Math.floor(y % Macros.PIXELS);
+            let index = tile[row][cell];
+            let hex = this.COLORS[index];
 
-            this.setBufferPixel(x, y, index);
+            this.setBufferPixel(x + cell, y, index);
             this.context.fillStyle = hex;
             this.context.fillRect(
-                x * (this.ZOOM + this.SPACING),
+                x+cell * (this.ZOOM + this.SPACING),
                 y * (this.ZOOM + this.SPACING),
                 (this.ZOOM),
                 (this.ZOOM)
