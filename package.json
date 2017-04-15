@@ -5,11 +5,11 @@
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build-start" : "npm run clean && npm run build && npm run start",
     "start": "http-server ./target",
     "build": "gulp build",
     "clean": "gulp clean",
-    "watch": "gulp watch",
-    "package": "gulp"
+    "watch": "gulp watch"
   },
   "devDependencies": {
     "@types/jquery": "^2.0.34",
