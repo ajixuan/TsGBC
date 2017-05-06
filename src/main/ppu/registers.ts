@@ -10,12 +10,15 @@ export class Registers {
     public wx: number = 0;
     public wy: number = 0;
 
+    // LCD Controller
     public lcdc: number;
 
     // Status of LCD Controller pg 55
-    // 00 : hblank
-    // 01 : vblank
-    // 02 : OAM read mode
+
+
+    // 00 : enable cpu access to display RAM
+    // 01 : In VBLANK
+    // 02 : Searching
     // 03 : VRAM read mode
     public stat: number = 0;
 
@@ -29,7 +32,17 @@ export class Registers {
     public obp0: number = 0;
     public obp1: number = 0;
 
+    /**
+     * When bit 7 of LCDC is 1, ly is locked
+     * @type {number}
+     */
+
     public ly : number = 0;
+
+    /**
+     *
+     * @type {number}
+     */
     public lyc : number = 0;
 
     private memory : Memory;
@@ -77,5 +90,23 @@ export class Registers {
 
     };
 
+
+    public setLY(ly:number):void{
+
+        //If lcdc bit 7 is set
+        if((this.lcdc & 0x8) != 0){
+            console.log("LCDC is locked, ly cannot be written");
+            return;
+        }
+        this.ly = ly;
+    }
+
+    public setSTAT(stat:number):void{
+        switch(stat){
+
+        }
+
+
+    }
 
 }

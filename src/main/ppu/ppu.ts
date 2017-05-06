@@ -2,12 +2,13 @@ import {Memory} from "../memory/memory";
 import {Screen} from "./screen";
 import {Registers} from "./registers";
 import {Macros} from "./macros";
+import {Interrupts} from "../io/interrupts";
 
 export class Ppu {
     private screen: Screen;
     private memory: Memory;
     private tileset: Array<Array<Array<number>>>;
-    private registers: Registers;
+    public registers: Registers;
 
     //PPu units
     private bgmapbase: number;
@@ -121,35 +122,56 @@ export class Ppu {
 
 
         switch (this.registers.stat) {
-            //Horizontal blanking
-            case 0:
-            //Vertical blanking
-            case 1:
-            //OAM Rendering
-            case 2:
-            //VRAM Rendering
-            case 3:
-                // render at ly
-                if (this.registers.ly >= 144) {
-                    //Vertical blank
-                    this.registers.stat = 0;
-                    this.registers.ly++;
+            case 0: //Horizontal blanking
+                break;
+            case 1: //Vertical Blank
+                if(this.registers.ly > 153){
+                    this.registers.ly=0;
+                    this.registers.stat=2;
                 } else {
-                    //Get the tile of our current ly
-                    var ycoor = ((Macros.TILES *Math.floor((this.registers.ly + this.registers.scy) / Macros.PIXELS)) ) % Macros.TILES;
+                    this.registers.ly++;
+                }
+                break;
+            case 2: //OAM Rendering
 
-                    for (var x = 0; x < this.screen.WIDTH; x++) {
+            case 3: //VRAM Rendering
+                if(this.registers.lcdc &= 0x82){   //If bg and lcd is on for lcdc
 
-                        //Get the tile number
-                        var xcoor = (Math.floor((this.registers.scx + x) / Macros.PIXELS)) % Macros.TILES;
+                    if (this.registers.ly == 144) {
+                        //Vertical blank
+                        this.registers.stat = 0;
+                        this.registers.ly++;
 
-                        //Get the tile number
-                        var tile = this.getVramTile(xcoor + ycoor);
+                        //this.screen.printBuffer();
 
-                        //Display the tile on screen
-                        this.screen.printRow(tile, this.registers.scx, this.registers.ly + this.registers.scy);
+                        //Set interrupt
+                        this.memory.interrupt.setInterruptFlag(Interrupts.VBLANK);
+
+                    } else { // render at ly
+                        //Get the tile of our current ly
+                        let y, x, tile, ycoor, xcoor;
+
+                        //Y coordinate does not change during line render
+                        y = this.registers.ly + this.registers.scy;
+                        ycoor = Macros.TILES * Math.floor(y / Macros.PIXELS);
+
+                        //Render whole line
+                        for (let cell = 0; cell < this.screen.WIDTH; cell++) {
+                            x = this.registers.scx + cell;
+                            xcoor = Math.floor(x / Macros.PIXELS);
+
+                            //Get new tile
+                            if(cell % Macros.PIXELS == 0){
+                                tile = this.getVramTile(xcoor + ycoor);
+                            }
+
+                            this.screen.setBufferPixel(x, y, tile[y % Macros.PIXELS][x % Macros.PIXELS]);
+                        }
+                        this.screen.printBuffer();
+
                     }
                 }
+                break;
         }
 
     }

@@ -61,6 +61,9 @@ export class Screen {
         this.reset();
     }
 
+    /**
+     * Prints the entire screen
+     */
     public printBuffer() : void {
         for (let y = 0; y < this.HEIGHT; y++) {
             for (let x = 0; x < this.WIDTH; x++) {
@@ -78,6 +81,12 @@ export class Screen {
         }
     }
 
+    /**
+     * Print an entire row across the screen
+     * @param tile
+     * @param x
+     * @param y
+     */
     public printRow(tile : Array<Array<number>>, x : number, y : number){
 
         for(let cell = 0; cell<tile.length; cell++){
@@ -97,14 +106,13 @@ export class Screen {
 
     }
 
-
     /**
-     * Sets up a buffer of pixels to be printed according to the color
+     * Sets one pixel in the screen buffer
      * @param x coordinate
      * @param y coordinate
      * @param index the color scheme
      */
-    private setBufferPixel(x : number, y : number, index : number) : void {
+    public setBufferPixel(x : number, y : number, index : number) : void {
         this.FRAME[(y * this.WIDTH) + x] = index;
     }
 
