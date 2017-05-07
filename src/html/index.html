@@ -15,6 +15,7 @@
         </div>
         <div style="display: flex; flex-direction: row; margin-left: 10px; ">
             <button onclick="tick()">Tick</button>
+            <button onclick="run()">Run</button>
             <div style="flex-grow: 1"></div>
             <button onclick="grow()">+</button>
             <button onclick="shrink()">-</button>
@@ -68,7 +69,7 @@
                         </li>
                         <li>
                             <span class="header">Scanlines:</span>
-                            <span id="scanlunes">0</span>
+                            <span id="scanlines">0</span>
                         </li>
                         <li>
                             <span class="header">Ticks:</span>
@@ -104,6 +105,7 @@
                 </div>
             </fieldset>
         </div>
+
         <fieldset>
             <legend>CPU</legend>
             <div style="color: #bebebe; display: inline-block">
@@ -117,7 +119,7 @@
                         <span id="sp"></span>
                     </li>
 
-                    <br />
+                    <br/>
                     <li>
                         <span class="header">Flags:</span>
                         <span id="flags"></span>
@@ -143,17 +145,43 @@
             </div>
         </fieldset>
 
-    </div>
-</div>
+        <fieldset>
+            <legend>PPU Registers</legend>
+            <div style="color: #bebebe; display: inline-block">
+                <ul style="list-style: none;">
+                    <li>
+                        <span class="header">LCDC:</span>
+                        <span id="lcdc"></span>
+                    </li>
+                    <li>
+                        <span class="header">STAT:</span>
+                        <span id="stat"></span>
+                    </li>
 
+                    <br/>
+                    <li>
+                        <span class="header">LY:</span>
+                        <span id="ly"></span>
+                    </li>
+
+                    <li>
+                        <span class="header">LYC:</span>
+                        <span id="lyc"></span>
+                    </li>
+                </ul>
+            </div>
+        </fieldset>
+    </div>
+
+</div>
 
 
 <script>
     var gameboy = null;
     var debug = null;
 
-    var loadGameBoy = function() {
-        System.import('gameboy').then(function(e) {
+    var loadGameBoy = function () {
+        System.import('gameboy').then(function (e) {
             try {
                 gameboy = new e.GameBoy();
             } catch (e) {
@@ -167,15 +195,15 @@
             loadDebugger();
             console.info("Gameboy is ready!");
         }).catch(
-            function(err){
+            function (err) {
                 console.error("Unable to load GameBoy");
                 console.error(err);
             }
         );
     }
 
-    var loadDebugger = function() {
-        System.import('debugger').then(function(e) {
+    var loadDebugger = function () {
+        System.import('debugger').then(function (e) {
             try {
                 debug = e.Debugger;
             } catch (e) {
@@ -185,7 +213,7 @@
             }
             debug.init(gameboy);
         }).catch(
-            function(err){
+            function (err) {
                 console.error("Unable to load Debugger");
                 console.error(err);
             }
@@ -194,15 +222,19 @@
 
     loadGameBoy();
 
-    var tick = function() {
+    var tick = function () {
         gameboy.tick();
     }
 
-    var grow = function() {
+    var run = function () {
+        gameboy.run();
+    }
+
+    var grow = function () {
         gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() + 1);
     }
 
-    var shrink = function() {
+    var shrink = function () {
         gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() - 1);
     }
 
