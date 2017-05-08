@@ -13,7 +13,7 @@ export class Ppu {
         this.screen = new Screen();
         this.memory = memory;
         this.registers = new Registers(this.memory);
-        this.memory.setPpu(this);
+        this.memory.ppu = this;
         this.reset();
     }
 

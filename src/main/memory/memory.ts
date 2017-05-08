@@ -16,10 +16,10 @@ export class Memory {
     public io: number[] = [0x80];
     public cartridge: Cartridge;
     public interrupt: Interrupts = new Interrupts();
-    public ppu: Ppu = new Ppu(this);
 
     public vram: Array<number> = Array.apply(null, Array(0x1000)).map(Number.prototype.valueOf, 0);
     public oam: Array<number> = Array.apply(null, Array(0xA0)).map(Number.prototype.valueOf, 0);
+    public ppu : Ppu;
 
     public cpu: any = new class {
         public ram: Array<number> = Array.apply(null, Array(0x2000)).map(Number.prototype.valueOf, 0);
