@@ -1,11 +1,11 @@
-import {Macros} from "./macros";
-
 
 export class Screen {
 
     private canvas : any;
     private context : any;
 
+    public static PIXELS : number = 8;
+    public static TILES : number = 32;
     public HEIGHT : number = 144;
     public WIDTH : number = 160;
 
@@ -90,7 +90,7 @@ export class Screen {
     public printRow(tile : Array<Array<number>>, x : number, y : number){
 
         for(let cell = 0; cell<tile.length; cell++){
-            let row = Math.floor(y % Macros.PIXELS);
+            let row = Math.floor(y % Screen.PIXELS);
             let index = tile[row][cell];
             let hex = this.COLORS[index];
 

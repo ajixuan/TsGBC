@@ -1,7 +1,6 @@
 import {Memory} from "../memory/memory";
 import {Screen} from "./screen";
 import {Registers} from "./registers";
-import {Macros} from "./macros";
 import {Interrupts} from "../io/interrupts";
 
 export class Ppu {
@@ -118,28 +117,32 @@ export class Ppu {
      */
     public renderscan(): void {
 
+
+        //Set the ly,lyc coincidence interrupt
+        if(this.registers.ly == this.registers.lyc){
+            this.registers.setSTAT(Registers.STAT.LYCoincidence);
+        }
+
         //Render bg data (0x3FF addresses)
-
-
-        switch (this.registers.stat) {
+        switch (this.registers.getSTAT() & 0x03) {
             case 0: //Horizontal blanking
                 break;
             case 1: //Vertical Blank
                 if(this.registers.ly > 153){
-                    this.registers.ly=0;
-                    this.registers.stat=2;
+                    this.registers.ly = 0;
+                    this.registers.stat = 2;
                 } else {
                     this.registers.ly++;
                 }
                 break;
             case 2: //OAM Rendering
-
+                break;
             case 3: //VRAM Rendering
                 if(this.registers.lcdc &= 0x82){   //If bg and lcd is on for lcdc
 
                     if (this.registers.ly == 144) {
                         //Vertical blank
-                        this.registers.stat = 0;
+                        this.registers.setSTAT();
                         this.registers.ly++;
 
                         //this.screen.printBuffer();
@@ -153,19 +156,19 @@ export class Ppu {
 
                         //Y coordinate does not change during line render
                         y = this.registers.ly + this.registers.scy;
-                        ycoor = Macros.TILES * Math.floor(y / Macros.PIXELS);
+                        ycoor = Screen.TILES * Math.floor(y / Screen.PIXELS);
 
                         //Render whole line
                         for (let cell = 0; cell < this.screen.WIDTH; cell++) {
                             x = this.registers.scx + cell;
-                            xcoor = Math.floor(x / Macros.PIXELS);
+                            xcoor = Math.floor(x / Screen.PIXELS);
 
                             //Get new tile
-                            if(cell % Macros.PIXELS == 0){
+                            if(cell % Screen.PIXELS == 0){
                                 tile = this.getVramTile(xcoor + ycoor);
                             }
 
-                            this.screen.setBufferPixel(x, y, tile[y % Macros.PIXELS][x % Macros.PIXELS]);
+                            this.screen.setBufferPixel(x, y, tile[y % Screen.PIXELS][x % Screen.PIXELS]);
                         }
                         this.screen.printBuffer();
 
