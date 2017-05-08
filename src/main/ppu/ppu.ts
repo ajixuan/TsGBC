@@ -9,18 +9,6 @@ export class Ppu {
     private tileset: Array<Array<Array<number>>>;
     public registers: Registers;
 
-    //PPu units
-    private bgmapbase: number;
-    private bgtilebase: number;
-    private bgon: number;
-    private objon: number;
-    private objblock: number;
-    private winon: number;
-    private lcdon: number;
-    private winbase: number;
-
-
-
     constructor(memory: Memory) {
         this.screen = new Screen();
         this.memory = memory;
@@ -94,7 +82,7 @@ export class Ppu {
     private getVramTile(tile: number): Array<Array<number>> {
 
         //-------------Memory in map 1
-        if ((this.registers.lcdc & 0x10) != 0) {
+        if (this.registers.lcdc.bgmap) {
             return this.tileset[tile];
         }
 
@@ -120,17 +108,17 @@ export class Ppu {
 
         //Set the ly,lyc coincidence interrupt
         if(this.registers.ly == this.registers.lyc){
-            this.registers.setSTAT(Registers.STAT.LYCoincidence);
+            this.registers.stat.lycoincidence;
         }
 
         //Render bg data (0x3FF addresses)
-        switch (this.registers.getSTAT() & 0x03) {
+        switch (this.registers.stat.get() & 0x03) {
             case 0: //Horizontal blanking
                 break;
             case 1: //Vertical Blank
                 if(this.registers.ly > 153){
                     this.registers.ly = 0;
-                    this.registers.stat = 2;
+                    this.registers.stat.vblank;
                 } else {
                     this.registers.ly++;
                 }
@@ -138,11 +126,11 @@ export class Ppu {
             case 2: //OAM Rendering
                 break;
             case 3: //VRAM Rendering
-                if(this.registers.lcdc &= 0x82){   //If bg and lcd is on for lcdc
+                if(this.registers.lcdc.bgon && this.registers.lcdc.lcdon){   //If bg and lcd is on for lcdc
 
                     if (this.registers.ly == 144) {
                         //Vertical blank
-                        this.registers.setSTAT();
+                        this.registers.stat.vblank;
                         this.registers.ly++;
 
                         //this.screen.printBuffer();
@@ -187,16 +175,14 @@ export class Ppu {
     public writeByte(addr: number, val: number): void {
         switch (addr) {
             case 0xFF40:
-                this.bgon = (val & 0x01) ? 1 : 0;                   //Bg Display
-                this.objon = (val & 0x02) ? 1 : 0;
-                this.objblock = (val & 0x04) ? 1 : 0;
-                this.bgmapbase = (val & 0x08) ? 0x9C00 : 0x9800;    //Two bg map locations
-                this.bgtilebase = (val & 0x10) ? 0x8000 : 0x8800;   //Two bg tile locations
-
-                this.winon = (val & 0x20) ? 1 : 0;
-                this.winbase = (val & 0x40) ? 0x9C00 : 0x9800;      //Window code area selection
-                this.lcdon = (val & 0x80) ? 1 : 0;                  //LCDC controller
-                this.registers.lcdc = val;
+                if(val & 0x01) this.registers.lcdc.set.bgon;
+                if(val & 0x02) this.registers.lcdc.set.objon;
+                if(val & 0x04) this.registers.lcdc.set.objsize;
+                if(val & 0x08) this.registers.lcdc.set.tilemap;
+                if(val & 0x10) this.registers.lcdc.set.bgwin;
+                if(val & 0x20) this.registers.lcdc.set.objon;
+                if(val & 0x40) this.registers.lcdc.set.bgwin;
+                if(val & 0x80) this.registers.lcdc.set.lcdon;
             case 0xFF42:
                 this.registers.scy = val;
             case 0xFF43:
@@ -233,7 +219,7 @@ export class Ppu {
 
         switch (addr) {
             case 0xFF40:
-                return this.registers.lcdc;
+                return this.registers.lcdc.get();
             case 0xFF42:
                 return this.registers.scy;
             case 0xFF43:
