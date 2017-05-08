@@ -12,7 +12,7 @@ export class Debugger {
             return;
         }
 
-        if (Debugger.gameboy == null) {
+        if (Debugger.gameboy == null) {0
             console.error("Error: Debugger doesn't have GameBoy set!");
         }
 
@@ -47,8 +47,8 @@ export class Debugger {
         $('#operand').html(gameboy.cpu.last.opaddr.toString(16).toUpperCase());
 
         //PPU Register
-        $('#lcdc').html("0x" + gameboy.ppu.registers.lcdc.toString(16));
-        $('#stat').html("0x" + gameboy.ppu.registers.stat.toString(16));
+        $('#lcdc').html("0x" + gameboy.ppu.registers.lcdc.get().toString(16));
+        $('#stat').html("0x" + gameboy.ppu.registers.stat.get().toString(16));
         $('#ly').html(gameboy.ppu.registers.ly.toString());
 
 

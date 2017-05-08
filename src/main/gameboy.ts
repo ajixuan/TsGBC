@@ -33,7 +33,16 @@ export class GameBoy {
 
     public tick() : void {
         this.cpu.tick();
+        this.ppu.renderscan();
         this.ticks++;
+    }
+
+    public run() : void {
+        while(true){
+            this.cpu.tick();
+            this.ppu.renderscan();
+            this.ticks++;
+        }
     }
 
     public tickFor() : void {
