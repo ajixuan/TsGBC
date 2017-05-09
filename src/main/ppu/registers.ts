@@ -52,11 +52,11 @@ export class Registers {
     public stat = (function(){
         var _val = 0x00;
         return {
-            lycoincidence: function () { _val ^= 0x40; },
-            oaminterrupt: function () { _val ^= 0x20; },
-            vblank: function () { _val ^= 0x11; },
-            hblank: function () { _val ^= 0x8; },
-            vram : function ()  {_val ^= 0x3},
+            lycoincidence: function () { _val |= 0x40; },
+            oaminterrupt: function () { _val |= 0x20; },
+            vblank: function () { _val |= 0x11; },
+            hblank: function () { _val |= 0x8; },
+            vram : function ()  {_val |= 0x3},
             get : function(){ return _val; },
             set : function(val) {_val = val}
         }
@@ -84,23 +84,23 @@ export class Registers {
 
     /**
      *
-    * @type {number}
-    */
+     * @type {number}
+     */
     public lyc: number = 0;
 
     private memory: Memory;
 
-        constructor(memory: Memory) {
-            this.memory = memory;
-        }
+    constructor(memory: Memory) {
+        this.memory = memory;
+    }
 
     public getControl() {
-            return this.memory.io[40];
-        }
+        return this.memory.io[40];
+    }
 
     public reset() {
-            this.scy = 0x00;
-            this.scx = 0x00;
+        this.scy = 0x00;
+        this.scx = 0x00;
         this.ly = 0x00;
         this.lyc = 0x00;
         this.bgp = 0xFC;
@@ -108,7 +108,7 @@ export class Registers {
         this.wy = 0x00;
 
         //0x91 @formatter:off
-        this.lcdc.set.lcdon; this.lcdc.set.tilemap; this.lcdc.set.bgon;
+        this.lcdc.set.lcdon(); this.lcdc.set.tilemap(); this.lcdc.set.bgon();
         //@formatter:on
 
         //0x85
