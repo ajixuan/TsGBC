@@ -21,23 +21,23 @@ export class Registers {
         var _val = 0x00;
         return { //Toggles for the flags
             set : {
-                lcdon :     function(){ _val ^= 0x80 }(),
-                bgwin :     function(){ _val ^= 0x40 }(),
-                winon :     function(){ _val ^= 0x20 }(),
-                tilemap :   function(){ _val ^= 0x10 }(),
-                bgmap :     function(){ _val ^= 0x08 }(),
-                objsize :   function(){ _val ^= 0x04 }(),
-                objon :     function(){ _val ^= 0x02 }(),
-                bgon :      function(){ _val ^= 0x01 }(),
+                lcdon :     function(){ _val ^= 0x80 },
+                bgwin :     function(){ _val ^= 0x40 },
+                winon :     function(){ _val ^= 0x20 },
+                tilemap :   function(){ _val ^= 0x10 },
+                bgmap :     function(){ _val ^= 0x08 },
+                objsize :   function(){ _val ^= 0x04 },
+                objon :     function(){ _val ^= 0x02 },
+                bgon :      function(){ _val ^= 0x01 },
             },
-            lcdon :     function(){ return (_val &= 0x80) ? 1 : 0  }(),
-            bgwin :     function(){ return (_val &= 0x40) ? 1 : 0  }(),
-            winon :     function(){ return (_val &= 0x20) ? 1 : 0  }(),
-            tilemap :   function(){ return (_val &= 0x10) ? 1 : 0  }(),
-            bgmap :     function(){ return (_val &= 0x08) ? 1 : 0  }(),
-            objsize :   function(){ return (_val &= 0x04) ? 1 : 0  }(),
-            objon :     function(){ return (_val &= 0x02) ? 1 : 0  }(),
-            bgon :      function(){ return (_val &= 0x01) ? 1 : 0  }(),
+            lcdon :     function(){ return (_val &= 0x80) ? 1 : 0  },
+            bgwin :     function(){ return (_val &= 0x40) ? 1 : 0  },
+            winon :     function(){ return (_val &= 0x20) ? 1 : 0  },
+            tilemap :   function(){ return (_val &= 0x10) ? 1 : 0  },
+            bgmap :     function(){ return (_val &= 0x08) ? 1 : 0  },
+            objsize :   function(){ return (_val &= 0x04) ? 1 : 0  },
+            objon :     function(){ return (_val &= 0x02) ? 1 : 0  },
+            bgon :      function(){ return (_val &= 0x01) ? 1 : 0  },
             get : function(){ return _val },
         }
     })()
@@ -52,10 +52,11 @@ export class Registers {
     public stat = (function(){
         var _val = 0x00;
         return {
-            lycoincidence: function () { _val ^= 0x40; }(),
-            oaminterrupt: function () { _val ^= 0x20; }(),
-            vblank: function () { _val ^= 0x11; }(),
-            hblank: function () { _val ^= 0x08; }(),
+            lycoincidence: function () { _val ^= 0x40; },
+            oaminterrupt: function () { _val ^= 0x20; },
+            vblank: function () { _val ^= 0x11; },
+            hblank: function () { _val ^= 0x8; },
+            vram : function ()  {_val ^= 0x3},
             get : function(){ return _val; },
             set : function(val) {_val = val}
         }
@@ -83,23 +84,23 @@ export class Registers {
 
     /**
      *
-     * @type {number}
-     */
+    * @type {number}
+    */
     public lyc: number = 0;
 
     private memory: Memory;
 
-    constructor(memory: Memory) {
-        this.memory = memory;
-    }
+        constructor(memory: Memory) {
+            this.memory = memory;
+        }
 
     public getControl() {
-        return this.memory.io[40];
-    }
+            return this.memory.io[40];
+        }
 
     public reset() {
-        this.scy = 0x00;
-        this.scx = 0x00;
+            this.scy = 0x00;
+            this.scx = 0x00;
         this.ly = 0x00;
         this.lyc = 0x00;
         this.bgp = 0xFC;

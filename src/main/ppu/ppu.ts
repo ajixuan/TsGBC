@@ -108,17 +108,18 @@ export class Ppu {
 
         //Set the ly,lyc coincidence interrupt
         if(this.registers.ly == this.registers.lyc){
-            this.registers.stat.lycoincidence;
+            this.registers.stat.lycoincidence();
         }
 
         //Render bg data (0x3FF addresses)
         switch (this.registers.stat.get() & 0x03) {
             case 0: //Horizontal blanking
+                this.registers.stat.hblank();
                 break;
             case 1: //Vertical Blank
                 if(this.registers.ly > 153){
                     this.registers.ly = 0;
-                    this.registers.stat.vblank;
+                    this.registers.stat.vblank();
                 } else {
                     this.registers.ly++;
                 }
@@ -126,11 +127,11 @@ export class Ppu {
             case 2: //OAM Rendering
                 break;
             case 3: //VRAM Rendering
-                if(this.registers.lcdc.bgon && this.registers.lcdc.lcdon){   //If bg and lcd is on for lcdc
+                if(this.registers.lcdc.bgon() & this.registers.lcdc.lcdon()){   //If bg and lcd is on for lcdc
 
                     if (this.registers.ly == 144) {
                         //Vertical blank
-                        this.registers.stat.vblank;
+                        this.registers.stat.vblank();
                         this.registers.ly++;
 
                         //this.screen.printBuffer();
@@ -175,14 +176,14 @@ export class Ppu {
     public writeByte(addr: number, val: number): void {
         switch (addr) {
             case 0xFF40:
-                if(val & 0x01) this.registers.lcdc.set.bgon;
-                if(val & 0x02) this.registers.lcdc.set.objon;
-                if(val & 0x04) this.registers.lcdc.set.objsize;
-                if(val & 0x08) this.registers.lcdc.set.tilemap;
-                if(val & 0x10) this.registers.lcdc.set.bgwin;
-                if(val & 0x20) this.registers.lcdc.set.objon;
-                if(val & 0x40) this.registers.lcdc.set.bgwin;
-                if(val & 0x80) this.registers.lcdc.set.lcdon;
+                if(val & 0x01) this.registers.lcdc.set.bgon();
+                if(val & 0x02) this.registers.lcdc.set.objon();
+                if(val & 0x04) this.registers.lcdc.set.objsize();
+                if(val & 0x08) this.registers.lcdc.set.tilemap();
+                if(val & 0x10) this.registers.lcdc.set.bgwin();
+                if(val & 0x20) this.registers.lcdc.set.objon();
+                if(val & 0x40) this.registers.lcdc.set.bgwin();
+                if(val & 0x80) this.registers.lcdc.set.lcdon();
             case 0xFF42:
                 this.registers.scy = val;
             case 0xFF43:
