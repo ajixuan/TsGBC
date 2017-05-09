@@ -16,6 +16,7 @@
         <div style="display: flex; flex-direction: row; margin-left: 10px; ">
             <button onclick="tick()">Tick</button>
             <button onclick="run()">Run</button>
+            <button onclick="stop()">Stop</button>
             <div style="flex-grow: 1"></div>
             <button onclick="grow()">+</button>
             <button onclick="shrink()">-</button>
@@ -228,6 +229,11 @@
 
     var run = function () {
         gameboy.run();
+
+    }
+
+    var stop = function(){
+        gameboy.stop();
     }
 
     var grow = function () {

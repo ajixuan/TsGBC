@@ -9,8 +9,10 @@ export class GameBoy {
     public cpu : Cpu;
     public memory : Memory;
     public cartridge : Cartridge;
-
     public ticks : number = 0;
+    public running : boolean = false;
+    public timeout : any;
+    public interval : number = 1000;
 
     constructor() {
         this.cartridge = null
@@ -18,7 +20,6 @@ export class GameBoy {
         this.cpu = new Cpu(this.memory);
         this.ppu = new Ppu(this.memory);
     }
-
 
     public load(url : string) : void{
         this.cartridge = Cartridge.load(url, this.memory);
@@ -37,16 +38,27 @@ export class GameBoy {
         this.ticks++;
     }
 
-    public run() : void {
-        while(true){
-            this.cpu.tick();
-            this.ppu.renderscan();
-            this.ticks++;
+    private nextFrame(){
+        this.tick();
+        if(this.running){
+            window.requestAnimationFrame(this.nextFrame.bind(this));
         }
     }
 
-    public tickFor() : void {
-        //TODO
+
+    public run(): void {
+        this.running = true;
+        setTimeout(this.nextFrame(),this.interval);
     }
 
+    public stop() : void {
+        this.running = false;
+    }
+
+    public tickFor(val) : void {
+        //TODO
+        for(let i = 0; i < val; i++){
+            this.tick();
+        }
+    }
 }
