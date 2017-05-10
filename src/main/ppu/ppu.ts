@@ -100,6 +100,13 @@ export class Ppu {
         return this.tileset[tile + 128];
     }
 
+    private setInterrupts():void {
+        if(this.registers.stat.get() & 0x40) this.memory.interrupt.setInterruptFlag(Interrupts.LCDC);
+        if(this.registers.stat.get() & 0x20) this.memory.interrupt.setInterruptFlag(Interrupts.LCDC);
+        if(this.registers.stat.get() & 0x11) this.memory.interrupt.setInterruptFlag(Interrupts.VBLANK);
+        if(this.registers.stat.get() & 0x08) this.memory.interrupt.setInterruptFlag(Interrupts.LCDC);
+    }
+
     /**
      * Render scan on one tick
      */
@@ -166,6 +173,7 @@ export class Ppu {
                 break;
         }
 
+        this.setInterrupts();
     }
 
     /**

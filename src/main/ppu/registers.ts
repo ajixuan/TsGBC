@@ -5,14 +5,24 @@ import {Interrupts} from "../io/interrupts";
  * Created by hkamran on 12/16/2016.
  */
 export class Registers {
-    private interrupts: Interrupts;
-
     public scx: number = 0;
     public scy: number = 0;
 
     //Window overlay
     public wx: number = 0;
     public wy: number = 0;
+
+
+    //OAM
+    public bcps: number = 0;
+    public bcpd: number = 0;
+    public ocps: number = 0;
+    public ocpd: number = 0;
+
+    public dma: number = 0;
+    public bgp: number = 0;
+    public obp0: number = 0;
+    public obp1: number = 0;
 
 
     //@formatter:off
@@ -43,8 +53,6 @@ export class Registers {
     })()
 
     // Status of LCD Controller pg 55
-
-
     // 00 : enable cpu access to display RAM
     // 01 : In VBLANK
     // 02 : Searching
@@ -56,24 +64,13 @@ export class Registers {
             oaminterrupt: function () { _val |= 0x20; },
             vblank: function () { _val |= 0x11; },
             hblank: function () { _val |= 0x8; },
-            vram : function ()  {_val |= 0x3},
+            vram : function ()  { _val |= 0x3 },
             get : function(){ return _val; },
             set : function(val) {_val = val}
         }
-        })();
-
+    })();
     //@formatter:on
 
-
-    public bcps: number = 0;
-    public bcpd: number = 0;
-    public ocps: number = 0;
-    public ocpd: number = 0;
-
-    public dma: number = 0;
-    public bgp: number = 0;
-    public obp0: number = 0;
-    public obp1: number = 0;
 
     /**
      * When bit 7 of LCDC is 1, ly is locked
