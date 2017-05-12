@@ -1,5 +1,4 @@
 import {Memory} from "../memory/memory";
-import {Interrupts} from "../io/interrupts";
 
 /**
  * Created by hkamran on 12/16/2016.
@@ -28,7 +27,7 @@ export class Registers {
     //@formatter:off
     // LCD Controller
     public lcdc  = (function(){
-        var _val = 0x00;
+        let _val = 0x00;
         return { //Toggles for the flags
             set : {
                 lcdon :     function(){ _val ^= 0x80 },
@@ -50,7 +49,7 @@ export class Registers {
             bgon :      function(){ return (_val &= 0x01) ? 1 : 0  },
             get : function(){ return _val },
         }
-    })()
+    })();
 
     // Status of LCD Controller pg 55
     // 00 : enable cpu access to display RAM
@@ -58,15 +57,22 @@ export class Registers {
     // 02 : Searching
     // 03 : VRAM read mode
     public stat = (function(){
-        var _val = 0x00;
+        let _val = 0x00;
         return {
-            lycoincidence: function () { _val |= 0x40; },
-            oaminterrupt: function () { _val |= 0x20; },
-            vblank: function () { _val |= 0x11; },
-            hblank: function () { _val |= 0x8; },
-            vram : function ()  { _val |= 0x3 },
-            get : function(){ return _val; },
-            set : function(val) {_val = val}
+            get : function() { return _val; },
+            set : function(val) { _val = val },
+            interrupts : {
+                lycoincidence:  function () { _val |= 0x40; },
+                oaminterrupt:   function () { _val |= 0x20; },
+                vblank:         function () { _val |= 0x11; },
+                hblank:         function () { _val |= 0x8; },
+            },
+            modeFlag : {
+                hblank:     function() {_val &= 0xFC},
+                vblank:     function() {_val &= 0xFC; _val += 1},
+                oamlock:    function() {_val &= 0xFC; _val += 2},
+                ovramlock:  function() {_val &= 0xFC; _val += 3}
+            }
         }
     })();
     //@formatter:on
@@ -111,8 +117,6 @@ export class Registers {
         //0x85
         this.stat.set(0x85);
     }
-
-    private status: {};
 
     public setLCDC(lcdc: number): void {
         //Turning lcdc off

@@ -26,11 +26,11 @@ export class Ppu {
         this.registers.reset();
 
         //Go through all tiles
-        for (var i = 0; i < 384; i++) {
+        for (let i = 0; i < 384; i++) {
             this.tileset[i] = [];
 
             //For each tile there are 8 bits
-            for (var j = 0; j < 8; j++) {
+            for (let j = 0; j < 8; j++) {
                 //Since each pixel consist 2 bytes, store values here
                 this.tileset[i][j] = [0, 0, 0, 0, 0, 0, 0, 0];
             }
@@ -42,7 +42,6 @@ export class Ppu {
      * Updates one row of pixels
      *
      * @param addr
-     * @param val
      */
     public updateTile(addr: number): void {
 
@@ -58,14 +57,14 @@ export class Ppu {
         // Each tile has 8 rows, each row takes 2 bytes. Divide the rows
         // by 16 (shift 4 == divide 16)
         // This will give us the tile number that the row belongs to
-        var tile = (addr >> 4) & 0x1FF;
+        let tile = (addr >> 4) & 0x1FF;
 
         // Find the row number of the tile
-        var y = (addr >> 1) & 0x7;
-        var pindex;
+        let y = (addr >> 1) & 0x7;
+        let pindex;
 
         //8 bits
-        for (var x = 0; x < 8; x++) {
+        for (let x = 0; x < 8; x++) {
             pindex = 1 << x;
 
             this.tileset[tile][y][x] =
@@ -77,7 +76,7 @@ export class Ppu {
     /**
      * Helper function for getting the vram tile in tile
      * object form
-     * @param index
+     * @param tile
      */
     private getVramTile(tile: number): Array<Array<number>> {
 
@@ -115,18 +114,18 @@ export class Ppu {
 
         //Set the ly,lyc coincidence interrupt
         if(this.registers.ly == this.registers.lyc){
-            this.registers.stat.lycoincidence();
+            this.registers.stat.interrupts.lycoincidence();
         }
 
         //Render bg data (0x3FF addresses)
         switch (this.registers.stat.get() & 0x03) {
             case 0: //Horizontal blanking
-                this.registers.stat.hblank();
+                this.registers.stat.interrupts.hblank();
                 break;
             case 1: //Vertical Blank
                 if(this.registers.ly > 153){
                     this.registers.ly = 0;
-                    this.registers.stat.vblank();
+                    this.registers.stat.interrupts.vblank();
                 } else {
                     this.registers.ly++;
                 }
@@ -138,7 +137,7 @@ export class Ppu {
 
                     if (this.registers.ly == 144) {
                         //Vertical blank
-                        this.registers.stat.vblank();
+                        this.registers.stat.interrupts.vblank();
                         this.registers.ly++;
 
                         //this.screen.printBuffer();
@@ -192,35 +191,47 @@ export class Ppu {
                 if(val & 0x20) this.registers.lcdc.set.objon();
                 if(val & 0x40) this.registers.lcdc.set.bgwin();
                 if(val & 0x80) this.registers.lcdc.set.lcdon();
+                break;
             case 0xFF42:
                 this.registers.scy = val;
+                break;
             case 0xFF43:
                 this.registers.scx = val;
+                break;
             case 0xFF44:
                 this.registers.ly = val;
+                break;
             case 0xFF45:
                 this.registers.lyc = val;
+                break;
             case 0xFF46:
                 //DMA
                 //Transfers 40 x 32 bits of data
                 //val is the starting address of transfer
                 //val is always the upper 8 bits, so need to be shifted
-                for (var i = 0; i < 0x9F; i++) {
-                    var data = this.memory.readByte((val << 8) + i);
+                for (let i = 0; i < 0x9F; i++) {
+                    let data = this.memory.readByte((val << 8) + i);
                     this.memory.oam[i] = data;
                 }
+                break;
             case 0xFF4A:
                 this.registers.wy = val;
+                break;
             case 0xFF4B:
                 this.registers.wx = val;
+                break;
             case 0xFF68:
                 this.registers.bcps = val;
+                break;
             case 0xFF69:
                 this.registers.bcpd = val;
+                break;
             case 0xFF6A:
                 this.registers.ocps = val;
+                break;
             case 0xFF6B:
                 this.registers.ocpd = val;
+                break;
         }
     }
 
