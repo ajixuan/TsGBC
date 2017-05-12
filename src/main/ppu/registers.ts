@@ -26,11 +26,17 @@ export class Registers {
 
     //@formatter:off
     // LCD Controller
-    public lcdc  = (function(){
+    public lcdc  = (function(self : Registers){
         let _val = 0x00;
         return { //Toggles for the flags
             set : {
-                lcdon :     function(){ _val ^= 0x80 },
+                lcdon :     function(){
+                                _val ^= 0x80
+                                if(!this.lcdon){
+                                    //Set ly
+                                    self.setLY(0);
+                                }
+                            },
                 bgwin :     function(){ _val ^= 0x40 },
                 winon :     function(){ _val ^= 0x20 },
                 tilemap :   function(){ _val ^= 0x10 },
@@ -39,7 +45,7 @@ export class Registers {
                 objon :     function(){ _val ^= 0x02 },
                 bgon :      function(){ _val ^= 0x01 },
             },
-            lcdon :     function(){ return (_val &= 0x80) ? 1 : 0  },
+            lcdon :     function(){ return (_val &= 0x80) ? 1 : 0  ;},
             bgwin :     function(){ return (_val &= 0x40) ? 1 : 0  },
             winon :     function(){ return (_val &= 0x20) ? 1 : 0  },
             tilemap :   function(){ return (_val &= 0x10) ? 1 : 0  },
@@ -49,7 +55,7 @@ export class Registers {
             bgon :      function(){ return (_val &= 0x01) ? 1 : 0  },
             get : function(){ return _val },
         }
-    })();
+    })(this);
 
     // Status of LCD Controller pg 55
     // 00 : enable cpu access to display RAM
