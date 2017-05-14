@@ -1,4 +1,5 @@
 import {Memory} from "../memory/memory";
+import {Interrupts} from "../io/interrupts"
 
 /**
  * Created by hkamran on 12/16/2016.
@@ -23,7 +24,6 @@ export class Registers {
     public obp0: number = 0;
     public obp1: number = 0;
 
-
     //@formatter:off
     // LCD Controller
     public lcdc  = (function(self : Registers){
@@ -31,12 +31,12 @@ export class Registers {
         return { //Toggles for the flags
             set : {
                 lcdon :     function(){
-                                _val ^= 0x80
-                                if(!this.lcdon){
-                                    //Set ly
-                                    self.setLY(0);
-                                }
-                            },
+                    _val ^= 0x80
+                    if(!this.lcdon){
+                        //Set ly
+                        self.setLY(0);
+                    }
+                },
                 bgwin :     function(){ _val ^= 0x40 },
                 winon :     function(){ _val ^= 0x20 },
                 tilemap :   function(){ _val ^= 0x10 },
@@ -56,32 +56,59 @@ export class Registers {
             get : function(){ return _val },
         }
     })(this);
+    //@formatter:on
 
     // Status of LCD Controller pg 55
     // 00 : enable cpu access to display RAM
     // 01 : In VBLANK
     // 02 : Searching
     // 03 : VRAM read mode
-    public stat = (function(){
+    public stat = (function (self: Registers) {
         let _val = 0x00;
         return {
-            get : function() { return _val; },
-            set : function(val) { _val = val },
-            interrupts : {
-                lycoincidence:  function () { _val |= 0x40; },
-                oaminterrupt:   function () { _val |= 0x20; },
-                vblank:         function () { _val |= 0x11; },
-                hblank:         function () { _val |= 0x8; },
+            get: function () {
+                return _val;
             },
-            modeFlag : {
-                hblank:     function() {_val &= 0xFC},
-                vblank:     function() {_val &= 0xFC; _val += 1},
-                oamlock:    function() {_val &= 0xFC; _val += 2},
-                ovramlock:  function() {_val &= 0xFC; _val += 3}
+            set: function (val) {
+                _val = val
+            },
+            interrupts: {
+                lycoincidence: function () {
+                    _val ^= 0x40;
+                    if (_val &= 0x40) this.memory.interrupt.setInterruptFlag(Interrupts.LCDC);
+                },
+                oaminterrupt: function () {
+                    _val ^= 0x20;
+                    if (_val &= 0x20) this.memory.interrupt.setInterruptFlag(Interrupts.LCDC);
+                },
+                vblank: function () {
+                    _val ^= 0x11;
+                    if (_val &= 0x11) this.memory.interrupt.setInterruptFlag(Interrupts.VBLANK);
+                },
+                hblank: function () {
+                    _val ^= 0x8;
+                    if (_val &= 0x8) this.memory.interrupt.setInterruptFlag(Interrupts.LCDC);
+                },
+            },
+            modeFlag: {
+                hblank: function () {
+                    _val &= 0xFC
+                },
+                vblank: function () {
+                    _val &= 0xFC;
+                    _val += 1
+                },
+                oamlock: function () {
+                    _val &= 0xFC;
+                    _val += 2
+                },
+                ovramlock: function () {
+                    _val &= 0xFC;
+                    _val += 3
+                }
             }
         }
-    })();
-    //@formatter:on
+    })(this);
 
 
     /**
