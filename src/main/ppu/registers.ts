@@ -49,12 +49,12 @@ export class Registers {
     // 01 : In VBLANK
     // 02 : Searching
     // 03 : VRAM read mode
-    public stat = (function () {
+    public stat = (function (self : Registers) {
         let _val = 0x00;
         let set  = (val : number, intr : Interrupt) => {
             return ()=> {
                 _val |= val ;
-                this.memory.interrupt.setInterruptFlag(intr)
+                self.memory.interrupt.setInterruptFlag(intr)
             }
         };
         let unset = (val : number)=> { return ()=> {_val &= ~val}};
@@ -93,7 +93,7 @@ export class Registers {
             }
 
         }
-    })();
+    })(this);
     //@formatter:on
 
 
