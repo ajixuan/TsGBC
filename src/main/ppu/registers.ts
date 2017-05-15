@@ -26,89 +26,69 @@ export class Registers {
 
     //@formatter:off
     // LCD Controller
-    public lcdc  = (function(self : Registers){
+    public lcdc  = (function(){
         let _val = 0x00;
+        let set  = (val : number)=> { _val |= val };
+        let unset = (val : number)=> { _val &= ~val };
+        let get = (val : number)=> { return _val & val ? 1 : 0};
         return { //Toggles for the flags
-            set : {
-                lcdon :     function(){
-                    _val ^= 0x80
-                    if(!this.lcdon){
-                        //Set ly
-                        self.setLY(0);
-                    }
-                },
-                bgwin :     function(){ _val ^= 0x40 },
-                winon :     function(){ _val ^= 0x20 },
-                tilemap :   function(){ _val ^= 0x10 },
-                bgmap :     function(){ _val ^= 0x08 },
-                objsize :   function(){ _val ^= 0x04 },
-                objon :     function(){ _val ^= 0x02 },
-                bgon :      function(){ _val ^= 0x01 },
-            },
-            lcdon :     function(){ return (_val &= 0x80) ? 1 : 0  ;},
-            bgwin :     function(){ return (_val &= 0x40) ? 1 : 0  },
-            winon :     function(){ return (_val &= 0x20) ? 1 : 0  },
-            tilemap :   function(){ return (_val &= 0x10) ? 1 : 0  },
-            bgmap :     function(){ return (_val &= 0x08) ? 1 : 0  },
-            objsize :   function(){ return (_val &= 0x04) ? 1 : 0  },
-            objon :     function(){ return (_val &= 0x02) ? 1 : 0  },
-            bgon :      function(){ return (_val &= 0x01) ? 1 : 0  },
-            get : function(){ return _val },
+            lcdon :     {set : set(0x80), unset : unset(0x80), get : get(0x80)},
+            bgwin :     {set : set(0x40), unset : unset(0x40), get : get(0x40)},
+            winon :     {set : set(0x20), unset : unset(0x20), get : get(0x20)},
+            tilemap :   {set : set(0x10), unset : unset(0x10), get : get(0x10)},
+            bgmap :     {set : set(0x08), unset : unset(0x08), get : get(0x08)},
+            objsize :   {set : set(0x04), unset : unset(0x04), get : get(0x04)},
+            objon :     {set : set(0x02), unset : unset(0x02), get : get(0x02)},
+            bgon :      {set : set(0x01), unset : unset(0x01), get : get(0x01)},
+            getAll :    function(){return _val}
         }
-    })(this);
-    //@formatter:on
+    })();
 
     // Status of LCD Controller pg 55
     // 00 : enable cpu access to display RAM
     // 01 : In VBLANK
     // 02 : Searching
     // 03 : VRAM read mode
-    public stat = (function (self: Registers) {
-        let _val = 0x00;
+    public stat = (function () {
+        let _val = 0x85;
+        let set  = (val : number)=> { _val |= val };
+        let unset = (val : number)=> { _val &= ~val };
+        let get = (val : number)=> { return _val & val ? 1 : 0};
+        let setFlag= (val : number) => { _val &= 0xFC; _val |= val };
         return {
-            get: function () {
-                return _val;
-            },
-            set: function (val) {
-                _val = val
-            },
+            getAll: function () { return _val },
             interrupts: {
-                lycoincidence: function () {
-                    _val ^= 0x40;
-                    if (_val &= 0x40) this.memory.interrupt.setInterruptFlag(Interrupts.LCDC);
+                lycoincidence: {
+                    set : set(0x40).then(this.memory.setInterruptFlag(Interrupts.LCDC)),
+                    unset : unset(0x40),
+                    get : get(0x40)
                 },
-                oaminterrupt: function () {
-                    _val ^= 0x20;
-                    if (_val &= 0x20) this.memory.interrupt.setInterruptFlag(Interrupts.LCDC);
+                oaminterrupt: {
+                    set : set(0x20).then(this.memory.setInterruptFlag(Interrupts.LCDC)),
+                    unset : unset(0x20),
+                    get : get(0x20)
                 },
-                vblank: function () {
-                    _val ^= 0x11;
-                    if (_val &= 0x11) this.memory.interrupt.setInterruptFlag(Interrupts.VBLANK);
+                vblank: {
+                    set : set(0x11).then(this.memory.setInterruptFlag(Interrupts.VBLANK)),
+                    unset : unset(0x11),
+                    get : get(0x11)
                 },
-                hblank: function () {
-                    _val ^= 0x8;
-                    if (_val &= 0x8) this.memory.interrupt.setInterruptFlag(Interrupts.LCDC);
+                hblank: {
+                    set : set(0x08).then(this.memory.setInterruptFlag(Interrupts.LCDC)),
+                    unset : unset(0x08),
+                    get : get(0x08)
                 },
             },
             modeFlag: {
-                hblank: function () {
-                    _val &= 0xFC
-                },
-                vblank: function () {
-                    _val &= 0xFC;
-                    _val += 1
-                },
-                oamlock: function () {
-                    _val &= 0xFC;
-                    _val += 2
-                },
-                ovramlock: function () {
-                    _val &= 0xFC;
-                    _val += 3
-                }
+                hblank: {set : setFlag(0x00), get : function(){return _val & 0xFC}},
+                vblank: {set : setFlag(0x01), get : function(){return _val & 0xFC}},
+                oamlock: {set : setFlag(0x02), get : function(){return _val & 0xFC}},
+                ovramlock: {set : setFlag(0x03), get : function(){return _val & 0xFC}}
             }
+
         }
-    })(this);
+    })();
+    //@formatter:on
 
 
     /**
@@ -143,12 +123,9 @@ export class Registers {
         this.wx = 0x00;
         this.wy = 0x00;
 
-        //0x91 @formatter:off
-        this.lcdc.set.lcdon(); this.lcdc.set.tilemap(); this.lcdc.set.bgon();
-        //@formatter:on
-
-        //0x85
-        this.stat.set(0x85);
+        this.lcdc.lcdon.set;
+        this.lcdc.tilemap.set;
+        this.lcdc.bgon.set;
     }
 
     public setLCDC(lcdc: number): void {

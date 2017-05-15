@@ -103,62 +103,63 @@ export class Ppu {
      */
     public renderscan(): void {
 
-
         //Set the ly,lyc coincidence interrupt
-        if(this.registers.ly == this.registers.lyc){
+        if (this.registers.ly == this.registers.lyc) {
             this.registers.stat.interrupts.lycoincidence();
         }
 
-        //Render bg data (0x3FF addresses)
-        switch (this.registers.stat.get() & 0x03) {
-            case 0: //Horizontal blanking
-                this.registers.stat.interrupts.hblank();
-                break;
-            case 1: //Vertical Blank
-                if(this.registers.ly > 153){
-                    this.registers.ly = 0;
+        //Hblank
+        if (this.registers.stat.modeFlag.hblank.get()) {
+            this.registers.stat.interrupts.hblank.set;
+
+            //Vblank
+        } else if (this.registers.stat.modeFlag.vblank.get()) {
+            if (this.registers.ly > 153) {
+                this.registers.ly = 0;
+                this.registers.stat.interrupts.vblank();
+            } else {
+                this.registers.ly++;
+            }
+
+            //OAM Read
+        } else if (this.registers.stat.modeFlag.oamlock) {
+            this.registers.lcdc.bgon;
+
+            //Vram rendering
+        } else if (this.registers.stat.modeFlag.ovramlock) {
+            if (this.registers.lcdc.bgon.get & this.registers.lcdc.lcdon.get) {   //If bg and lcd is on for lcdc
+
+                if (this.registers.ly == 144) {
+                    //Vertical blank
                     this.registers.stat.interrupts.vblank();
-                } else {
                     this.registers.ly++;
-                }
-                break;
-            case 2: //OAM Rendering
-                break;
-            case 3: //VRAM Rendering
-                if(this.registers.lcdc.bgon() & this.registers.lcdc.lcdon()){   //If bg and lcd is on for lcdc
 
-                    if (this.registers.ly == 144) {
-                        //Vertical blank
-                        this.registers.stat.interrupts.vblank();
-                        this.registers.ly++;
+                    //this.screen.printBuffer();
 
-                        //this.screen.printBuffer();
+                } else { // render at ly
+                    //Get the tile of our current ly
+                    let y, x, tile, ycoor, xcoor;
 
-                    } else { // render at ly
-                        //Get the tile of our current ly
-                        let y, x, tile, ycoor, xcoor;
+                    //Y coordinate does not change during line render
+                    y = this.registers.ly + this.registers.scy;
+                    ycoor = Screen.TILES * Math.floor(y / Screen.PIXELS);
 
-                        //Y coordinate does not change during line render
-                        y = this.registers.ly + this.registers.scy;
-                        ycoor = Screen.TILES * Math.floor(y / Screen.PIXELS);
+                    //Render whole line
+                    for (let cell = 0; cell < this.screen.WIDTH; cell++) {
+                        x = this.registers.scx + cell;
+                        xcoor = Math.floor(x / Screen.PIXELS);
 
-                        //Render whole line
-                        for (let cell = 0; cell < this.screen.WIDTH; cell++) {
-                            x = this.registers.scx + cell;
-                            xcoor = Math.floor(x / Screen.PIXELS);
-
-                            //Get new tile
-                            if(cell % Screen.PIXELS == 0){
-                                tile = this.getVramTile(xcoor + ycoor);
-                            }
-
-                            this.screen.setBufferPixel(x, y, tile[y % Screen.PIXELS][x % Screen.PIXELS]);
+                        //Get new tile
+                        if (cell % Screen.PIXELS == 0) {
+                            tile = this.getVramTile(xcoor + ycoor);
                         }
-                        this.screen.printBuffer();
 
+                        this.screen.setBufferPixel(x, y, tile[y % Screen.PIXELS][x % Screen.PIXELS]);
                     }
+                    this.screen.printBuffer();
+
                 }
-                break;
+            }
         }
     }
 
@@ -170,14 +171,14 @@ export class Ppu {
     public writeByte(addr: number, val: number): void {
         switch (addr) {
             case 0xFF40:
-                if(val & 0x01) this.registers.lcdc.set.bgon();
-                if(val & 0x02) this.registers.lcdc.set.objon();
-                if(val & 0x04) this.registers.lcdc.set.objsize();
-                if(val & 0x08) this.registers.lcdc.set.tilemap();
-                if(val & 0x10) this.registers.lcdc.set.bgwin();
-                if(val & 0x20) this.registers.lcdc.set.objon();
-                if(val & 0x40) this.registers.lcdc.set.bgwin();
-                if(val & 0x80) this.registers.lcdc.set.lcdon();
+                if (val & 0x01) this.registers.lcdc.bgon.set;
+                if (val & 0x02) this.registers.lcdc.objon.set;
+                if (val & 0x04) this.registers.lcdc.objsize.set;
+                if (val & 0x08) this.registers.lcdc.tilemap.set;
+                if (val & 0x10) this.registers.lcdc.bgwin.set;
+                if (val & 0x20) this.registers.lcdc.objon.set;
+                if (val & 0x40) this.registers.lcdc.bgwin.set;
+                if (val & 0x80) this.registers.lcdc.lcdon.set;
                 break;
             case 0xFF42:
                 this.registers.scy = val;
@@ -222,11 +223,12 @@ export class Ppu {
         }
     }
 
-    public readByte(addr: number): number {
+    public
+    readByte(addr: number): number {
 
         switch (addr) {
             case 0xFF40:
-                return this.registers.lcdc.get();
+                return this.registers.lcdc.getAll();
             case 0xFF42:
                 return this.registers.scy;
             case 0xFF43:
