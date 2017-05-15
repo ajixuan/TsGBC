@@ -105,33 +105,33 @@ export class Ppu {
 
         //Set the ly,lyc coincidence interrupt
         if (this.registers.ly == this.registers.lyc) {
-            this.registers.stat.interrupts.lycoincidence();
+            this.registers.stat.interrupts.lycoincidence.set();
         }
 
         //Hblank
         if (this.registers.stat.modeFlag.hblank.get()) {
-            this.registers.stat.interrupts.hblank.set;
+            this.registers.stat.interrupts.hblank.set();
 
             //Vblank
         } else if (this.registers.stat.modeFlag.vblank.get()) {
             if (this.registers.ly > 153) {
                 this.registers.ly = 0;
-                this.registers.stat.interrupts.vblank();
+                this.registers.stat.interrupts.vblank.set();
             } else {
                 this.registers.ly++;
             }
 
             //OAM Read
         } else if (this.registers.stat.modeFlag.oamlock) {
-            this.registers.lcdc.bgon;
+            this.registers.lcdc.bgon.set();
 
             //Vram rendering
         } else if (this.registers.stat.modeFlag.ovramlock) {
-            if (this.registers.lcdc.bgon.get & this.registers.lcdc.lcdon.get) {   //If bg and lcd is on for lcdc
+            if (this.registers.lcdc.bgon.get() & this.registers.lcdc.lcdon.get()) {   //If bg and lcd is on for lcdc
 
                 if (this.registers.ly == 144) {
                     //Vertical blank
-                    this.registers.stat.interrupts.vblank();
+                    this.registers.stat.interrupts.vblank.set();
                     this.registers.ly++;
 
                     //this.screen.printBuffer();
@@ -171,14 +171,14 @@ export class Ppu {
     public writeByte(addr: number, val: number): void {
         switch (addr) {
             case 0xFF40:
-                if (val & 0x01) this.registers.lcdc.bgon.set;
-                if (val & 0x02) this.registers.lcdc.objon.set;
-                if (val & 0x04) this.registers.lcdc.objsize.set;
-                if (val & 0x08) this.registers.lcdc.tilemap.set;
-                if (val & 0x10) this.registers.lcdc.bgwin.set;
-                if (val & 0x20) this.registers.lcdc.objon.set;
-                if (val & 0x40) this.registers.lcdc.bgwin.set;
-                if (val & 0x80) this.registers.lcdc.lcdon.set;
+                if (val & 0x01) this.registers.lcdc.bgon.set();
+                if (val & 0x02) this.registers.lcdc.objon.set();
+                if (val & 0x04) this.registers.lcdc.objsize.set();
+                if (val & 0x08) this.registers.lcdc.tilemap.set();
+                if (val & 0x10) this.registers.lcdc.bgwin.set();
+                if (val & 0x20) this.registers.lcdc.objon.set();
+                if (val & 0x40) this.registers.lcdc.bgwin.set();
+                if (val & 0x80) this.registers.lcdc.lcdon.set();
                 break;
             case 0xFF42:
                 this.registers.scy = val;

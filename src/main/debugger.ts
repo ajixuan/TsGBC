@@ -12,15 +12,15 @@ export class Debugger {
             return;
         }
 
-        if (Debugger.gameboy == null) {0
+        if (Debugger.gameboy == null) {
             console.error("Error: Debugger doesn't have GameBoy set!");
         }
 
-        var gameboy = Debugger.gameboy;
+        let gameboy = Debugger.gameboy;
 
         if (gameboy.cpu.last == null) {
-            var eventStr = "ERROR";
-            var eventElement = $(".log ul");
+            let eventStr = "ERROR";
+            let eventElement = $(".log ul");
             eventElement.append("<li class='error'>" + eventStr + "</li>");
             $(".log").scrollTop($(".log").prop("scrollHeight"));
             return;
@@ -47,9 +47,14 @@ export class Debugger {
         $('#operand').html(gameboy.cpu.last.opaddr.toString(16).toUpperCase());
 
         //PPU Register
-        $('#lcdc').html("0x" + gameboy.ppu.registers.lcdc.get().toString(16));
-        $('#stat').html("0x" + gameboy.ppu.registers.stat.get().toString(16));
+        $('#lcdc').html("0x" + gameboy.ppu.registers.lcdc.getAll().toString(16));
+        $('#stat').html("0x" + gameboy.ppu.registers.stat.getAll().toString(16));
         $('#ly').html(gameboy.ppu.registers.ly.toString());
+
+        //Interrupts
+        $('#ime').html("0x" + gameboy.memory.interrupt.ime.toString(16));
+        $('#if').html("0x" + gameboy.memory.interrupt.if.toString(16));
+        $('#ie').html("0x" + gameboy.memory.interrupt.ie.toString(16));
 
 
         if (gameboy.cartridge.type) {

@@ -1,5 +1,5 @@
 import {Memory} from "../memory/memory";
-import {Interrupts} from "../io/interrupts"
+import {Interrupt, Interrupts} from "../io/interrupts"
 
 /**
  * Created by hkamran on 12/16/2016.
@@ -28,9 +28,9 @@ export class Registers {
     // LCD Controller
     public lcdc  = (function(){
         let _val = 0x00;
-        let set  = (val : number)=> { _val |= val };
-        let unset = (val : number)=> { _val &= ~val };
-        let get = (val : number)=> { return _val & val ? 1 : 0};
+        let set  = (val : number)=> { return ()=> { _val |= val } };
+        let unset = (val : number)=> {  return ()=> {_val &= ~val} };
+        let get = (val : number)=> { return ()=> { return _val & val ? 1 : 0} };
         return { //Toggles for the flags
             lcdon :     {set : set(0x80), unset : unset(0x80), get : get(0x80)},
             bgwin :     {set : set(0x40), unset : unset(0x40), get : get(0x40)},
@@ -50,31 +50,37 @@ export class Registers {
     // 02 : Searching
     // 03 : VRAM read mode
     public stat = (function () {
-        let _val = 0x85;
-        let set  = (val : number)=> { _val |= val };
-        let unset = (val : number)=> { _val &= ~val };
-        let get = (val : number)=> { return _val & val ? 1 : 0};
-        let setFlag= (val : number) => { _val &= 0xFC; _val |= val };
+        let _val = 0x00;
+        let set  = (val : number, intr : Interrupt) => {
+            return ()=> {
+                _val |= val ;
+                this.memory.interrupt.setInterruptFlag(intr)
+            }
+        };
+        let unset = (val : number)=> { return ()=> {_val &= ~val}};
+        let get = (val : number)=> { return ()=> { return _val & val ? 1 : 0}};
+        let setFlag= (val : number) => { return ()=> {_val &= 0xFC; _val |= val}};
         return {
             getAll: function () { return _val },
+            reset : function(){ _val = 0x85},
             interrupts: {
                 lycoincidence: {
-                    set : set(0x40).then(this.memory.setInterruptFlag(Interrupts.LCDC)),
+                    set : set(0x40, Interrupts.LCDC),
                     unset : unset(0x40),
                     get : get(0x40)
                 },
                 oaminterrupt: {
-                    set : set(0x20).then(this.memory.setInterruptFlag(Interrupts.LCDC)),
+                    set : set(0x20, Interrupts.LCDC),
                     unset : unset(0x20),
                     get : get(0x20)
                 },
                 vblank: {
-                    set : set(0x11).then(this.memory.setInterruptFlag(Interrupts.VBLANK)),
+                    set : set(0x11, Interrupts.VBLANK),
                     unset : unset(0x11),
                     get : get(0x11)
                 },
                 hblank: {
-                    set : set(0x08).then(this.memory.setInterruptFlag(Interrupts.LCDC)),
+                    set : set(0x08, Interrupts.LCDC),
                     unset : unset(0x08),
                     get : get(0x08)
                 },
@@ -123,9 +129,10 @@ export class Registers {
         this.wx = 0x00;
         this.wy = 0x00;
 
-        this.lcdc.lcdon.set;
-        this.lcdc.tilemap.set;
-        this.lcdc.bgon.set;
+        this.stat.reset();
+        this.lcdc.lcdon.set();
+        this.lcdc.tilemap.set();
+        this.lcdc.bgon.set();
     }
 
     public setLCDC(lcdc: number): void {
