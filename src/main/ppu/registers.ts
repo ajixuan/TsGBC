@@ -26,13 +26,16 @@ export class Registers {
 
     //@formatter:off
     // LCD Controller
-    public lcdc  = (function(){
+    public lcdc  = (function(self : Registers){
         let _val = 0x00;
         let set  = (val : number)=> { return ()=> { _val |= val } };
-        let unset = (val : number)=> {  return ()=> {_val &= ~val} };
+        let unset = (val : number, callback ?: () => void )=> {  return ()=> {_val &= ~val; callback()} };
         let get = (val : number)=> { return ()=> { return _val & val ? 1 : 0} };
+
+        //Callback functions
+        let lyreset = () => { self.ly = 0 };
         return { //Toggles for the flags
-            lcdon :     {set : set(0x80), unset : unset(0x80), get : get(0x80)},
+            lcdon :     {set : set(0x80), unset : unset(0x80, lyreset), get : get(0x80)},
             bgwin :     {set : set(0x40), unset : unset(0x40), get : get(0x40)},
             winon :     {set : set(0x20), unset : unset(0x20), get : get(0x20)},
             tilemap :   {set : set(0x10), unset : unset(0x10), get : get(0x10)},
@@ -42,7 +45,7 @@ export class Registers {
             bgon :      {set : set(0x01), unset : unset(0x01), get : get(0x01)},
             getAll :    function(){return _val}
         }
-    })();
+    })(this);
 
     // Status of LCD Controller pg 55
     // 00 : enable cpu access to display RAM
@@ -91,7 +94,6 @@ export class Registers {
                 oamlock: {set : setFlag(0x02), get : function(){return _val & 0xFC}},
                 ovramlock: {set : setFlag(0x03), get : function(){return _val & 0xFC}}
             }
-
         }
     })(this);
     //@formatter:on

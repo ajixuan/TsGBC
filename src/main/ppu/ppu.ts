@@ -104,16 +104,18 @@ export class Ppu {
     public renderscan(): void {
 
         //Set the ly,lyc coincidence interrupt
+        /*
         if (this.registers.ly == this.registers.lyc) {
             this.registers.stat.interrupts.lycoincidence.set();
-        }
+        }*/
 
-        //Hblank
+        //Cycle through stat
         if (this.registers.stat.modeFlag.hblank.get()) {
             this.registers.stat.interrupts.hblank.set();
 
-            //Vblank
         } else if (this.registers.stat.modeFlag.vblank.get()) {
+
+            //Vblank complete
             if (this.registers.ly > 153) {
                 this.registers.ly = 0;
                 this.registers.stat.interrupts.vblank.set();
@@ -121,22 +123,21 @@ export class Ppu {
                 this.registers.ly++;
             }
 
-            //OAM Read
-        } else if (this.registers.stat.modeFlag.oamlock) {
+        } else if (this.registers.stat.modeFlag.oamlock.get()) {
             this.registers.lcdc.bgon.set();
 
-            //Vram rendering
-        } else if (this.registers.stat.modeFlag.ovramlock) {
-            if (this.registers.lcdc.bgon.get() & this.registers.lcdc.lcdon.get()) {   //If bg and lcd is on for lcdc
+        } else if (this.registers.stat.modeFlag.ovramlock.get()) {
+            if (this.registers.lcdc.bgon.get() & this.registers.lcdc.lcdon.get()) {
 
+                //Vertical blank
                 if (this.registers.ly == 144) {
-                    //Vertical blank
                     this.registers.stat.interrupts.vblank.set();
                     this.registers.ly++;
 
                     //this.screen.printBuffer();
 
-                } else { // render at ly
+                //Render one ly
+                } else {
                     //Get the tile of our current ly
                     let y, x, tile, ycoor, xcoor;
 
