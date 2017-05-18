@@ -1028,7 +1028,6 @@ export class Operations {
         // pg 70
         //----------------------------------------
 
-
         this.operations[0xF2] = {
             name: "LD",
             cycle: 8,
@@ -1042,6 +1041,17 @@ export class Operations {
                 registers.setA(val);
             }
         };
+
+        this.operations[0xF3] = {
+            name: "Di",
+            cycle : 4,
+            mode : immediate,
+            size : 1,
+            execute (pc : number){
+                this.cpu.interrupts.disableAllInterrupts();
+            }
+        };
+
 
         //----------------------------------------
         // LD (C),A - Put value at address A to HL
