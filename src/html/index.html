@@ -106,68 +106,90 @@
                 </div>
             </fieldset>
         </div>
+        <div style="display: flex; flex-direction: row;">
+            <fieldset>
+                <legend>CPU</legend>
+                <div style="color: #bebebe; display: inline-block">
+                    <ul style="list-style: none;">
+                        <li>
+                            <span class="header">PC:</span>
+                            <span id="pc"></span>
+                        </li>
+                        <li>
+                            <span class="header">SP:</span>
+                            <span id="sp"></span>
+                        </li>
+
+                        <br/>
+                        <li>
+                            <span class="header">Flags:</span>
+                            <span id="flags"></span>
+                        </li>
+
+                        <li>
+                            <span class="header">AF:</span>
+                            <span id="af"></span>
+                        </li>
+                        <li>
+                            <span class="header">BC:</span>
+                            <span id="bc"></span>
+                        </li>
+                        <li>
+                            <span class="header">DE:</span>
+                            <span id="de"></span>
+                        </li>
+                        <li>
+                            <span class="header">HL:</span>
+                            <span id="hl"></span>
+                        </li>
+                    </ul>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>PPU Registers</legend>
+                <div style="color: #bebebe; display: inline-block">
+                    <ul style="list-style: none;">
+                        <li>
+                            <span class="header">LCDC:</span>
+                            <span id="lcdc"></span>
+                        </li>
+                        <li>
+                            <span class="header">STAT:</span>
+                            <span id="stat"></span>
+                        </li>
+
+                        <br/>
+                        <li>
+                            <span class="header">LY:</span>
+                            <span id="ly"></span>
+                        </li>
+
+                        <li>
+                            <span class="header">LYC:</span>
+                            <span id="lyc"></span>
+                        </li>
+                    </ul>
+                </div>
+            </fieldset>
+        </div>
 
         <fieldset>
-            <legend>CPU</legend>
+            <legend>Interrupts</legend>
             <div style="color: #bebebe; display: inline-block">
                 <ul style="list-style: none;">
                     <li>
-                        <span class="header">PC:</span>
-                        <span id="pc"></span>
+                        <span class="header">IME:</span>
+                        <span id="ime"></span>
                     </li>
                     <li>
-                        <span class="header">SP:</span>
-                        <span id="sp"></span>
+                        <span class="header">IE:</span>
+                        <span id="ie"></span>
                     </li>
 
                     <br/>
                     <li>
-                        <span class="header">Flags:</span>
-                        <span id="flags"></span>
-                    </li>
-
-                    <li>
-                        <span class="header">AF:</span>
-                        <span id="af"></span>
-                    </li>
-                    <li>
-                        <span class="header">BC:</span>
-                        <span id="bc"></span>
-                    </li>
-                    <li>
-                        <span class="header">DE:</span>
-                        <span id="de"></span>
-                    </li>
-                    <li>
-                        <span class="header">HL:</span>
-                        <span id="hl"></span>
-                    </li>
-                </ul>
-            </div>
-        </fieldset>
-
-        <fieldset>
-            <legend>PPU Registers</legend>
-            <div style="color: #bebebe; display: inline-block">
-                <ul style="list-style: none;">
-                    <li>
-                        <span class="header">LCDC:</span>
-                        <span id="lcdc"></span>
-                    </li>
-                    <li>
-                        <span class="header">STAT:</span>
-                        <span id="stat"></span>
-                    </li>
-
-                    <br/>
-                    <li>
-                        <span class="header">LY:</span>
-                        <span id="ly"></span>
-                    </li>
-
-                    <li>
-                        <span class="header">LYC:</span>
-                        <span id="lyc"></span>
+                        <span class="header">IF:</span>
+                        <span id="if"></span>
                     </li>
                 </ul>
             </div>
@@ -232,7 +254,7 @@
 
     }
 
-    var stop = function(){
+    var stop = function () {
         gameboy.stop();
     }
 
