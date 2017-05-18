@@ -6,7 +6,7 @@ export class Ppu {
     private screen: Screen;
     private memory: Memory;
     private tileset: Array<Array<Array<number>>>;
-    private clock : number = 0;
+    private clock: number = 0;
     public registers: Registers;
 
     constructor(memory: Memory) {
@@ -103,18 +103,18 @@ export class Ppu {
     /**
      * Render scan on one tick
      */
-    public renderscan(cycles : number): void {
+    public renderscan(cycles: number): void {
 
         this.clock += cycles;
 
         //Set the ly,lyc coincidence interrupt
         /*
-        if (this.registers.ly == this.registers.lyc) {
-            this.registers.stat.interrupts.lycoincidence.set();
-        }*/
+         if (this.registers.ly == this.registers.lyc) {
+         this.registers.stat.interrupts.lycoincidence.set();
+         }*/
 
         //Cycle through stat
-        if (this.registers.stat.modeFlag.hblank.get() && this.clock >=204) {
+        if (this.registers.stat.modeFlag.hblank.get() && this.clock >= 204) {
             this.registers.stat.interrupts.hblank.set();
             this.clock = 0;
 
@@ -142,7 +142,7 @@ export class Ppu {
                     this.registers.stat.interrupts.vblank.set();
                     //this.screen.printBuffer();
 
-                //Render one ly
+                    //Render one ly
                 } else {
                     //Get the tile of our current ly
                     let y, x, tile, ycoor, xcoor;
@@ -174,11 +174,42 @@ export class Ppu {
     }
 
     /**
+     * Method for external processes to make writes to vram.
+     * VRAM is ppu controlled, external processes must
+     * make request to write to vram
+     */
+    public requestWrite(addr: number, val: number): void {
+
+        //Vram
+        if (addr < 0xA000) {
+            if (!this.registers.stat.modeFlag.vramlock.get()) {
+                console.log("ERROR: VRAM locked");
+                return;
+            }
+
+            this.memory.vram[addr - 0x8000] = val;
+            this.updateTile(addr);
+
+        //OAM
+        } else if(addr < 0xFEA0){
+            if (!this.registers.stat.modeFlag.vramlock.get()) {
+                console.log("ERROR: OAM locked");
+                return;
+            }
+
+            this.memory.oam[addr - 0xFE00] = val;
+
+        } else {
+            this.writeByte(addr, val);
+        }
+    }
+
+    /**
      * Gpu handles writing bytes to its own registers
      * @param addr
      * @param val
      */
-    public writeByte(addr: number, val: number): void {
+    private writeByte(addr: number, val: number): void {
         switch (addr) {
             case 0xFF40:
                 if (val & 0x01) this.registers.lcdc.bgon.set();
@@ -233,8 +264,7 @@ export class Ppu {
         }
     }
 
-    public
-    readByte(addr: number): number {
+    public readByte(addr: number): number {
 
         switch (addr) {
             case 0xFF40:

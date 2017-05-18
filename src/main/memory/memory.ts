@@ -34,21 +34,20 @@ export class Memory {
         if (addr < 0x8000) {
             this.cartridge.writeByte(addr, val);
         } else if (addr < 0xA000) {
-            this.vram[addr - 0x8000] = val;
-            this.ppu.updateTile(addr);
+            this.ppu.requestWrite(addr, val);
         } else if (addr < 0xC000) {
             this.cartridge.writeByte(addr, val);
         } else if (addr < 0xFE00) {
             this.cpu.ram[(addr - 0xC000) % 0x2000] = val;
         } else if (addr < 0xFEA0) {
-            this.oam[addr - 0xFE00] = val;
+            this.ppu.requestWrite(addr, val);
         } else if (addr < 0xFF80) {
             if (addr < 0xFF00) {
                 throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
             } else if (addr == 0xFF0F) {
                 this.interrupt.if = val & 0xFF;
             } else if (addr == 0xFF40) {
-                this.ppu.writeByte(addr, val);
+                this.ppu.requestWrite(addr, val);
             } else if (addr < 0xFF80) {
                 throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
             }
