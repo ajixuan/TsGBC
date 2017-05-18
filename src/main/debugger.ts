@@ -26,7 +26,7 @@ export class Debugger {
             return;
         }
 
-        $('#cpucycles').html(gameboy.cpu.cycles.toString());
+        $('#cpucycles').html(gameboy.cpu.clock.t.toString());
         $('#ticks').html(gameboy.ticks.toString());
         $('#pc').html("0x" + gameboy.cpu.registers.getPC().toString(16).toUpperCase());
         $('#sp').html("0x" + gameboy.cpu.registers.getSP().toString(16).toUpperCase());

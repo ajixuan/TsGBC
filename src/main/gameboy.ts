@@ -33,8 +33,8 @@ export class GameBoy {
     }
 
     public tick() : void {
-        this.cpu.tick();
-        this.ppu.renderscan();
+        let cycles = this.cpu.tick();
+        this.ppu.renderscan(cycles);
         this.ticks++;
     }
 
@@ -44,7 +44,6 @@ export class GameBoy {
             window.requestAnimationFrame(this.nextFrame.bind(this));
         }
     }
-
 
     public run(): void {
         this.running = true;

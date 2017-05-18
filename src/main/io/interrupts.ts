@@ -17,7 +17,7 @@ export class Interrupts {
      ||--------- Serial
      |---------- Controller
      */
-    public if : number = 0x0;
+    public if: number = 0x0;
 
     /*
      Name: IE (Register)
@@ -31,8 +31,8 @@ export class Interrupts {
      |||-------- Timer
      ||--------- Serial
      |---------- Controller
-    */
-    public ie : number = 0x0;
+     */
+    public ie: number = 0x0;
 
     /*
      Name: IME (Interrupt Master Enable)
@@ -42,73 +42,73 @@ export class Interrupts {
      Executing the operation DI opcode to disable all interrupts.
      Executing the operation IE opcode to enable all interrupts.
      */
-    public ime : number = 0x0;
+    public ime: number = 0x0;
 
 
-    public static VBLANK : Interrupt = {
-        name : "VBLANK",
-        mask : 0x1,
-        id : 0,
-        address : 0x0040
+    public static VBLANK: Interrupt = {
+        name: "VBLANK",
+        mask: 0x1,
+        id: 0,
+        address: 0x0040
     };
 
-    public static LCDC : Interrupt = {
-        name : "LCDC",
-        mask : 0x2,
-        id : 1,
-        address : 0x0048
+    public static LCDC: Interrupt = {
+        name: "LCDC",
+        mask: 0x2,
+        id: 1,
+        address: 0x0048
     };
 
-    public static TIMER : Interrupt = {
-        name : "TIMER",
-        mask : 0x4,
-        id : 2,
-        address : 0x0050
+    public static TIMER: Interrupt = {
+        name: "TIMER",
+        mask: 0x4,
+        id: 2,
+        address: 0x0050
     };
 
-    public static SERIAL : Interrupt = {
-        name : "SERIAL",
-        mask : 0x8,
-        id : 3,
-        address : 0x0058
+    public static SERIAL: Interrupt = {
+        name: "SERIAL",
+        mask: 0x8,
+        id: 3,
+        address: 0x0058
     };
 
-    public static JOYPAD : Interrupt = {
-        name : "JOYPAD",
-        mask : 0x10,
-        id : 4,
-        address : 0x0060
+    public static JOYPAD: Interrupt = {
+        name: "JOYPAD",
+        mask: 0x10,
+        id: 4,
+        address: 0x0060
     };
 
     constructor() {
     }
 
-    public disableAllInterrupts() : void {
+    public disableAllInterrupts(): void {
         this.ime = 0;
     }
 
-    public enableAllInterrupts() : void {
+    public enableAllInterrupts(): void {
         this.ime = 1;
     }
 
-    public hasInterrupts() : boolean {
-        var isInterruptEnabled : boolean = ((this.ime & 0x1) == 1);
-        var hasInterrupt : boolean = (this.ie != 0);
+    public hasInterrupts(): boolean {
+        var isInterruptEnabled: boolean = ((this.ime & 0x1) == 1);
+        var hasInterrupt: boolean = (this.ie != 0);
 
         return isInterruptEnabled && hasInterrupt;
     }
 
-    public clearInterruptFlag(interrupt : Interrupt) {
+    public clearInterruptFlag(interrupt: Interrupt) {
         var mask = (1 << (interrupt.id + 1)) - 1;
         this.ie = this.ie & mask;
     }
 
-    public setInterruptFlag(interrupt : Interrupt) {
+    public setInterruptFlag(interrupt: Interrupt) {
         var mask = 1 << interrupt.id;
         this.ie = this.ie | mask;
     }
 
-    public getInterrupt() : Interrupt {
+    public getInterrupt(): Interrupt {
         var result = (this.ie & this.ie);
 
         if (result == Interrupts.VBLANK.mask) {
@@ -138,8 +138,8 @@ export class Interrupts {
 }
 
 export interface Interrupt {
-    name : string;
-    mask : number;
-    id : number;
-    address : number;
+    name: string;
+    mask: number;
+    id: number;
+    address: number;
 }

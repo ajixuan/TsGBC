@@ -24,13 +24,17 @@ export class Registers {
     private sp : number = 0;
     private pc : number = 0;
 
+    public clock : {m : number, t : number} = {
+        m : 0,
+        t : 0
+    };
+
 
     constructor() {
         //Set flags to initial state
         this.setZeroFlag(1);
         this.setCarryFlag(1);
         this.setHalfFlag(1);
-
     }
 
     /**

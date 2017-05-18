@@ -12,11 +12,13 @@ export class Cpu {
     public operations: Operations;
     public stack: Stack;
     public interrupts: Interrupts;
-
-    public cycles: number;
     public halt: boolean;
 
     public last: {operation: Operation, opcode: number, opaddr: number};
+    public clock : {
+        m : number, //4,194,304Hz one cycle
+        t : number   //1,048,576Hz
+    };
 
     constructor(memory: Memory) {
         this.registers = new Registers();
@@ -38,8 +40,7 @@ export class Cpu {
         this.registers.setSP(0xFFFE);
         this.registers.setPC(0x100);
 
-        this.cycles = 0;
-
+        this.clock = { m : 0, t : 0 };
 
         this.last = {
             operation: this.operations.get(0x00),
@@ -85,11 +86,10 @@ export class Cpu {
 
         this.handledInterrupts();
 
-        var cycles = 0;
-        var pc = this.registers.getPC();
+        let pc = this.registers.getPC();
 
         //Get opcode
-        var opcode = this.memory.readByte(pc++);
+        let opcode = this.memory.readByte(pc++);
 
         if (this.halt) {
             opcode = 0x00; //NOP
@@ -97,7 +97,7 @@ export class Cpu {
         }
 
         //Get Operation
-        var operation = this.operations.get(opcode);
+        let operation = this.operations.get(opcode);
 
         if (operation == null) {
             this.last = null;
@@ -106,12 +106,12 @@ export class Cpu {
         }
 
         //Update Infromation
-        var oldPC = this.registers.getPC();
-        cycles += operation.cycle;
-        this.cycles += cycles;
+        let oldPC = this.registers.getPC();
+        this.clock.t += operation.cycle;
+        this.clock.m = this.clock.t /4;
 
         //Execute Operation
-        var opaddr = operation.mode.getValue(pc, operation.size - 1);
+        let opaddr = operation.mode.getValue(pc, operation.size - 1);
         operation.execute(opaddr);
 
         //If pc did not change during op execution, increment pc
@@ -128,7 +128,7 @@ export class Cpu {
         };
         Debugger.display();
 
-        return cycles;
+        return operation.cycle;
     }
 
 }

@@ -6,6 +6,7 @@ export class Ppu {
     private screen: Screen;
     private memory: Memory;
     private tileset: Array<Array<Array<number>>>;
+    private clock : number = 0;
     public registers: Registers;
 
     constructor(memory: Memory) {
@@ -23,6 +24,7 @@ export class Ppu {
     public reset(): void {
         this.tileset = [];
         this.registers.reset();
+        this.clock = 0;
 
         //Go through all tiles
         for (let i = 0; i < 384; i++) {
@@ -73,7 +75,7 @@ export class Ppu {
     }
 
     /**
-     * Helper function for getting the vram tile in tile
+     * Helper function for getting the vramlock tile in tile
      * object form
      * @param tile
      */
@@ -101,7 +103,9 @@ export class Ppu {
     /**
      * Render scan on one tick
      */
-    public renderscan(): void {
+    public renderscan(cycles : number): void {
+
+        this.clock += cycles;
 
         //Set the ly,lyc coincidence interrupt
         /*
@@ -110,30 +114,32 @@ export class Ppu {
         }*/
 
         //Cycle through stat
-        if (this.registers.stat.modeFlag.hblank.get()) {
+        if (this.registers.stat.modeFlag.hblank.get() && this.clock >=204) {
             this.registers.stat.interrupts.hblank.set();
+            this.clock = 0;
 
-        } else if (this.registers.stat.modeFlag.vblank.get()) {
+        } else if (this.registers.stat.modeFlag.vblank.get() && this.clock >= 456) {
+
+            this.registers.ly++;
+            this.clock = 0;
 
             //Vblank complete
             if (this.registers.ly > 153) {
                 this.registers.ly = 0;
-                this.registers.stat.interrupts.vblank.set();
-            } else {
-                this.registers.ly++;
+                this.registers.stat.interrupts.vblank.unset();
             }
 
-        } else if (this.registers.stat.modeFlag.oamlock.get()) {
+        } else if (this.registers.stat.modeFlag.oamlock.get() && this.clock >= 80) {
             this.registers.lcdc.bgon.set();
+            this.registers.stat.modeFlag.vramlock.set();
+            this.clock = 0;
 
-        } else if (this.registers.stat.modeFlag.ovramlock.get()) {
+        } else if (this.registers.stat.modeFlag.vramlock.get() && this.clock >= 172) {
             if (this.registers.lcdc.bgon.get() & this.registers.lcdc.lcdon.get()) {
 
                 //Vertical blank
                 if (this.registers.ly == 144) {
                     this.registers.stat.interrupts.vblank.set();
-                    this.registers.ly++;
-
                     //this.screen.printBuffer();
 
                 //Render one ly
@@ -160,6 +166,9 @@ export class Ppu {
                     this.screen.printBuffer();
 
                 }
+
+                this.registers.ly++;
+                this.clock = 0;
             }
         }
     }
