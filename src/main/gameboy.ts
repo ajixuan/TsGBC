@@ -32,14 +32,16 @@ export class GameBoy {
         this.ticks = 0;
     }
 
-    public tick() : void {
-        let cycles = this.cpu.tick();
-        this.ppu.renderscan(cycles);
-        this.ticks++;
+    public tick(val : number) : void {
+        for(let i =0; i < val; i++){
+            let cycles = this.cpu.tick();
+            this.ppu.renderscan(cycles);
+            this.ticks++;
+        }
     }
 
     private nextFrame(){
-        this.tick();
+        this.tick(1);
         if(this.running){
             window.requestAnimationFrame(this.nextFrame.bind(this));
         }
@@ -52,12 +54,5 @@ export class GameBoy {
 
     public stop() : void {
         this.running = false;
-    }
-
-    public tickFor(val) : void {
-        //TODO
-        for(let i = 0; i < val; i++){
-            this.tick();
-        }
     }
 }

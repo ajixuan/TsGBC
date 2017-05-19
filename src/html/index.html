@@ -14,12 +14,15 @@
             <canvas id="screen"></canvas>
         </div>
         <div style="display: flex; flex-direction: row; margin-left: 10px; ">
+            <input size="2" id="tickfor" value="1">
             <button onclick="tick()">Tick</button>
-            <button onclick="run()">Run</button>
-            <button onclick="stop()">Stop</button>
             <div style="flex-grow: 1"></div>
             <button onclick="grow()">+</button>
             <button onclick="shrink()">-</button>
+        </div>
+        <div style="display: flex; flex-direction: row; margin-left: 10px; ">
+            <button onclick="run()">Run</button>
+            <button onclick="stop()">Stop</button>
         </div>
 
         <div class="debugger" style="display: flex; flex-direction: row; margin-left: 10px; flex-grow: 1">
@@ -66,7 +69,7 @@
                         </li>
                         <li>
                             <span class="header">PPU Cycles:</span>
-                            <span id="ppuCycles">0</span>
+                            <span id="ppucycles">0</span>
                         </li>
                         <li>
                             <span class="header">Scanlines:</span>
@@ -245,8 +248,12 @@
 
     loadGameBoy();
 
+
+
+
     var tick = function () {
-        gameboy.tick();
+        var tickfor = $('#tickfor').val();
+        gameboy.tick(tickfor);
     }
 
     var run = function () {

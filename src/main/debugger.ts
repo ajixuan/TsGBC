@@ -27,6 +27,7 @@ export class Debugger {
         }
 
         $('#cpucycles').html(gameboy.cpu.clock.t.toString());
+        $('#ppucycles').html(gameboy.ppu.clock.toString());
         $('#ticks').html(gameboy.ticks.toString());
         $('#pc').html("0x" + gameboy.cpu.registers.getPC().toString(16).toUpperCase());
         $('#sp').html("0x" + gameboy.cpu.registers.getSP().toString(16).toUpperCase());
@@ -38,7 +39,6 @@ export class Debugger {
         $('#bc').html("0x" + gameboy.cpu.registers.getBC().toString(16).toUpperCase());
         $('#de').html("0x" + gameboy.cpu.registers.getDE().toString(16).toUpperCase());
         $('#hl').html("0x" + gameboy.cpu.registers.getHL().toString(16).toUpperCase());
-        $('#scanlines').html(gameboy.ppu.registers.ly.toString());
 
         $('#opcode').html("0x" + gameboy.cpu.last.opcode.toString(16).toUpperCase());
         $('#opname').html(gameboy.cpu.last.operation.name.toUpperCase());
