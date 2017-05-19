@@ -10,6 +10,7 @@ export class GameBoy {
     public memory : Memory;
     public cartridge : Cartridge;
     public ticks : number = 0;
+    public counts : number = 0;
     public running : boolean = false;
     public timeout : any;
     public interval : number = 1000;
@@ -32,27 +33,26 @@ export class GameBoy {
         this.ticks = 0;
     }
 
-    public tick(val : number) : void {
-        for(let i =0; i < val; i++){
-            let cycles = this.cpu.tick();
-            this.ppu.renderscan(cycles);
-            this.ticks++;
-        }
+    public tick() : void {
+        let cycles = this.cpu.tick();
+        this.ppu.renderscan(cycles);
+        this.ticks++;
     }
 
-    private nextFrame(){
-        this.tick(1);
-        if(this.running){
-            window.requestAnimationFrame(this.nextFrame.bind(this));
+    public tickfor(): void {
+        this.tick();
+        if(this.counts != 0){
+            this.counts--;
+            window.requestAnimationFrame(this.tickfor.bind(this));
         }
     }
 
     public run(): void {
-        this.running = true;
-        setTimeout(this.nextFrame(),this.interval);
+        this.counts = -1;
+        setTimeout(this.tickfor(),this.interval);
     }
 
     public stop() : void {
-        this.running = false;
+        this.counts = 0;
     }
 }

@@ -1,6 +1,6 @@
 <html>
 <head>
-    <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js" type="application/javascript"></script>
+    <script src="./assets/SystemJS.js" type="application/javascript"></script>
     <script src="./assets/jquery-3.1.1.min.js" type="application/javascript"></script>
     <script src="app.js" type="application/javascript"></script>
     <link rel="stylesheet" type="text/css" href="./css/debugger.css">
@@ -248,12 +248,9 @@
 
     loadGameBoy();
 
-
-
-
     var tick = function () {
-        var tickfor = $('#tickfor').val();
-        gameboy.tick(tickfor);
+        gameboy.counts = $('#tickfor').val();
+        gameboy.tickfor(tickfor);
     }
 
     var run = function () {
