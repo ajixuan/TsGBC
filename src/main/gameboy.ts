@@ -40,8 +40,8 @@ export class GameBoy {
     }
 
     public tickfor(): void {
-        this.tick();
         if(this.counts != 0){
+            this.tick();
             this.counts--;
             window.requestAnimationFrame(this.tickfor.bind(this));
         }
