@@ -59,13 +59,13 @@ export class Registers {
         let _val = 0x00;
         let set  = (val : number, intr : Interrupt) => {
             return ()=> {
-                _val |= val ;
-                self.memory.interrupt.setInterruptFlag(intr)
+                _val = val ;
+                self.memory.interrupt.setInterruptFlag(intr);
             }
         };
         let unset = (val : number)=> { return ()=> {_val &= ~val}};
         let get = (val : number)=> { return ()=> { return _val & val ? 1 : 0}};
-        let setFlag= (val : number) => { return ()=> {_val &= 0xFC; _val |= val}};
+        let setFlag = (val : number) => { return ()=> {_val &= 0xFC; _val |= val}};
         return {
             getAll: function () { return _val },
             reset : function(){ _val = 0x85},
@@ -76,14 +76,14 @@ export class Registers {
                     get : get(0x40)
                 },
                 oaminterrupt: {
-                    set : set(0x20, Interrupts.LCDC),
-                    unset : unset(0x20),
+                    set : set(0x22, Interrupts.LCDC),
+                    unset : unset(0x22),
                     get : get(0x20)
                 },
                 vblank: {
                     set : set(0x11, Interrupts.VBLANK),
                     unset : unset(0x11),
-                    get : get(0x11)
+                    get : get(0x10)
                 },
                 hblank: {
                     set : set(0x08, Interrupts.LCDC),

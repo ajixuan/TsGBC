@@ -6,7 +6,7 @@ export class Ppu {
     private screen: Screen;
     private memory: Memory;
     private tileset: Array<Array<Array<number>>>;
-    private clock: number = 0;
+    public clock: number = 0;
     public registers: Registers;
 
     constructor(memory: Memory) {
@@ -82,7 +82,7 @@ export class Ppu {
     private getVramTile(tile: number): Array<Array<number>> {
 
         //-------------Memory in map 1
-        if (this.registers.lcdc.bgmap) {
+        if (this.registers.lcdc.bgmap.get()) {
             return this.tileset[tile];
         }
 
@@ -123,7 +123,6 @@ export class Ppu {
             this.registers.ly++;
             this.clock = 0;
 
-            //Vblank complete
             if (this.registers.ly > 153) {
                 this.registers.ly = 0;
                 this.registers.stat.interrupts.vblank.unset();
@@ -142,7 +141,6 @@ export class Ppu {
                     this.registers.stat.interrupts.vblank.set();
                     //this.screen.printBuffer();
 
-                    //Render one ly
                 } else {
                     //Get the tile of our current ly
                     let y, x, tile, ycoor, xcoor;
@@ -158,7 +156,7 @@ export class Ppu {
 
                         //Get new tile
                         if (cell % Screen.PIXELS == 0) {
-                            tile = this.getVramTile(xcoor + ycoor);
+                            tile = this.getVramTile(xcoor + ycoor % 256);
                         }
 
                         this.screen.setBufferPixel(x, y, tile[y % Screen.PIXELS][x % Screen.PIXELS]);
@@ -190,8 +188,8 @@ export class Ppu {
             this.memory.vram[addr - 0x8000] = val;
             this.updateTile(addr);
 
-        //OAM
-        } else if(addr < 0xFEA0){
+            //OAM
+        } else if (addr < 0xFEA0) {
             if (!this.registers.stat.modeFlag.vramlock.get()) {
                 console.log("ERROR: OAM locked");
                 return;
