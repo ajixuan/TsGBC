@@ -57,12 +57,12 @@ export class Registers {
     // 03 : VRAM read mode
     public stat = (function (self : Registers) {
         let _val = 0x00;
-        let set  = (val : number, intr : Interrupt, setflag ?: Function) => {
+        let set  = (val : number, intr : Interrupt, setflag : Function) => {
             return ()=> {
                 setflag();
 
                 //Set interrupt flag only if interrupt is allowed
-                if(setflag && self.memory.interrupt.ime){
+                if(self.memory.interrupt.ime){
                     _val |= val ;
                     self.memory.interrupt.setInterruptFlag(intr);
                 }
@@ -97,10 +97,10 @@ export class Registers {
                 },
             },
             modeFlag: {
-                hblank:     {set : setFlag(0x00), get : function(){return (_val == 0x00) ? 0 : 1}},
-                vblank:     {set : setFlag(0x01), get : function(){return (_val == 0x01) ? 1 : 0}},
-                oamlock:    {set : setFlag(0x02), get : function(){return (_val == 0x02) ? 1 : 0}},
-                vramlock:   {set : setFlag(0x03), get : function(){return (_val == 0x03) ? 1 : 0}}
+                hblank:     {set : setFlag(0x00), get : function(){return ((_val & 0x03) == 0x00) ? 1 : 0}},
+                vblank:     {set : setFlag(0x01), get : function(){return ((_val & 0x03) == 0x01) ? 1 : 0}},
+                oamlock:    {set : setFlag(0x02), get : function(){return ((_val & 0x03) == 0x02) ? 1 : 0}},
+                vramlock:   {set : setFlag(0x03), get : function(){return ((_val & 0x03) == 0x03) ? 1 : 0}}
             }
         }
     })(this);

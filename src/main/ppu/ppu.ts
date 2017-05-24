@@ -104,13 +104,7 @@ export class Ppu {
      * Render scan on one tick
      */
     public renderscan(cycles: number): void {
-
         this.clock += cycles;
-
-        //Beginning of scanline
-        if(this.registers.ly == 0){
-            this.registers.stat.modeFlag.vramlock.set();
-        }
 
         //Set the ly,lyc coincidence interrupt
          if (this.registers.ly == this.registers.lyc) {
@@ -119,7 +113,7 @@ export class Ppu {
 
         //Cycle through stat
         if (this.registers.stat.modeFlag.hblank.get() && this.clock >= 204) {
-            this.registers.stat.modeFlag.vramlock.set();
+            this.registers.stat.modeFlag.oamlock.set();
 
             if(this.registers.stat.interrupts.lycoincidence.get()){
                 this.registers.stat.interrupts.lycoincidence.unset()
@@ -130,12 +124,13 @@ export class Ppu {
 
         } else if (this.registers.stat.modeFlag.vblank.get() && this.clock >= 456) {
 
-            this.registers.ly++;
-            this.clock = 0;
-
-            if (this.registers.ly > 153) {
+            if (this.registers.ly > 153 || this.registers.ly == 0) {
                 this.registers.ly = 0;
+                this.registers.stat.modeFlag.vramlock.set();
                 this.registers.stat.interrupts.vblank.unset();
+            } else {
+                this.registers.ly++;
+                this.clock = 0;
             }
 
         } else if (this.registers.stat.modeFlag.oamlock.get() && this.clock >= 80) {
@@ -145,7 +140,6 @@ export class Ppu {
 
         } else if (this.registers.stat.modeFlag.vramlock.get() && this.clock >= 172) {
             if (this.registers.lcdc.bgon.get() & this.registers.lcdc.lcdon.get()) {
-
                 //Vertical blank
                 if (this.registers.ly == 144) {
                     this.registers.stat.interrupts.vblank.set();
