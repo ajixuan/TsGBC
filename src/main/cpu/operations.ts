@@ -24,6 +24,16 @@ export class Operations {
         return this.operations[opcode];
     }
 
+    /**
+     * Private function for writing byte to memory.
+     * Checks lcdc and stat restrictions
+     * @param byte
+     */
+    private wrtieByte(byte : number) : void {
+
+
+    }
+
 
     /**
      * Helper function for setting carry flags depending on number of bits
@@ -33,21 +43,21 @@ export class Operations {
      */
     private calcAddFlags(first: number, second: number, short: boolean = true): number {
         //Default short is true (8bit operation by default)
-        var garb = 0xFF;
-        var mask = 0xF;
-        var low = 4;
-        var high = 8;
+        let garb = 0xFF;
+        let mask = 0xF;
+        let low = 4;
+        let high = 8;
 
         //If short is false (if it is 16bit operation)
         if (short === false) {
-            var garb = 0xFFFF;
+            let garb = 0xFFFF;
             mask = 0xFFF;
             low = 12;
             high = 16;
         }
 
-        var half = (first & mask) + (second & mask);
-        var full = first + second;
+        let half = (first & mask) + (second & mask);
+        let full = first + second;
 
         //Reset subtract flag everytime when we add
         this.cpu.registers.setSubtractFlag(0);
@@ -84,7 +94,7 @@ export class Operations {
     private calcSubtractFlags(first: number, second: number, short: boolean = true): number {
         //Default short is true (8bit operation by default)
         // The half flag (low) is set if there is a borrow on bit 4
-        var mask = 0xF;
+        let mask = 0xF;
 
         //If short is false (if it is 16bit operation)
         // The half flag (low) is set if there is a borrow at bit 12
@@ -97,8 +107,8 @@ export class Operations {
         this.cpu.registers.setHalfFlag(0);
         this.cpu.registers.setZeroFlag(0);
 
-        var half = (first & mask) - (second & mask);
-        var full = first - second;
+        let half = (first & mask) - (second & mask);
+        let full = first - second;
 
 
         if (half < 0) {
@@ -143,8 +153,8 @@ export class Operations {
 
             getValue(addr: number, size: number): number {
 
-                var val;
-                var shift = 7; // Shift to check last bit
+                let val;
+                let shift = 7; // Shift to check last bit
 
 
                 if (size == 2) {
@@ -208,6 +218,24 @@ export class Operations {
             }
         };
 
+        this.operations[0x0F] = {
+            name: "RRCA",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc: number)  {
+                let result = registers.getA();
+                registers.setCarryFlag(result & 0x1)
+                result = result >> 1;
+
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
         this.operations[0x16] = {
             name: "LD",
             cycle: 8,
@@ -260,7 +288,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = memory.readByte(registers.getHL());
+                let val = memory.readByte(registers.getHL());
                 registers.setA(val);
             }
         };
@@ -331,7 +359,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = memory.readByte(registers.getHL());
+                let val = memory.readByte(registers.getHL());
                 registers.setB(val);
             }
         };
@@ -401,7 +429,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = memory.readByte(registers.getHL());
+                let val = memory.readByte(registers.getHL());
                 registers.setC(val);
             }
         };
@@ -481,7 +509,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = memory.readByte(registers.getHL());
+                let val = memory.readByte(registers.getHL());
                 registers.setD(val);
             }
         };
@@ -551,7 +579,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = memory.readByte(registers.getHL());
+                let val = memory.readByte(registers.getHL());
                 registers.setE(val);
             }
         };
@@ -621,7 +649,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = memory.readByte(registers.getH());
+                let val = memory.readByte(registers.getH());
                 registers.setH(val);
             }
         };
@@ -691,7 +719,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = memory.readByte(registers.getHL());
+                let val = memory.readByte(registers.getHL());
                 registers.setL(val);
             }
         };
@@ -702,8 +730,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getHL();
-                var val = registers.getB();
+                let addr = registers.getHL();
+                let val = registers.getB();
                 memory.writeByte(addr, val);
             }
         };
@@ -714,8 +742,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getHL();
-                var val = registers.getC();
+                let addr = registers.getHL();
+                let val = registers.getC();
                 memory.writeByte(addr, val);
             }
         };
@@ -726,8 +754,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getHL();
-                var val = registers.getD();
+                let addr = registers.getHL();
+                let val = registers.getD();
                 memory.writeByte(addr, val);
             }
         };
@@ -738,8 +766,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getHL();
-                var val = registers.getE();
+                let addr = registers.getHL();
+                let val = registers.getE();
                 memory.writeByte(addr, val);
             }
         };
@@ -750,8 +778,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getHL();
-                var val = registers.getH();
+                let addr = registers.getHL();
+                let val = registers.getH();
                 memory.writeByte(addr, val);
             }
         };
@@ -762,8 +790,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getHL();
-                var val = registers.getL();
+                let addr = registers.getHL();
+                let val = registers.getL();
                 memory.writeByte(addr, val);
             }
         };
@@ -862,7 +890,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = memory.readByte(registers.getBC());
+                let val = memory.readByte(registers.getBC());
                 registers.setA(val);
             }
         };
@@ -873,7 +901,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = memory.readByte(registers.getDE());
+                let val = memory.readByte(registers.getDE());
                 registers.setA(val);
             }
         };
@@ -884,9 +912,9 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                var high = memory.readByte(pc + 1 & 0xFFFF);
-                var low = memory.readWord(pc);
-                var val = high << 8 | low;
+                let high = memory.readByte(pc + 1 & 0xFFFF);
+                let low = memory.readWord(pc);
+                let val = high << 8 | low;
                 registers.setA(val);
             }
         };
@@ -898,7 +926,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = memory.readByte(pc);
+                let val = memory.readByte(pc);
                 registers.setAF(val);
             }
         };
@@ -977,8 +1005,8 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                var addr = registers.getBC();
-                var val = registers.getA();
+                let addr = registers.getBC();
+                let val = registers.getA();
                 memory.writeByte(addr, val);
             }
         };
@@ -989,8 +1017,8 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                var addr = registers.getDE();
-                var val = registers.getA();
+                let addr = registers.getDE();
+                let val = registers.getA();
                 memory.writeByte(addr, val);
             }
         };
@@ -1001,8 +1029,8 @@ export class Operations {
             mode: immediate,
             size: 3,
             execute(pc: number) {
-                var addr = registers.getHL();
-                var val = registers.getA();
+                let addr = registers.getHL();
+                let val = registers.getA();
                 memory.writeByte(addr, val);
             }
         };
@@ -1014,10 +1042,10 @@ export class Operations {
             size: 2,
             execute(pc: number) {
                 //TODO this might be wrong (reverse?)
-                var high = memory.readByte(pc + 1 & 0xFFFF);
-                var low = memory.readByte(pc & 0xFFFF);
-                var addr = high << 8 | low;
-                var val = registers.getA();
+                let high = memory.readByte(pc + 1 & 0xFFFF);
+                let low = memory.readByte(pc & 0xFFFF);
+                let addr = high << 8 | low;
+                let val = registers.getA();
                 memory.writeByte(addr, val);
             }
         };
@@ -1034,10 +1062,10 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                var high = 0xff;
-                var low = registers.getC();
-                var addr = high << 8 | low;
-                var val = memory.readByte(addr);
+                let high = 0xff;
+                let low = registers.getC();
+                let addr = high << 8 | low;
+                let val = memory.readByte(addr);
                 registers.setA(val);
             }
         };
@@ -1065,9 +1093,9 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                var high = 0xff;
-                var low = registers.getC();
-                var addr = high << 8 | low;
+                let high = 0xff;
+                let low = registers.getC();
+                let addr = high << 8 | low;
                 memory.writeByte(addr, registers.getA());
             }
         };
@@ -1086,8 +1114,8 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                var addr = registers.getHL();
-                var val = memory.readByte(addr);
+                let addr = registers.getHL();
+                let val = memory.readByte(addr);
                 registers.setA(val);
                 registers.setHL(addr - 1 & 0xFFFF);
             }
@@ -1105,8 +1133,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getHL();
-                var val = registers.getA();
+                let addr = registers.getHL();
+                let val = registers.getA();
                 memory.writeByte(addr, val);
                 registers.setHL(addr - 1 & 0xFFFF);
             }
@@ -1124,8 +1152,8 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                var addr = registers.getHL();
-                var val = memory.readByte(addr);
+                let addr = registers.getHL();
+                let val = memory.readByte(addr);
                 registers.setA(val);
                 registers.setHL(addr + 1 & 0xFFFF);
             }
@@ -1144,7 +1172,7 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                var addr = registers.getHL();
+                let addr = registers.getHL();
                 memory.writeByte(addr, registers.getA());
                 registers.setHL(addr + 1 & 0xFFFF);
             }
@@ -1161,7 +1189,7 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                var addr = 0xFF00 | pc;
+                let addr = 0xFF00 | pc;
                 memory.writeByte(addr, registers.getA());
             }
         };
@@ -1178,8 +1206,8 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                var addr = 0xFF00 | pc;
-                var val = memory.readByte(addr);
+                let addr = 0xFF00 | pc;
+                let val = memory.readByte(addr);
                 registers.setA(val & 0xFFFF);
             }
         };
@@ -1264,13 +1292,13 @@ export class Operations {
             size: 2,
             execute(pc: number) {
 
-                var val = pc + registers.getSP();
-                var orig = registers.getHL();
+                let val = pc + registers.getSP();
+                let orig = registers.getHL();
 
                 //Set flags
                 registers.setZeroFlag(0);
                 registers.setSubtractFlag(0);
-                var result = calcAddFlags(val, orig, false);
+                let result = calcAddFlags(val, orig, false);
 
                 memory.writeByte(result, val);
             }
@@ -1399,9 +1427,9 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getA();
-                var val = memory.readByte(addr);
-                var result = calcAddFlags(val, val, false);
+                let addr = registers.getA();
+                let val = memory.readByte(addr);
+                let result = calcAddFlags(val, val, false);
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
             }
@@ -1413,11 +1441,11 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getA();
-                var val = memory.readByte(addr);
+                let addr = registers.getA();
+                let val = memory.readByte(addr);
                 addr = registers.getB();
-                var oper = memory.readByte(addr);
-                var result = calcAddFlags(val, oper, false);
+                let oper = memory.readByte(addr);
+                let result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1430,11 +1458,11 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getA();
-                var val = memory.readByte(addr);
+                let addr = registers.getA();
+                let val = memory.readByte(addr);
                 addr = registers.getC();
-                var oper = memory.readByte(addr);
-                var result = calcAddFlags(val, oper, false);
+                let oper = memory.readByte(addr);
+                let result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1448,12 +1476,12 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getA();
-                var val = memory.readByte(addr);
+                let addr = registers.getA();
+                let val = memory.readByte(addr);
                 addr = registers.getD();
-                var oper = memory.readByte(addr);
+                let oper = memory.readByte(addr);
 
-                var result = calcAddFlags(val, oper, false);
+                let result = calcAddFlags(val, oper, false);
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
             }
@@ -1466,11 +1494,11 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getA();
-                var val = memory.readByte(addr);
+                let addr = registers.getA();
+                let val = memory.readByte(addr);
                 addr = registers.getE();
-                var oper = memory.readByte(addr);
-                var result = calcAddFlags(val, oper, false);
+                let oper = memory.readByte(addr);
+                let result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1483,11 +1511,11 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getA();
-                var val = memory.readByte(addr);
+                let addr = registers.getA();
+                let val = memory.readByte(addr);
                 addr = registers.getH();
-                var oper = memory.readByte(addr);
-                var result = calcAddFlags(val, oper, false);
+                let oper = memory.readByte(addr);
+                let result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1501,11 +1529,11 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getA();
-                var val = memory.readByte(addr);
+                let addr = registers.getA();
+                let val = memory.readByte(addr);
                 addr = registers.getL();
-                var oper = memory.readByte(addr);
-                var result = calcAddFlags(val, oper, false);
+                let oper = memory.readByte(addr);
+                let result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1519,11 +1547,11 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var addr = registers.getA();
-                var val = memory.readByte(addr);
+                let addr = registers.getA();
+                let val = memory.readByte(addr);
                 addr = registers.getHL();
-                var oper = memory.readByte(addr);
-                var result = calcAddFlags(val, oper, false);
+                let oper = memory.readByte(addr);
+                let result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1537,9 +1565,9 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = memory.readByte(registers.getA());
-                var oper = memory.readByte(registers.getB());
-                var result = calcAddFlags(val, oper, false);
+                let val = memory.readByte(registers.getA());
+                let oper = memory.readByte(registers.getB());
+                let result = calcAddFlags(val, oper, false);
 
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
@@ -1557,8 +1585,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = registers.getA();
-                var result = calcAddFlags(val, val + registers.getCarryFlag());
+                let val = registers.getA();
+                let result = calcAddFlags(val, val + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1571,9 +1599,9 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getB();
-                var result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let val = registers.getA();
+                let oper = registers.getB();
+                let result = calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1586,9 +1614,9 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getC();
-                var result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let val = registers.getA();
+                let oper = registers.getC();
+                let result = calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1601,9 +1629,9 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getD();
-                var result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let val = registers.getA();
+                let oper = registers.getD();
+                let result = calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1617,9 +1645,9 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getE();
-                var result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let val = registers.getA();
+                let oper = registers.getE();
+                let result = calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1632,9 +1660,9 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getH();
-                var result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let val = registers.getA();
+                let oper = registers.getH();
+                let result = calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1648,9 +1676,9 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getL();
-                var result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let val = registers.getA();
+                let oper = registers.getL();
+                let result = calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1664,9 +1692,9 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = memory.readWord(registers.getHL());
-                var result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let val = registers.getA();
+                let oper = memory.readWord(registers.getHL());
+                let result = calcAddFlags(val, oper + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1682,9 +1710,9 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                var val = registers.getA();
+                let val = registers.getA();
 
-                var result = calcAddFlags(val, pc + registers.getCarryFlag());
+                let result = calcAddFlags(val, pc + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1702,8 +1730,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var result = calcSubtractFlags(val, val, false);
+                let val = registers.getA();
+                let result = calcSubtractFlags(val, val, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1716,9 +1744,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getB();
-                var result = calcSubtractFlags(val, oper, false);
+                let val = registers.getA();
+                let oper = registers.getB();
+                let result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1731,9 +1759,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getC();
-                var result = calcSubtractFlags(val, oper, false);
+                let val = registers.getA();
+                let oper = registers.getC();
+                let result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1747,9 +1775,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getD();
-                var result = calcSubtractFlags(val, oper, false);
+                let val = registers.getA();
+                let oper = registers.getD();
+                let result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1762,9 +1790,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getE();
-                var result = calcSubtractFlags(val, oper, false);
+                let val = registers.getA();
+                let oper = registers.getE();
+                let result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1777,9 +1805,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getH();
-                var result = calcSubtractFlags(val, oper, false);
+                let val = registers.getA();
+                let oper = registers.getH();
+                let result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1792,9 +1820,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getL();
-                var result = calcSubtractFlags(val, oper, false);
+                let val = registers.getA();
+                let oper = registers.getL();
+                let result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1807,9 +1835,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = memory.readWord(registers.getHL());
-                var result = calcSubtractFlags(val, oper, false);
+                let val = registers.getA();
+                let oper = memory.readWord(registers.getHL());
+                let result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1824,8 +1852,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var result = calcSubtractFlags(val, pc, false);
+                let val = registers.getA();
+                let result = calcSubtractFlags(val, pc, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1843,8 +1871,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var result = calcSubtractFlags(val, val - registers.getCarryFlag(), false);
+                let val = registers.getA();
+                let result = calcSubtractFlags(val, val - registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1857,9 +1885,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getB();
-                var result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
+                let val = registers.getA();
+                let oper = registers.getB();
+                let result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1872,9 +1900,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getC();
-                var result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
+                let val = registers.getA();
+                let oper = registers.getC();
+                let result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1888,9 +1916,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getD();
-                var result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
+                let val = registers.getA();
+                let oper = registers.getD();
+                let result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1903,9 +1931,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getE();
-                var result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
+                let val = registers.getA();
+                let oper = registers.getE();
+                let result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1918,9 +1946,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getH();
-                var result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
+                let val = registers.getA();
+                let oper = registers.getH();
+                let result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1933,9 +1961,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getL();
-                var result = calcSubtractFlags(val, oper, false);
+                let val = registers.getA();
+                let oper = registers.getL();
+                let result = calcSubtractFlags(val, oper, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1948,9 +1976,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = memory.readWord(registers.getHL());
-                var result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
+                let val = registers.getA();
+                let oper = memory.readWord(registers.getHL());
+                let result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1965,8 +1993,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var result = calcSubtractFlags(val, pc, false);
+                let val = registers.getA();
+                let result = calcSubtractFlags(val, pc, false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1985,8 +2013,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var result = val & val;
+                let val = registers.getA();
+                let result = val & val;
 
                 //reset all flags
                 registers.setF(0);
@@ -2006,9 +2034,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getB();
-                var result = val & oper;
+                let val = registers.getA();
+                let oper = registers.getB();
+                let result = val & oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2028,9 +2056,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getC();
-                var result = val & oper;
+                let val = registers.getA();
+                let oper = registers.getC();
+                let result = val & oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2051,9 +2079,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getD();
-                var result = val & oper;
+                let val = registers.getA();
+                let oper = registers.getD();
+                let result = val & oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2073,9 +2101,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getE();
-                var result = val & oper;
+                let val = registers.getA();
+                let oper = registers.getE();
+                let result = val & oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2096,9 +2124,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getH();
-                var result = val & oper;
+                let val = registers.getA();
+                let oper = registers.getH();
+                let result = val & oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2119,9 +2147,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getL();
-                var result = val & oper;
+                let val = registers.getA();
+                let oper = registers.getL();
+                let result = val & oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2141,9 +2169,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = memory.readWord(registers.getHL());
-                var result = val & oper;
+                let val = registers.getA();
+                let oper = memory.readWord(registers.getHL());
+                let result = val & oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2165,8 +2193,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var result = val & pc;
+                let val = registers.getA();
+                let result = val & pc;
 
                 //reset all flags
                 registers.setF(0);
@@ -2193,8 +2221,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var result = val | val;
+                let val = registers.getA();
+                let result = val | val;
 
                 //reset all flags
                 registers.setF(0);
@@ -2213,9 +2241,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getB();
-                var result = val | oper;
+                let val = registers.getA();
+                let oper = registers.getB();
+                let result = val | oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2234,9 +2262,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getC();
-                var result = val | oper;
+                let val = registers.getA();
+                let oper = registers.getC();
+                let result = val | oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2256,9 +2284,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getD();
-                var result = val | oper;
+                let val = registers.getA();
+                let oper = registers.getD();
+                let result = val | oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2277,9 +2305,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getE();
-                var result = val | oper;
+                let val = registers.getA();
+                let oper = registers.getE();
+                let result = val | oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2299,9 +2327,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getH();
-                var result = val | oper;
+                let val = registers.getA();
+                let oper = registers.getH();
+                let result = val | oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2321,9 +2349,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getL();
-                var result = val | oper;
+                let val = registers.getA();
+                let oper = registers.getL();
+                let result = val | oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2342,9 +2370,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = memory.readWord(registers.getHL());
-                var result = val | oper;
+                let val = registers.getA();
+                let oper = memory.readWord(registers.getHL());
+                let result = val | oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2365,8 +2393,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var result = val | pc;
+                let val = registers.getA();
+                let result = val | pc;
 
                 //reset all flags
                 registers.setF(0);
@@ -2407,9 +2435,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getB();
-                var result = val ^ oper;
+                let val = registers.getA();
+                let oper = registers.getB();
+                let result = val ^ oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2428,9 +2456,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getC();
-                var result = val ^ oper;
+                let val = registers.getA();
+                let oper = registers.getC();
+                let result = val ^ oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2450,9 +2478,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getD();
-                var result = val ^ oper;
+                let val = registers.getA();
+                let oper = registers.getD();
+                let result = val ^ oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2471,9 +2499,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getE();
-                var result = val ^ oper;
+                let val = registers.getA();
+                let oper = registers.getE();
+                let result = val ^ oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2493,9 +2521,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getH();
-                var result = val ^ oper;
+                let val = registers.getA();
+                let oper = registers.getH();
+                let result = val ^ oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2515,9 +2543,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getL();
-                var result = val ^ oper;
+                let val = registers.getA();
+                let oper = registers.getL();
+                let result = val ^ oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2536,9 +2564,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = memory.readWord(registers.getHL());
-                var result = val ^ oper;
+                let val = registers.getA();
+                let oper = memory.readWord(registers.getHL());
+                let result = val ^ oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2559,8 +2587,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var result = val ^ pc;
+                let val = registers.getA();
+                let result = val ^ pc;
 
                 //reset all flags
                 registers.setF(0);
@@ -2597,8 +2625,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getB();
+                let val = registers.getA();
+                let oper = registers.getB();
 
                 registers.setF(0);
                 registers.setSubtractFlag(1);
@@ -2611,8 +2639,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getC();
+                let val = registers.getA();
+                let oper = registers.getC();
                 calcSubtractFlags(val, oper, false);
 
                 registers.setF(0);
@@ -2627,8 +2655,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getD();
+                let val = registers.getA();
+                let oper = registers.getD();
                 calcSubtractFlags(val, oper, false);
 
                 registers.setF(0);
@@ -2642,8 +2670,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getE();
+                let val = registers.getA();
+                let oper = registers.getE();
                 calcSubtractFlags(val, oper, false);
 
                 registers.setF(0);
@@ -2657,8 +2685,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getH();
+                let val = registers.getA();
+                let oper = registers.getH();
                 calcSubtractFlags(val, oper, false);
 
                 registers.setF(0);
@@ -2672,8 +2700,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = registers.getL();
+                let val = registers.getA();
+                let oper = registers.getL();
                 calcSubtractFlags(val, oper, false);
 
                 registers.setF(0);
@@ -2687,8 +2715,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var oper = memory.readWord(registers.getHL());
+                let val = registers.getA();
+                let oper = memory.readWord(registers.getHL());
                 calcSubtractFlags(val, oper, false);
 
                 registers.setF(0);
@@ -2704,7 +2732,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
+                let val = registers.getA();
                 calcSubtractFlags(val, pc, false);
 
                 registers.setF(0);
@@ -2724,7 +2752,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcAddFlags(registers.getA(), 1);
+                let result = calcAddFlags(registers.getA(), 1);
                 registers.setA(result);
             }
         };
@@ -2735,7 +2763,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcAddFlags(registers.getB(), 1);
+                let result = calcAddFlags(registers.getB(), 1);
                 registers.setB(result);
             }
         };
@@ -2746,7 +2774,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcAddFlags(registers.getC(), 1);
+                let result = calcAddFlags(registers.getC(), 1);
                 registers.setC(result);
             }
         };
@@ -2758,7 +2786,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcAddFlags(registers.getD(), 1);
+                let result = calcAddFlags(registers.getD(), 1);
                 registers.setD(result);
             }
         };
@@ -2769,7 +2797,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcAddFlags(registers.getE(), 1);
+                let result = calcAddFlags(registers.getE(), 1);
                 registers.setE(result);
             }
         };
@@ -2780,7 +2808,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcAddFlags(registers.getH(), 1);
+                let result = calcAddFlags(registers.getH(), 1);
                 registers.setH(result);
             }
         };
@@ -2791,7 +2819,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcAddFlags(registers.getL(), 1);
+                let result = calcAddFlags(registers.getL(), 1);
                 registers.setL(result);
             }
         };
@@ -2802,7 +2830,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcAddFlags(registers.getHL(), 1, false);
+                let result = calcAddFlags(registers.getHL(), 1, false);
                 memory.writeWord(registers.getHL(), result);
             }
         };
@@ -2818,7 +2846,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcSubtractFlags(registers.getA(), 1);
+                let result = calcSubtractFlags(registers.getA(), 1);
                 registers.setA(result);
             }
         };
@@ -2829,7 +2857,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcSubtractFlags(registers.getB(), 1);
+                let result = calcSubtractFlags(registers.getB(), 1);
                 registers.setB(result);
             }
         };
@@ -2840,7 +2868,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcSubtractFlags(registers.getC(), 1);
+                let result = calcSubtractFlags(registers.getC(), 1);
                 registers.setC(result);
             }
         };
@@ -2852,7 +2880,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcSubtractFlags(registers.getD(), 1);
+                let result = calcSubtractFlags(registers.getD(), 1);
                 registers.setD(result);
             }
         };
@@ -2863,7 +2891,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcSubtractFlags(registers.getE(), 1);
+                let result = calcSubtractFlags(registers.getE(), 1);
                 registers.setE(result);
             }
         };
@@ -2874,7 +2902,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcSubtractFlags(registers.getH(), 1);
+                let result = calcSubtractFlags(registers.getH(), 1);
                 registers.setH(result);
             }
         };
@@ -2885,7 +2913,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcSubtractFlags(registers.getL(), 1);
+                let result = calcSubtractFlags(registers.getL(), 1);
                 registers.setL(result);
             }
         };
@@ -2896,7 +2924,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcSubtractFlags(registers.getHL(), 1, false);
+                let result = calcSubtractFlags(registers.getHL(), 1, false);
                 memory.writeWord(registers.getHL(), result);
             }
         };
@@ -2915,10 +2943,10 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getHL();
-                var oper = registers.getBC();
+                let val = registers.getHL();
+                let oper = registers.getBC();
 
-                var result = calcAddFlags(val, oper, false);
+                let result = calcAddFlags(val, oper, false);
                 registers.setHL(result);
             }
         };
@@ -2929,10 +2957,10 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getHL();
-                var oper = registers.getDE();
+                let val = registers.getHL();
+                let oper = registers.getDE();
 
-                var result = calcAddFlags(val, oper, false);
+                let result = calcAddFlags(val, oper, false);
                 registers.setHL(result);
             }
         };
@@ -2943,9 +2971,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getHL();
+                let val = registers.getHL();
 
-                var result = calcAddFlags(val, val, false);
+                let result = calcAddFlags(val, val, false);
                 registers.setHL(result);
             }
         };
@@ -2956,10 +2984,10 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getHL();
-                var oper = registers.getSP();
+                let val = registers.getHL();
+                let oper = registers.getSP();
 
-                var result = calcAddFlags(val, oper, false);
+                let result = calcAddFlags(val, oper, false);
                 registers.setHL(result);
             }
         };
@@ -2975,8 +3003,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getSP();
-                var result = calcAddFlags(val, pc, false);
+                let val = registers.getSP();
+                let result = calcAddFlags(val, pc, false);
                 registers.setSP(result);
             }
         };
@@ -2992,7 +3020,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcAddFlags(registers.getBC(), 1, false);
+                let result = calcAddFlags(registers.getBC(), 1, false);
                 registers.setBC(result);
             }
         };
@@ -3003,7 +3031,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcAddFlags(registers.getDE(), 1, false);
+                let result = calcAddFlags(registers.getDE(), 1, false);
                 registers.setDE(result);
             }
         };
@@ -3014,7 +3042,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcAddFlags(registers.getHL(), 1, false);
+                let result = calcAddFlags(registers.getHL(), 1, false);
                 registers.setHL(result);
             }
         };
@@ -3026,7 +3054,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcAddFlags(registers.getSP(), 1, false);
+                let result = calcAddFlags(registers.getSP(), 1, false);
                 registers.setSP(result);
             }
         };
@@ -3042,7 +3070,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcSubtractFlags(registers.getBC(), 1, false);
+                let result = calcSubtractFlags(registers.getBC(), 1, false);
                 registers.setBC(result);
             }
         };
@@ -3053,7 +3081,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcSubtractFlags(registers.getDE(), 1, false);
+                let result = calcSubtractFlags(registers.getDE(), 1, false);
                 registers.setDE(result);
             }
         };
@@ -3064,7 +3092,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcSubtractFlags(registers.getHL(), 1, false);
+                let result = calcSubtractFlags(registers.getHL(), 1, false);
                 registers.setHL(result);
             }
         };
@@ -3076,7 +3104,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var result = calcSubtractFlags(registers.getSP(), 1, false);
+                let result = calcSubtractFlags(registers.getSP(), 1, false);
                 registers.setSP(result);
             }
         };
@@ -3091,10 +3119,10 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var lower = val & 0xF;
-                var upper = (val & 0xF0) >> 4;
-                var result = lower << 4 + upper;
+                let val = registers.getA();
+                let lower = val & 0xF;
+                let upper = (val & 0xF0) >> 4;
+                let result = lower << 4 + upper;
 
                 if (result === 0) {
                     registers.setZeroFlag(1);
@@ -3110,10 +3138,10 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getB();
-                var lower = val & 0xF;
-                var upper = (val & 0xF0) >> 4;
-                var result = lower << 4 + upper;
+                let val = registers.getB();
+                let lower = val & 0xF;
+                let upper = (val & 0xF0) >> 4;
+                let result = lower << 4 + upper;
 
                 if (result === 0) {
                     registers.setZeroFlag(1);
@@ -3129,10 +3157,10 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getC();
-                var lower = val & 0xF;
-                var upper = (val & 0xF0) >> 4;
-                var result = lower << 4 + upper;
+                let val = registers.getC();
+                let lower = val & 0xF;
+                let upper = (val & 0xF0) >> 4;
+                let result = lower << 4 + upper;
 
                 if (result === 0) {
                     registers.setZeroFlag(1);
@@ -3149,10 +3177,10 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getD();
-                var lower = val & 0xF;
-                var upper = (val & 0xF0) >> 4;
-                var result = lower << 4 + upper;
+                let val = registers.getD();
+                let lower = val & 0xF;
+                let upper = (val & 0xF0) >> 4;
+                let result = lower << 4 + upper;
 
                 if (result === 0) {
                     registers.setZeroFlag(1);
@@ -3168,10 +3196,10 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getE();
-                var lower = val & 0xF;
-                var upper = (val & 0xF0) >> 4;
-                var result = lower << 4 + upper;
+                let val = registers.getE();
+                let lower = val & 0xF;
+                let upper = (val & 0xF0) >> 4;
+                let result = lower << 4 + upper;
 
                 if (result === 0) {
                     registers.setZeroFlag(1);
@@ -3187,10 +3215,10 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getH();
-                var lower = val & 0xF;
-                var upper = (val & 0xF0) >> 4;
-                var result = lower << 4 + upper;
+                let val = registers.getH();
+                let lower = val & 0xF;
+                let upper = (val & 0xF0) >> 4;
+                let result = lower << 4 + upper;
 
                 if (result === 0) {
                     registers.setZeroFlag(1);
@@ -3206,10 +3234,10 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getL();
-                var lower = val & 0xF;
-                var upper = (val & 0xF0) >> 4;
-                var result = lower << 4 + upper;
+                let val = registers.getL();
+                let lower = val & 0xF;
+                let upper = (val & 0xF0) >> 4;
+                let result = lower << 4 + upper;
 
                 if (result === 0) {
                     registers.setZeroFlag(1);
@@ -3225,10 +3253,10 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getHL();
-                var lower = val & 0xFF;
-                var upper = (val & 0xFF00) >> 8;
-                var result = lower << 8 + upper;
+                let val = registers.getHL();
+                let lower = val & 0xFF;
+                let upper = (val & 0xFF00) >> 8;
+                let result = lower << 8 + upper;
 
                 if (result === 0) {
                     registers.setZeroFlag(1);
@@ -3252,10 +3280,10 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var lower = val & 0xFF;
-                var upper = (val & 0xFF00) >> 8;
-                var result = lower << 8 + upper;
+                let val = registers.getA();
+                let lower = val & 0xFF;
+                let upper = (val & 0xFF00) >> 8;
+                let result = lower << 8 + upper;
 
                 if (result === 0) {
                     registers.setZeroFlag(1);
@@ -3277,8 +3305,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var result = val ^ 0xFF;
+                let val = registers.getA();
+                let result = val ^ 0xFF;
                 registers.setSubtractFlag(1);
                 registers.setHalfFlag(1);
                 registers.setA(result);
@@ -3311,9 +3339,9 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                var val = registers.getA();
-                var msb = (val & 0x80) >> 7;
-                var result = ((val << 1) & 0xFF) + msb;
+                let val = registers.getA();
+                let msb = (val & 0x80) >> 7;
+                let result = ((val << 1) & 0xFF) + msb;
 
                 //Set flags
                 registers.setSubtractFlag(0);
@@ -3357,15 +3385,15 @@ export class Operations {
             execute(pc: number) {
                 if (registers.getZeroFlag() == 0) {
                     //Pop from stack pointer to pc
-                    var sp = registers.getSP();
+                    let sp = registers.getSP();
 
-                    var lower = stack.popByte();
+                    let lower = stack.popByte();
                     registers.setSP(sp + 1);
 
-                    var higher = stack.popByte();
+                    let higher = stack.popByte();
                     registers.setSP(sp + 1);
 
-                    var result = lower & (higher << 8);
+                    let result = lower & (higher << 8);
                     registers.setPC(result);
                 }
             }
@@ -3379,15 +3407,15 @@ export class Operations {
             execute(pc: number) {
                 if (registers.getZeroFlag() == 1) {
                     //Pop from stack pointer to pc
-                    var sp = registers.getSP();
+                    let sp = registers.getSP();
 
-                    var lower = stack.popByte();
+                    let lower = stack.popByte();
                     registers.setSP(sp + 1);
 
-                    var higher = stack.popByte();
+                    let higher = stack.popByte();
                     registers.setSP(sp + 1);
 
-                    var result = lower & (higher << 8);
+                    let result = lower & (higher << 8);
                     registers.setPC(result);
                 }
             }
