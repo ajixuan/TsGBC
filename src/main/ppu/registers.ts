@@ -97,10 +97,10 @@ export class Registers {
                 },
             },
             modeFlag: {
-                hblank:     {set : setFlag(0x00), get : function(){return (_val & 0x03) ? 0 : 1}},
-                vblank:     {set : setFlag(0x01), get : function(){return (_val & 0x01) ? 1 : 0}},
-                oamlock:    {set : setFlag(0x02), get : function(){return (_val & 0x02) ? 1 : 0}},
-                vramlock:   {set : setFlag(0x03), get : function(){return ((_val & 0x03) == 0x03) ? 1 : 0}}
+                hblank:     {set : setFlag(0x00), get : function(){return (_val == 0x00) ? 0 : 1}},
+                vblank:     {set : setFlag(0x01), get : function(){return (_val == 0x01) ? 1 : 0}},
+                oamlock:    {set : setFlag(0x02), get : function(){return (_val == 0x02) ? 1 : 0}},
+                vramlock:   {set : setFlag(0x03), get : function(){return (_val == 0x03) ? 1 : 0}}
             }
         }
     })(this);

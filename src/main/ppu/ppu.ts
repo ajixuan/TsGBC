@@ -107,9 +107,9 @@ export class Ppu {
 
         this.clock += cycles;
 
+        //Beginning of scanline
         if(this.registers.ly == 0){
             this.registers.stat.modeFlag.vramlock.set();
-
         }
 
         //Set the ly,lyc coincidence interrupt
@@ -119,7 +119,13 @@ export class Ppu {
 
         //Cycle through stat
         if (this.registers.stat.modeFlag.hblank.get() && this.clock >= 204) {
-            this.registers.stat.interrupts.hblank.set();
+            this.registers.stat.modeFlag.vramlock.set();
+
+            if(this.registers.stat.interrupts.lycoincidence.get()){
+                this.registers.stat.interrupts.lycoincidence.unset()
+            }
+
+            this.registers.ly++;
             this.clock = 0;
 
         } else if (this.registers.stat.modeFlag.vblank.get() && this.clock >= 456) {
@@ -166,10 +172,9 @@ export class Ppu {
                         this.screen.setBufferPixel(x, y, tile[y % Screen.PIXELS][x % Screen.PIXELS]);
                     }
                     this.screen.printBuffer();
-
+                    this.registers.stat.interrupts.hblank.set();
                 }
 
-                this.registers.ly++;
                 this.clock = 0;
             }
         }
