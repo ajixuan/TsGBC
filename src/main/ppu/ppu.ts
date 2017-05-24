@@ -107,11 +107,15 @@ export class Ppu {
 
         this.clock += cycles;
 
+        if(this.registers.ly == 0){
+            this.registers.stat.modeFlag.vramlock.set();
+
+        }
+
         //Set the ly,lyc coincidence interrupt
-        /*
          if (this.registers.ly == this.registers.lyc) {
-         this.registers.stat.interrupts.lycoincidence.set();
-         }*/
+            this.registers.stat.interrupts.lycoincidence.set();
+         }
 
         //Cycle through stat
         if (this.registers.stat.modeFlag.hblank.get() && this.clock >= 204) {

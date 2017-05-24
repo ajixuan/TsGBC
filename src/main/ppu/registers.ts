@@ -57,10 +57,15 @@ export class Registers {
     // 03 : VRAM read mode
     public stat = (function (self : Registers) {
         let _val = 0x00;
-        let set  = (val : number, intr : Interrupt) => {
+        let set  = (val : number, intr : Interrupt, setflag ?: Function) => {
             return ()=> {
-                _val = val ;
-                self.memory.interrupt.setInterruptFlag(intr);
+                setflag();
+
+                //Set interrupt flag only if interrupt is allowed
+                if(setflag && self.memory.interrupt.ime){
+                    _val |= val ;
+                    self.memory.interrupt.setInterruptFlag(intr);
+                }
             }
         };
         let unset = (val : number)=> { return ()=> {_val &= ~val}};
@@ -71,22 +76,22 @@ export class Registers {
             reset : function(){ _val = 0x85},
             interrupts: {
                 lycoincidence: {
-                    set : set(0x40, Interrupts.LCDC),
-                    unset : unset(0x40),
+                    set : set(0x40, Interrupts.LCDC, function(){_val |= 0x04}),
+                    unset : unset(0x44),
                     get : get(0x40)
                 },
                 oaminterrupt: {
-                    set : set(0x22, Interrupts.LCDC),
+                    set : set(0x20, Interrupts.LCDC, setFlag(0x02)),
                     unset : unset(0x22),
                     get : get(0x20)
                 },
                 vblank: {
-                    set : set(0x11, Interrupts.VBLANK),
+                    set : set(0x10, Interrupts.VBLANK, setFlag(0x01)),
                     unset : unset(0x11),
                     get : get(0x10)
                 },
                 hblank: {
-                    set : set(0x08, Interrupts.LCDC),
+                    set : set(0x08, Interrupts.LCDC, setFlag(0x00)),
                     unset : unset(0x08),
                     get : get(0x08)
                 },
