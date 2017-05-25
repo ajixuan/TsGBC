@@ -126,6 +126,7 @@ export class Cpu {
             opcode: opcode,
             opaddr: opaddr
         };
+
         Debugger.display();
 
         return operation.cycle;

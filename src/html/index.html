@@ -19,21 +19,24 @@
             <div style="flex-grow: 1"></div>
             <button onclick="grow()">+</button>
             <button onclick="shrink()">-</button>
+            <button onclick="toggleDebug()">Debug</button>
         </div>
         <div style="display: flex; flex-direction: row; margin-left: 10px; ">
             <button onclick="run()">Run</button>
             <button onclick="stop()">Stop</button>
         </div>
 
-        <div class="debugger" style="display: flex; flex-direction: row; margin-left: 10px; flex-grow: 1">
-            <fieldset style="width: 100%">
-                <legend>LOG</legend>
-                <div class="log" style="color: #bebebe; display: inline-block">
-                    <ul>
+        <div class="debugger">
+            <div style="display: flex; flex-direction: row; margin-left: 10px; flex-grow: 1">
+                <fieldset style="width: 100%">
+                    <legend>LOG</legend>
+                    <div class="log" style="color: #bebebe; display: inline-block">
+                        <ul>
 
-                    </ul>
-                </div>
-            </fieldset>
+                        </ul>
+                    </div>
+                </fieldset>
+            </div>
         </div>
     </div>
 
@@ -268,6 +271,15 @@
 
     var shrink = function () {
         gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() - 1);
+    }
+
+    var toggleDebug = function(){
+        debug.status = !debug.status;
+        if(debug.status){
+            $(".debugger").css("display", "");
+        } else {
+            $(".debugger").css("display", "none");
+        }
     }
 
 </script>

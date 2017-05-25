@@ -75,4 +75,5 @@ export class Debugger {
         console.info("Debugger is ready!");
         Debugger.display();
     }
+
 }
