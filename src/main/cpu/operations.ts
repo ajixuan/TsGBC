@@ -1,5 +1,6 @@
 import {Memory}  from "../memory/memory";
 import {Cpu} from "./cpu";
+import {Debugger} from "../debugger";
 
 /**
  * Manages the set of operations
@@ -63,14 +64,14 @@ export class Operations {
         this.cpu.registers.setSubtractFlag(0);
 
         if (half >> low == 1) {
-            console.log("set half carry:");
-            console.log(half);
+            Debugger.log("set half carry:");
+            Debugger.log(half);
             this.cpu.registers.setHalfFlag(1);
         }
 
         if (full >> high == 1) {
-            console.log("set full carry");
-            console.log(full);
+            Debugger.log("set full carry");
+            Debugger.log(full);
             this.cpu.registers.setCarryFlag(1);
         }
 
@@ -112,14 +113,14 @@ export class Operations {
 
 
         if (half < 0) {
-            console.log("set half carry:");
-            console.log(half);
+            Debugger.log("set half carry:");
+            Debugger.log(half);
             this.cpu.registers.setHalfFlag(1);
         }
 
         if (full < 0 && short === false) {
-            console.log("set full carry");
-            console.log(full);
+            Debugger.log("set full carry");
+            Debugger.log(full);
             this.cpu.registers.setCarryFlag(1);
         }
 
@@ -170,7 +171,7 @@ export class Operations {
                     val -= (1 << (shift + 1)); //Sign extension trick
                 }
 
-                console.log(val);
+                Debugger.log(val);
                 return val
             }
         };

@@ -76,4 +76,12 @@ export class Debugger {
         Debugger.display();
     }
 
+    public static log(message : any){
+        if(!Debugger.status){
+            return
+        }
+
+        console.log(message);
+    }
+
 }
