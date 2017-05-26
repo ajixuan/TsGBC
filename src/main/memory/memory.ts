@@ -46,7 +46,7 @@ export class Memory {
                 throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
             } else if (addr == 0xFF0F) {
                 this.interrupt.if = val & 0xFF;
-            } else if (addr == 0xFF40) {
+            } else if (addr < 0xFF6C) {
                 this.ppu.requestWrite(addr, val);
             } else if (addr < 0xFF80) {
                 throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
