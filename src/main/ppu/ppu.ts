@@ -165,7 +165,7 @@ export class Ppu {
 
                         this.screen.setBufferPixel(x, y, tile[y % Screen.PIXELS][x % Screen.PIXELS]);
                     }
-                    this.screen.printBuffer();
+                    this.screen.printBufferRow(y);
                     this.registers.stat.interrupts.hblank.set();
                 }
 

@@ -82,28 +82,23 @@ export class Screen {
     }
 
     /**
-     * Print an entire row across the screen
+     * Print an entire row across the screen from the buffer
      * @param tile
      * @param x
      * @param y
      */
-    public printRow(tile : Array<Array<number>>, x : number, y : number){
-
-        for(let cell = 0; cell<tile.length; cell++){
-            let row = Math.floor(y % Screen.PIXELS);
-            let index = tile[row][cell];
+    public printBufferRow(y : number){
+        for(let x = 0; x<this.WIDTH; x++){
+            let index = this.FRAME[(y * this.WIDTH) + x];
             let hex = this.COLORS[index];
-
-            this.setBufferPixel(x + cell, y, index);
             this.context.fillStyle = hex;
             this.context.fillRect(
-                x+cell * (this.ZOOM + this.SPACING),
+                x * (this.ZOOM  + this.SPACING),
                 y * (this.ZOOM + this.SPACING),
                 (this.ZOOM),
                 (this.ZOOM)
             );
         }
-
     }
 
     /**
