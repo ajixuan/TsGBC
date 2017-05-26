@@ -5,15 +5,18 @@ import {Cartridge} from "./cartridge/cartridge";
 
 export class GameBoy {
 
-    public ppu : Ppu;
-    public cpu : Cpu;
-    public memory : Memory;
-    public cartridge : Cartridge;
-    public ticks : number = 0;
-    public counts : number = 0;
-    public running : boolean = false;
-    public timeout : any;
-    public interval : number = 1000;
+    public ppu: Ppu;
+    public cpu: Cpu;
+    public memory: Memory;
+    public cartridge: Cartridge;
+    public ticks: number = 0;
+    public counts: number = 0;
+    public running: boolean = false;
+    public timeout: any;
+    public interval: number = 1000;
+
+    //Ticks per frame
+    public tpf: number = 20;
 
     constructor() {
         this.cartridge = null
@@ -22,37 +25,38 @@ export class GameBoy {
         this.ppu = new Ppu(this.memory);
     }
 
-    public load(url : string) : void{
+    public load(url: string): void {
         this.cartridge = Cartridge.load(url, this.memory);
         this.memory.cartridge = this.cartridge;
-
     }
 
-    public reset() : void {
+    public reset(): void {
         this.cpu.reset();
         this.ticks = 0;
     }
 
-    public tick() : void {
-        let cycles = this.cpu.tick();
-        this.ppu.renderscan(cycles);
-        this.ticks++;
+    public tick(): void {
+        for(let i = 0; i < this.tpf; i++){
+            let cycles = this.cpu.tick();
+            this.ppu.renderscan(cycles);
+            this.ticks++;
+        }
     }
 
     public tickfor(): void {
-        if(this.counts != 0){
-            this.tick();
+        if (this.counts != 0) {
             this.counts--;
-            window.requestAnimationFrame(this.tickfor.bind(this));
+            this.tick();
+            requestAnimationFrame(this.tickfor.bind(this));
         }
     }
 
     public run(): void {
         this.counts = -1;
-        setTimeout(this.tickfor(),this.interval);
+        this.tickfor();
     }
 
-    public stop() : void {
+    public stop(): void {
         this.counts = 0;
     }
 }

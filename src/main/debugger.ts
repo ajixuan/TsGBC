@@ -80,7 +80,6 @@ export class Debugger {
         if(!Debugger.status){
             return
         }
-
         console.log(message);
     }
 

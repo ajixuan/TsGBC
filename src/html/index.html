@@ -16,6 +16,8 @@
         <div style="display: flex; flex-direction: row; margin-left: 10px; ">
             <input size="2" id="tickfor" value="1">
             <button onclick="tick()">Tick</button>
+            Ticks per frame:
+            <input size="2" id="tpf" value="1000">
             <div style="flex-grow: 1"></div>
             <button onclick="grow()">+</button>
             <button onclick="shrink()">-</button>
@@ -254,11 +256,11 @@
     var tick = function () {
         gameboy.counts = $('#tickfor').val();
         gameboy.tickfor(tickfor);
+
     }
 
     var run = function () {
         gameboy.run();
-
     }
 
     var stop = function () {
@@ -273,11 +275,12 @@
         gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() - 1);
     }
 
-    var toggleDebug = function(){
+    var toggleDebug = function () {
         debug.status = !debug.status;
-        if(debug.status){
+        if (debug.status) {
             $(".debugger").css("display", "");
         } else {
+            gameboy.tpf = $('#tpf').val();
             $(".debugger").css("display", "none");
         }
     }
