@@ -29,6 +29,8 @@ export class Memory {
     public writeByte(addr: number, val: number): void {
         if (val == null || val > 0xFF || addr == null || addr > 0xFFFF) {
             throw "Invalid write at 0x" + addr.toString(16) + " with " + val;
+        } else if(addr < 0){
+            addr &= 0xFFFF;
         }
 
         if (addr < 0x8000) {
@@ -61,8 +63,11 @@ export class Memory {
     }
 
     public readByte(addr: number): number {
+
         if (addr == null || addr > 0xFFFF) {
-            throw "Invalid read at 0x" + addr.toString(16);
+                throw "Invalid read at 0x" + addr.toString(16);
+        } else if(addr < 0){
+            addr &= 0xFFFF;
         }
 
         var val = null;
