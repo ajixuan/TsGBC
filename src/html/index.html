@@ -253,11 +253,13 @@
     loadGameBoy();
 
     var tick = function () {
+        gameboy.tpf = $('#tpf').val();
         gameboy.counts = $('#tickfor').val();
         gameboy.tickfor();
     }
 
     var run = function () {
+        gameboy.tpf = $('#tpf').val();
         gameboy.run();
     }
 
@@ -276,10 +278,8 @@
     var toggleDebug = function () {
         debug.status = !debug.status;
         if (debug.status) {
-            gameboy.tpf = 1;
             $(".debugger").css("display", "");
         } else {
-            gameboy.tpf = $('#tpf').val();
             $(".debugger").css("display", "none");
         }
     }
