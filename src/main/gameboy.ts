@@ -16,7 +16,7 @@ export class GameBoy {
     public interval: number = 1000;
 
     //Ticks per frame
-    public tpf: number = 20;
+    public tpf: number = 1;
 
     constructor() {
         this.cartridge = null
@@ -36,17 +36,17 @@ export class GameBoy {
     }
 
     public tick(): void {
-        for(let i = 0; i < this.tpf; i++){
-            let cycles = this.cpu.tick();
-            this.ppu.renderscan(cycles);
-            this.ticks++;
-        }
+        let cycles = this.cpu.tick();
+        this.ppu.renderscan(cycles);
+        this.ticks++;
     }
 
     public tickfor(): void {
         if (this.counts != 0) {
             this.counts--;
-            this.tick();
+            for (let i = 0; i < this.tpf; i++) {
+                this.tick();
+            }
             requestAnimationFrame(this.tickfor.bind(this));
         }
     }

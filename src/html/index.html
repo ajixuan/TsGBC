@@ -206,7 +206,6 @@
 
 </div>
 
-
 <script>
     var gameboy = null;
     var debug = null;
@@ -255,8 +254,7 @@
 
     var tick = function () {
         gameboy.counts = $('#tickfor').val();
-        gameboy.tickfor(tickfor);
-
+        gameboy.tickfor();
     }
 
     var run = function () {
@@ -278,6 +276,7 @@
     var toggleDebug = function () {
         debug.status = !debug.status;
         if (debug.status) {
+            gameboy.tpf = 1;
             $(".debugger").css("display", "");
         } else {
             gameboy.tpf = $('#tpf').val();
