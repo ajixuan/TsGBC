@@ -95,22 +95,22 @@ export class Operations {
     private calcSubtractFlags(first: number, second: number, short: boolean = true): number {
         //Default short is true (8bit operation by default)
         // The half flag (low) is set if there is a borrow on bit 4
+        let limit = 0xFF;
         let mask = 0xF;
 
         //If short is false (if it is 16bit operation)
         // The half flag (low) is set if there is a borrow at bit 12
         if (short === false) {
+            limit = 0xFFFF;
             mask = 0xFFF;
         }
 
-        //Set subtract flag everytime when we add
         this.cpu.registers.setSubtractFlag(1);
         this.cpu.registers.setHalfFlag(0);
         this.cpu.registers.setZeroFlag(0);
 
         let half = (first & mask) - (second & mask);
         let full = first - second;
-
 
         if (half < 0) {
             Debugger.log("set half carry:");
@@ -128,8 +128,7 @@ export class Operations {
             this.cpu.registers.setZeroFlag(1);
         }
 
-        full &= ((mask << 4) + 0xF);
-        return full;
+        return full & limit;
     }
 
     /**
@@ -1732,7 +1731,7 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let result = calcSubtractFlags(val, val, false);
+                let result = calcSubtractFlags(val, val, true);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1747,7 +1746,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getB();
-                let result = calcSubtractFlags(val, oper, false);
+                let result = calcSubtractFlags(val, oper, true);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1762,7 +1761,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getC();
-                let result = calcSubtractFlags(val, oper, false);
+                let result = calcSubtractFlags(val, oper, true);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1778,7 +1777,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getD();
-                let result = calcSubtractFlags(val, oper, false);
+                let result = calcSubtractFlags(val, oper, true);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1793,7 +1792,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getE();
-                let result = calcSubtractFlags(val, oper, false);
+                let result = calcSubtractFlags(val, oper, true);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1808,7 +1807,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getH();
-                let result = calcSubtractFlags(val, oper, false);
+                let result = calcSubtractFlags(val, oper, true);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1823,7 +1822,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getL();
-                let result = calcSubtractFlags(val, oper, false);
+                let result = calcSubtractFlags(val, oper, true);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1838,7 +1837,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = memory.readWord(registers.getHL());
-                let result = calcSubtractFlags(val, oper, false);
+                let result = calcSubtractFlags(val, oper, true);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
