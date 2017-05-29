@@ -126,10 +126,6 @@ export class Registers {
         this.memory = memory;
     }
 
-    public getControl() {
-        return this.memory.io[40];
-    }
-
     public reset() {
         this.scy = 0x00;
         this.scx = 0x00;

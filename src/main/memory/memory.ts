@@ -13,7 +13,6 @@ export class Memory {
     0xDC, 0xCC, 0x6E, 0xE6, 0xDD, 0xDD, 0xD9, 0x99, 0xBB, 0xBB, 0x67, 0x63, 0x6E, 0x0E, 0xEC, 0xCC,
     0xDD, 0xDC, 0x99, 0x9F, 0xBB, 0xB9, 0x33, 0x3E];
 
-    public io: number[] = [0x80];
     public cartridge: Cartridge;
     public interrupt: Interrupts = new Interrupts();
 
@@ -86,8 +85,6 @@ export class Memory {
                 throw "Invalid read on unused i/o at 0x" + addr.toString(16);
             } else if (addr == 0xFF0F) {
                 return this.interrupt.if & 0xFF;
-            } else if (addr < 0xFF4C) {
-                val = this.io[addr - 0xFF00];
             } else if (addr < 0xFF6C) {
                 return this.ppu.readByte(addr);
             } else if (addr < 0xFF80) {
