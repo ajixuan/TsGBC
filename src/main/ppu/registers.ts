@@ -36,7 +36,7 @@ export class Registers {
         let lyreset = () => { self.ly = 0 };
         return { //Toggles for the flags
             lcdon :     {set : set(0x80), unset : unset(0x80, lyreset), get : get(0x80)},
-            bgwin :     {set : set(0x40), unset : unset(0x40), get : get(0x40)},
+            bgwin :     {set : set(0x40), unset : unset(0x40), get : get(0x40)},    //BGmap 1 or 2
             winon :     {set : set(0x20), unset : unset(0x20), get : get(0x20)},
             tilemap :   {set : set(0x10), unset : unset(0x10), get : get(0x10)},
             bgmap :     {set : set(0x08), unset : unset(0x08), get : get(0x08)},

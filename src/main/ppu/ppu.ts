@@ -5,7 +5,9 @@ import {Registers} from "./registers";
 export class Ppu {
     private screen: Screen;
     private memory: Memory;
-    private tileset: Array<Array<Array<number>>>;
+    private vramTileset: Array<Array<Array<number>>>;
+    private oamTileset: Array<Array<Array<number>>>;
+
     public clock: number = 0;
     public registers: Registers;
 
@@ -22,20 +24,30 @@ export class Ppu {
      * Resets the bitmap
      */
     public reset(): void {
-        this.tileset = [];
+        this.vramTileset = [];
         this.registers.reset();
         this.clock = 0;
 
         //Go through all tiles
         for (let i = 0; i < 384; i++) {
-            this.tileset[i] = [];
+            this.vramTileset[i] = [];
 
             //For each tile there are 8 bits
             for (let j = 0; j < 8; j++) {
                 //Since each pixel consist 2 bytes, store values here
-                this.tileset[i][j] = [0, 0, 0, 0, 0, 0, 0, 0];
+                this.vramTileset[i][j] = [0, 0, 0, 0, 0, 0, 0, 0];
             }
         }
+    }
+
+    public updateOamTile(addr: number): void {
+        addr &= 0xFF;
+        let
+
+
+            let
+        addr / 4
+
     }
 
     /**
@@ -44,7 +56,7 @@ export class Ppu {
      *
      * @param addr
      */
-    public updateTile(addr: number): void {
+    public updateVramTile(addr: number): void {
 
         // Cut down the address so it is a number
         // that represents one of the 384 tiles
@@ -68,7 +80,7 @@ export class Ppu {
         for (let x = 0; x < 8; x++) {
             pindex = 1 << x;
 
-            this.tileset[tile][y][x] =
+            this.vramTileset[tile][y][x] =
                 this.memory.readByte(addr) & pindex +
                 this.memory.readByte(addr + 1) & pindex;
         }
@@ -79,11 +91,23 @@ export class Ppu {
      * object form
      * @param tile
      */
-    private getVramTile(tile: number): Array<Array<number>> {
+    private getVramTile(block: number): Array<Array<number>> {
+
+        //BGmap 1 0x9800
+        let tile;
+        if(this.registers.lcdc.bgwin.get()){
+            //add 0x9800 to hex tile
+            tile = block + 0x9800;
+        }
+
+        //BGmap 2 0x9C00
+        else {
+            tile = block + 0x9C00;
+        }
 
         //-------------Memory in map 1
         if (this.registers.lcdc.bgmap.get()) {
-            return this.tileset[tile];
+            return this.vramTileset[tile];
         }
 
         //-------------Memory in map 2
@@ -97,7 +121,7 @@ export class Ppu {
         }
 
         //Pad 128 tiles
-        return this.tileset[tile + 128];
+        return this.vramTileset[tile + 128];
     }
 
     /**
@@ -107,15 +131,15 @@ export class Ppu {
         this.clock += cycles;
 
         //Set the ly,lyc coincidence interrupt
-         if (this.registers.ly == this.registers.lyc) {
+        if (this.registers.ly == this.registers.lyc) {
             this.registers.stat.interrupts.lycoincidence.set();
-         }
+        }
 
         //Cycle through stat
         if (this.registers.stat.modeFlag.hblank.get() && this.clock >= 204) {
             this.registers.stat.modeFlag.oamlock.set();
 
-            if(this.registers.stat.interrupts.lycoincidence.get()){
+            if (this.registers.stat.interrupts.lycoincidence.get()) {
                 this.registers.stat.interrupts.lycoincidence.unset()
             }
 
@@ -135,41 +159,44 @@ export class Ppu {
 
         } else if (this.registers.stat.modeFlag.oamlock.get() && this.clock >= 80) {
             this.registers.lcdc.bgon.set();
+
+
             this.registers.stat.modeFlag.vramlock.set();
             this.clock = 0;
 
+
         } else if (this.registers.stat.modeFlag.vramlock.get() && this.clock >= 172) {
             if (this.registers.lcdc.bgon.get() & this.registers.lcdc.lcdon.get()) {
+                this.clock = 0;
+
                 //Vertical blank
                 if (this.registers.ly == 144) {
                     this.registers.stat.interrupts.vblank.set();
                     //this.screen.printBuffer();
-
-                } else {
-                    //Get the tile of our current ly
-                    let y, x, tile, ycoor, xcoor;
-
-                    //Y coordinate does not change during line render
-                    y = this.registers.ly + this.registers.scy;
-                    ycoor = Screen.TILES * Math.floor(y / Screen.PIXELS);
-
-                    //Render whole line
-                    for (let cell = 0; cell < this.screen.WIDTH; cell++) {
-                        x = this.registers.scx + cell;
-                        xcoor = Math.floor(x / Screen.PIXELS);
-
-                        //Get new tile
-                        if (cell % Screen.PIXELS == 0) {
-                            tile = this.getVramTile(xcoor + ycoor % 256);
-                        }
-
-                        this.screen.setBufferPixel(x, y, tile[y % Screen.PIXELS][x % Screen.PIXELS]);
-                    }
-                    this.screen.printBufferRow(y);
-                    this.registers.stat.interrupts.hblank.set();
+                    return;
                 }
 
-                this.clock = 0;
+                //Get the tiles of our current ly
+                let y, x, tile, ycoor, xcoor;
+
+                //Y coordinate does not change during line render
+                y = this.registers.ly + this.registers.scy;
+                //ycoor = Screen.TILES * Math.floor(y / Screen.PIXELS);
+
+                //Render whole line
+                for (let cell = 0; cell < this.screen.WIDTH; cell++) {
+                    x = this.registers.scx + cell;
+                    //xcoor = Math.floor(x / Screen.PIXELS);
+
+                    tile = this.getVramTile(x + (y * 32));
+                    this.screen.setBufferPixel(x, y, tile[y % Screen.PIXELS][x % Screen.PIXELS]);
+                }
+                this.screen.printBufferRow(y);
+                this.registers.stat.interrupts.hblank.set();
+
+
+            } else {
+                console.log("ERROR, lcdc does not have bg enabled");
             }
         }
     }
@@ -189,16 +216,19 @@ export class Ppu {
             }
 
             this.memory.vram[addr - 0x8000] = val;
-            this.updateTile(addr);
+            this.updateVramTile(addr);
 
-            //OAM
-        } else if (addr < 0xFEA0) {
+
+        }
+        //OAM
+        else if (addr < 0xFEA0) {
             if (!this.registers.stat.modeFlag.vramlock.get()) {
                 console.log("ERROR: OAM locked");
                 return;
             }
 
             this.memory.oam[addr - 0xFE00] = val;
+            this.updateOamTile(addr);
 
         } else {
             this.writeByte(addr, val);
