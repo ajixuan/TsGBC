@@ -42,12 +42,6 @@ export class Ppu {
 
     public updateOamTile(addr: number): void {
         addr &= 0xFF;
-        let
-
-
-            let
-        addr / 4
-
     }
 
     /**
@@ -96,13 +90,11 @@ export class Ppu {
         //BGmap 1 0x9800
         let tile;
         if(this.registers.lcdc.bgwin.get()){
-            //add 0x9800 to hex tile
-            tile = block + 0x9800;
+            tile = this.memory.readWord(block + 0x9C00);
         }
-
         //BGmap 2 0x9C00
         else {
-            tile = block + 0x9C00;
+            tile = this.memory.readWord(block + 0x9800);
         }
 
         //-------------Memory in map 1

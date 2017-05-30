@@ -16,7 +16,7 @@ export class Memory {
     public cartridge: Cartridge;
     public interrupt: Interrupts = new Interrupts();
 
-    public vram: Array<number> = Array.apply(null, Array(0x1800)).map(Number.prototype.valueOf, 0);
+    public vram: Array<number> = Array.apply(null, Array(0x2000)).map(Number.prototype.valueOf, 0);
     public oam: Array<number> = Array.apply(null, Array(0xA0)).map(Number.prototype.valueOf, 0);
     public ppu : Ppu;
 
