@@ -75,8 +75,8 @@ export class Ppu {
             pindex = 1 << x;
 
             this.vramTileset[tile][y][x] =
-                this.memory.readByte(addr) & pindex +
-                this.memory.readByte(addr + 1) & pindex;
+                ((this.memory.readByte(addr) & pindex) ? 1 : 0) +
+                ((this.memory.readByte(addr + 1) & pindex) ? 2 : 0);
         }
     }
 
