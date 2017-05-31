@@ -97,23 +97,19 @@ export class Ppu {
             tile = this.memory.readWord(block + 0x9800);
         }
 
-        //-------------Memory in map 1
-        if (this.registers.lcdc.bgmap.get()) {
-            return this.vramTileset[tile];
+        // Memory in map 2
+        if (this.registers.lcdc.bgmap.get() == 0){
+            //If lcdc is set to map 2
+            //0x8800 is beginning of address, which starts from +128 tiles
+
+            //Check if negative
+            if (tile & 0x80) {
+                tile -= (1 << 8); //Sign extension
+                tile += 0x80;     //-0x80 is index 0, pad 128
+            }
         }
 
-        //-------------Memory in map 2
-        //If lcdc is set to map 2
-        //0x8800 is beginning of address, which starts from +128 tiles
-
-        //Convert to negative
-        if (tile & 0x80) {
-            tile -= (1 << 8); //Sign extension
-            tile += 128;      //Make value positive
-        }
-
-        //Pad 128 tiles
-        return this.vramTileset[tile + 128];
+        return this.vramTileset[tile];
     }
 
     /**
