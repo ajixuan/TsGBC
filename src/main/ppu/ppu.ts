@@ -89,7 +89,7 @@ export class Ppu {
 
         //BGmap 1 0x9800
         let tile;
-        if(this.registers.lcdc.bgwin.get()){
+        if (this.registers.lcdc.bgwin.get()) {
             tile = this.memory.readWord(block + 0x9C00);
         }
         //BGmap 2 0x9C00
@@ -98,7 +98,7 @@ export class Ppu {
         }
 
         // Memory in map 2
-        if (this.registers.lcdc.bgmap.get() == 0){
+        if (this.registers.lcdc.bgmap.get() == 0) {
             //If lcdc is set to map 2
             //0x8800 is beginning of address, which starts from +128 tiles
 
@@ -189,6 +189,49 @@ export class Ppu {
         }
     }
 
+    public requestRead(addr: number): number {
+        //Vram
+        let val;
+        if (addr < 0xA000) {
+            if (this.registers.stat.modeFlag.vramlock.get()) {
+                val =  0xFF;
+            }
+            val =  this.memory.vram[addr - 0x8000];
+        }
+        //OAM
+        else if (addr < 0xFEA0) {
+            if (this.registers.stat.modeFlag.vramlock.get() || this.registers.stat.modeFlag.oamlock.get()) {
+                val =  0xFF;
+            }
+
+            val =  this.memory.oam[addr - 0xFE00];
+        } else if (addr == 0xFF40) {
+            val =  this.registers.lcdc.getAll();
+        } else if (addr == 0xFF42) {
+            val =  this.registers.scy;
+        } else if (addr == 0xFF43) {
+            val =  this.registers.scx;
+        } else if (addr == 0xFF44) {
+            val =  this.registers.ly;
+        } else if (addr == 0xFF45) {
+            val =  this.registers.lyc;
+        } else if (addr == 0xFF4A) {
+            val =  this.registers.wy;
+        } else if (addr == 0xFF4B) {
+            val =  this.registers.wx;
+        } else if (addr == 0xFF68) {
+            val =  this.registers.bcps;
+        } else if (addr == 0xFF69) {
+            val =  this.registers.bcpd;
+        } else if (addr == 0xFF6A) {
+            val =  this.registers.ocps;
+        } else if (addr == 0xFF6B) {
+            val =  this.registers.ocpd;
+        }
+
+        return val;
+    }
+
     /**
      * Method for external processes to make writes to vram.
      * VRAM is ppu controlled, external processes must
@@ -205,8 +248,6 @@ export class Ppu {
 
             this.memory.vram[addr - 0x8000] = val;
             this.updateVramTile(addr);
-
-
         }
         //OAM
         else if (addr < 0xFEA0) {
@@ -217,100 +258,55 @@ export class Ppu {
 
             this.memory.oam[addr - 0xFE00] = val;
             this.updateOamTile(addr);
+        } else if (addr == 0xFF40) {
+            if (val & 0x01) this.registers.lcdc.bgon.set();
+            if (val & 0x02) this.registers.lcdc.objon.set();
+            if (val & 0x04) this.registers.lcdc.objsize.set();
+            if (val & 0x08) this.registers.lcdc.tilemap.set();
+            if (val & 0x10) this.registers.lcdc.bgwin.set();
+            if (val & 0x20) this.registers.lcdc.objon.set();
+            if (val & 0x40) this.registers.lcdc.bgwin.set();
+            if (val & 0x80) this.registers.lcdc.lcdon.set();
+        } else if (addr == 0xFF42) {
+            this.registers.scy = val;
 
-        } else {
-            this.writeByte(addr, val);
+        } else if (addr == 0xFF43) {
+            this.registers.scx = val;
+
+        } else if (addr == 0xFF44) {
+            this.registers.ly = val;
+
+        } else if (addr == 0xFF45) {
+            this.registers.lyc = val;
+
+        } else if (addr == 0xFF46) {
+            //DMA
+            //Transfers 40 x 32 bits of data
+            //val is the starting address of transfer
+            //val is always the upper 8 bits, so need to be shifted
+            for (let i = 0; i < 0x9F; i++) {
+                let data = this.memory.readByte((val << 8) + i);
+                this.memory.oam[i] = data;
+            }
+
+        } else if (addr == 0xFF4A) {
+            this.registers.wy = val;
+
+        } else if (addr == 0xFF4B) {
+            this.registers.wx = val;
+
+        } else if (addr == 0xFF68) {
+            this.registers.bcps = val;
+
+        } else if (addr == 0xFF69) {
+            this.registers.bcpd = val;
+
+        } else if (addr == 0xFF6A) {
+            this.registers.ocps = val;
+
+        } else if (addr == 0xFF6B) {
+            this.registers.ocpd = val;
         }
-    }
-
-    /**
-     * Gpu handles writing bytes to its own registers
-     * @param addr
-     * @param val
-     */
-    private writeByte(addr: number, val: number): void {
-        switch (addr) {
-            case 0xFF40:
-                if (val & 0x01) this.registers.lcdc.bgon.set();
-                if (val & 0x02) this.registers.lcdc.objon.set();
-                if (val & 0x04) this.registers.lcdc.objsize.set();
-                if (val & 0x08) this.registers.lcdc.tilemap.set();
-                if (val & 0x10) this.registers.lcdc.bgwin.set();
-                if (val & 0x20) this.registers.lcdc.objon.set();
-                if (val & 0x40) this.registers.lcdc.bgwin.set();
-                if (val & 0x80) this.registers.lcdc.lcdon.set();
-                break;
-            case 0xFF42:
-                this.registers.scy = val;
-                break;
-            case 0xFF43:
-                this.registers.scx = val;
-                break;
-            case 0xFF44:
-                this.registers.ly = val;
-                break;
-            case 0xFF45:
-                this.registers.lyc = val;
-                break;
-            case 0xFF46:
-                //DMA
-                //Transfers 40 x 32 bits of data
-                //val is the starting address of transfer
-                //val is always the upper 8 bits, so need to be shifted
-                for (let i = 0; i < 0x9F; i++) {
-                    let data = this.memory.readByte((val << 8) + i);
-                    this.memory.oam[i] = data;
-                }
-                break;
-            case 0xFF4A:
-                this.registers.wy = val;
-                break;
-            case 0xFF4B:
-                this.registers.wx = val;
-                break;
-            case 0xFF68:
-                this.registers.bcps = val;
-                break;
-            case 0xFF69:
-                this.registers.bcpd = val;
-                break;
-            case 0xFF6A:
-                this.registers.ocps = val;
-                break;
-            case 0xFF6B:
-                this.registers.ocpd = val;
-                break;
-        }
-    }
-
-    public readByte(addr: number): number {
-
-        switch (addr) {
-            case 0xFF40:
-                return this.registers.lcdc.getAll();
-            case 0xFF42:
-                return this.registers.scy;
-            case 0xFF43:
-                return this.registers.scx;
-            case 0xFF44:
-                return this.registers.ly;
-            case 0xFF45:
-                return this.registers.lyc;
-            case 0xFF4A:
-                return this.registers.wy;
-            case 0xFF4B:
-                return this.registers.wx;
-            case 0xFF68:
-                return this.registers.bcps;
-            case 0xFF69:
-                return this.registers.bcpd;
-            case 0xFF6A:
-                return this.registers.ocps;
-            case 0xFF6B:
-                return this.registers.ocpd;
-
-        }
-
     }
 
 }

@@ -73,20 +73,20 @@ export class Memory {
         if (addr < 0x8000) {
             return this.cartridge.readByte(addr);
         } else if (addr < 0xA000) {
-            val = this.vram[addr - 0x8000];
+            val = this.ppu.requestRead(addr);
         } else if (addr < 0xC000) {
             return this.cartridge.readByte(addr);
         } else if (addr < 0xFE00) {
             val = this.cpu.ram[(addr - 0xC000) % 0x2000];
         } else if (addr < 0xFEA0) {
-            val = this.oam[addr - 0xFE00];
+            val = this.ppu.requestRead(addr);
         } else if (addr < 0xFF80) {
             if (addr < 0xFF00) {
                 throw "Invalid read on unused i/o at 0x" + addr.toString(16);
             } else if (addr == 0xFF0F) {
                 return this.interrupt.if & 0xFF;
             } else if (addr < 0xFF6C) {
-                return this.ppu.readByte(addr);
+                return this.ppu.requestRead(addr);
             } else if (addr < 0xFF80) {
                 throw "Invalid write on unused i/o at 0x" + addr.toString(16);
             }
