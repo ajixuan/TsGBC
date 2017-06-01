@@ -55,14 +55,10 @@ export class Operations {
         this.cpu.registers.setZeroFlag(0);
 
         if (half >> low == 1) {
-            Debugger.log("set half carry:");
-            Debugger.log(half);
             this.cpu.registers.setHalfFlag(1);
         }
 
         if (full >> high == 1) {
-            Debugger.log("set full carry");
-            Debugger.log(full);
             this.cpu.registers.setCarryFlag(1);
         }
 
@@ -103,14 +99,10 @@ export class Operations {
         let full = first - second;
 
         if (half < 0) {
-            Debugger.log("set half carry:");
-            Debugger.log(half);
             this.cpu.registers.setHalfFlag(1);
         }
 
         if (full < 0 && short === false) {
-            Debugger.log("set full carry");
-            Debugger.log(full);
             this.cpu.registers.setCarryFlag(1);
         }
 
@@ -160,7 +152,6 @@ export class Operations {
                     val -= (1 << (shift + 1)); //Sign extension trick
                 }
 
-                Debugger.log(val);
                 return val
             }
         };
