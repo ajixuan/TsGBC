@@ -61,6 +61,11 @@ export class Debugger {
         $('#if').html("0x" + gameboy.memory.interrupt.if.toString(16));
         $('#ie').html("0x" + gameboy.memory.interrupt.ie.toString(16));
 
+        $('#tpf').change(function(){
+            if($(this).val()) {
+                gameboy.tpf = $(this).val()
+            }
+        });
 
         if (gameboy.cartridge.type) {
             $('#url').html(gameboy.cartridge.url);
@@ -79,13 +84,6 @@ export class Debugger {
         Debugger.gameboy = gameboy;
         console.info("Debugger is ready!");
         Debugger.display();
-    }
-
-    public static log(message : any){
-        if(!Debugger.status){
-            return
-        }
-        console.log(message);
     }
 
 }
