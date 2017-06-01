@@ -32,7 +32,12 @@ export class Debugger {
         $('#pc').html("0x" + gameboy.cpu.registers.getPC().toString(16).toUpperCase());
         $('#sp').html("0x" + gameboy.cpu.registers.getSP().toString(16).toUpperCase());
 
-        $('#flags').html(Number(gameboy.cpu.registers.getF() >> 4).toString(2));
+        $('#zero').html("z: " + Number(gameboy.cpu.registers.getZeroFlag()).toString(2));
+        $('#subtract').html("s: " + Number(gameboy.cpu.registers.getSubtractFlag()).toString(2));
+        $('#halfcarry').html("h: " + Number(gameboy.cpu.registers.getHalfFlag()).toString(2));
+        $('#fullcarry').html("f: " + Number(gameboy.cpu.registers.getCarryFlag()).toString(2));
+
+
 
 
         $('#af').html("0x" + gameboy.cpu.registers.getAF().toString(16).toUpperCase());
