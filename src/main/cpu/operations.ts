@@ -907,8 +907,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let val = memory.readByte(pc);
-                registers.setAF(val);
+                registers.setA(pc);
             }
         };
 
