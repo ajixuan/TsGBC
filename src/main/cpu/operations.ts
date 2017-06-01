@@ -26,17 +26,6 @@ export class Operations {
     }
 
     /**
-     * Private function for writing byte to memory.
-     * Checks lcdc and stat restrictions
-     * @param byte
-     */
-    private wrtieByte(byte : number) : void {
-
-
-    }
-
-
-    /**
      * Helper function for setting carry flags depending on number of bits
      * @param first
      * @param second
@@ -60,8 +49,10 @@ export class Operations {
         let half = (first & mask) + (second & mask);
         let full = first + second;
 
-        //Reset subtract flag everytime when we add
         this.cpu.registers.setSubtractFlag(0);
+        this.cpu.registers.setHalfFlag(0);
+        this.cpu.registers.setCarryFlag(0);
+        this.cpu.registers.setZeroFlag(0);
 
         if (half >> low == 1) {
             Debugger.log("set half carry:");
@@ -78,8 +69,6 @@ export class Operations {
         //Set 0 flag
         if (full == 0) {
             this.cpu.registers.setZeroFlag(1);
-        } else {
-            this.cpu.registers.setZeroFlag(0);
         }
 
         return full & garb;
@@ -107,6 +96,7 @@ export class Operations {
 
         this.cpu.registers.setSubtractFlag(1);
         this.cpu.registers.setHalfFlag(0);
+        this.cpu.registers.setCarryFlag(0);
         this.cpu.registers.setZeroFlag(0);
 
         let half = (first & mask) - (second & mask);
