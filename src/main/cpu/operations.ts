@@ -1,6 +1,5 @@
 import {Memory}  from "../memory/memory";
 import {Cpu} from "./cpu";
-import {Debugger} from "../debugger";
 
 /**
  * Manages the set of operations

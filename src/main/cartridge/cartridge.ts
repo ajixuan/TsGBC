@@ -1,6 +1,7 @@
 import {Memory} from "../memory/memory";
 import {Controller} from "./controllers/controller";
 import {None} from "./controllers/none";
+import {MBC1} from "./controllers/mbc1";
 export class Cartridge {
 
     public url : string;
@@ -46,6 +47,8 @@ export class Cartridge {
 
         if (this.type.id == 0) {
             this.controller = new None(rom);
+        } else if (this.type.id == 1){
+            this.controller = new MBC1(rom);
         } else {
             throw "Unable to create cartridge for " + url;
         }

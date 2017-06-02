@@ -37,9 +37,6 @@ export class Debugger {
         $('#halfcarry').html("h: " + Number(gameboy.cpu.registers.getHalfFlag()).toString(2));
         $('#fullcarry').html("f: " + Number(gameboy.cpu.registers.getCarryFlag()).toString(2));
 
-
-
-
         $('#af').html("0x" + gameboy.cpu.registers.getAF().toString(16).toUpperCase());
         $('#bc').html("0x" + gameboy.cpu.registers.getBC().toString(16).toUpperCase());
         $('#de').html("0x" + gameboy.cpu.registers.getDE().toString(16).toUpperCase());
