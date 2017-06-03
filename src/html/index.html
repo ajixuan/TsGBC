@@ -26,6 +26,9 @@
         <div style="display: flex; flex-direction: row; margin-left: 10px; ">
             <button onclick="run()">Run</button>
             <button onclick="stop()">Stop</button>
+            Break at pc:
+            <input size="4" id="breakpoint" value="0">
+            <button id="setbreak" onclick="setBreakPoint()">Set</button>
         </div>
 
         <div class="debugger">
@@ -212,6 +215,7 @@
 <script>
     var gameboy = null;
     var debug = null;
+    var breakpoint = false;
 
     var loadGameBoy = function () {
         System.import('gameboy').then(function (e) {
@@ -259,8 +263,7 @@
 
     var tick = function () {
         gameboy.tpf = $('#tpf').val();
-        gameboy.counts = $('#tickfor').val();
-        gameboy.tickfor();
+        gameboy.tickUntil($('#tickfor').val());
     }
 
     var run = function () {
@@ -283,6 +286,13 @@
     var toggleDebug = function () {
         debug.status = !debug.status;
     }
+
+    var setBreakPoint = function(){
+        var val = parseInt($("#breakpoint").val(), 16);
+        gameboy.setPCBreak(val);
+    }
+
+
 
 </script>
 </body>

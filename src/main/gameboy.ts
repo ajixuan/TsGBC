@@ -2,6 +2,7 @@ import {Cpu} from "./cpu/cpu";
 import {Ppu} from "./ppu/ppu";
 import {Memory} from "./memory/memory";
 import {Cartridge} from "./cartridge/cartridge";
+import {Registers} from "./cpu/registers"
 
 export class GameBoy {
 
@@ -10,11 +11,10 @@ export class GameBoy {
     public memory: Memory;
     public cartridge: Cartridge;
     public ticks: number = 0;
-    public counts: number = 0;
-    public running: boolean = false;
     public timeout: any;
     public interval: number = 1000;
     private runConditions : Array<Function> = new Array<Function>();
+    private counts: number = 0;
 
     //Ticks per frame
     public tpf: number = 1;
@@ -37,17 +37,16 @@ export class GameBoy {
     }
 
     public checkRunConditions(): boolean {
-        let final = true;
-        for(let condition of this.runConditions){
-            console.log(condition);
-            final = final && condition();
+        for(let i = 0 ; i < this.runConditions.length; i++){
+            if(this.runConditions[i]()){
+                this.runConditions.splice(i, 1);
+                return true;
+            }
         }
-
-        return final;
+        return false;
     }
 
     public tick(): boolean {
-
         for (let i = 0; i < this.tpf; i++) {
             if (this.checkRunConditions()) {
                 return true;
@@ -56,6 +55,7 @@ export class GameBoy {
             let cycles = this.cpu.tick();
             this.ppu.renderscan(cycles);
             this.ticks++;
+            this.counts--;
         }
         return false;
     }
@@ -64,23 +64,37 @@ export class GameBoy {
      * Tick until
      * @param pc
      */
-    public tickUntil(): void {
-
+    private tickAnimation(): void {
         //Continue if tick is not finished
         if(!this.tick()){
-            requestAnimationFrame(this.tickUntil.bind(this));
+            requestAnimationFrame(this.tickAnimation.bind(this));
+            return;
         }
     }
 
-    public runUntilPC(pc : number):void {
-        this.tickUntil();
+    public setPCBreak(pc : number):void {
+        let cb = (function(pc : number, registers : Registers){
+            console.log(pc);
+            let _pc = pc;
+            let _registers = registers;
+            return () => {
+                return (_registers.getPC() == _pc);
+            };
+        })(pc, this.cpu.registers);
+        this.runConditions.push(cb);
+    }
+
+
+    public tickUntil(counts : number) : void {
+        //Push the basic run condition in
+        let run = function(){ return (this.counts == 0)}.bind(this);
+        this.runConditions.push(run);
+        this.counts = counts;
+        this.tickAnimation();
     }
 
     public run(): void {
-        let run = function(){ return (this.counts == 0) ? true : false}.bind(this);
-        this.runConditions.push(run);
-        this.counts = -1;
-        this.tickUntil();
+        this.tickUntil(-1);
     }
 
     public stop(): void {
