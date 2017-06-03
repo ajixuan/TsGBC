@@ -14,6 +14,7 @@ export class GameBoy {
     public running: boolean = false;
     public timeout: any;
     public interval: number = 1000;
+    private runConditions : Array<Function> = new Array<Function>();
 
     //Ticks per frame
     public tpf: number = 1;
@@ -35,28 +36,55 @@ export class GameBoy {
         this.ticks = 0;
     }
 
-    public tick(): void {
-        let cycles = this.cpu.tick();
-        this.ppu.renderscan(cycles);
-        this.ticks++;
+    public checkRunConditions(): boolean {
+        let final = true;
+        for(let condition of this.runConditions){
+            console.log(condition);
+            final = final && condition();
+        }
+
+        return final;
     }
 
-    public tickfor(): void {
-        if (this.counts != 0) {
-            this.counts--;
-            for (let i = 0; i < this.tpf; i++) {
-                this.tick();
+    public tick(): boolean {
+
+        for (let i = 0; i < this.tpf; i++) {
+            if (this.checkRunConditions()) {
+                return true;
             }
-            requestAnimationFrame(this.tickfor.bind(this));
+
+            let cycles = this.cpu.tick();
+            this.ppu.renderscan(cycles);
+            this.ticks++;
+        }
+        return false;
+    }
+
+    /**
+     * Tick until
+     * @param pc
+     */
+    public tickUntil(): void {
+
+        //Continue if tick is not finished
+        if(!this.tick()){
+            requestAnimationFrame(this.tickUntil.bind(this));
         }
     }
 
+    public runUntilPC(pc : number):void {
+        this.tickUntil();
+    }
+
     public run(): void {
+        let run = function(){ return (this.counts == 0) ? true : false}.bind(this);
+        this.runConditions.push(run);
         this.counts = -1;
-        this.tickfor();
+        this.tickUntil();
     }
 
     public stop(): void {
         this.counts = 0;
     }
+
 }
