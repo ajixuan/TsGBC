@@ -13,32 +13,52 @@
         <div id="screenContainer">
             <canvas id="screen"></canvas>
         </div>
-        <div style="display: flex; flex-direction: row; margin-left: 10px; ">
-            <input size="2" id="tickfor" value="1">
-            <button onclick="tick()">Tick</button>
-            Ticks per frame:
-            <input size="2" id="tpf" value="1">
-            <div style="flex-grow: 1"></div>
-            <button onclick="grow()">+</button>
-            <button onclick="shrink()">-</button>
-            <button onclick="toggleDebug()">Debug</button>
-        </div>
-        <div style="display: flex; flex-direction: row; margin-left: 10px; ">
-            <button onclick="run()">Run</button>
-            <button onclick="stop()">Stop</button>
-            Break at pc:
-            <input size="4" id="breakpoint" value="0">
-            <button id="setbreak" onclick="setBreakPoint()">Set</button>
+
+        <div class="controllerRow">
+            <div class="controllerCol">
+
+                <div>
+                    <input size="2" id="tickfor" value="1">
+                    <button onclick="tick()">Tick</button>
+                </div>
+                <div>
+                    <button onclick="run()">Run</button>
+                    <button onclick="stop()">Stop</button>
+                </div>
+            </div>
+
+            <div class="controllerCol">
+
+                <div>
+                    Ticks per frame:
+                    <input size="2" id="tpf" value="1">
+                </div>
+                <div>
+                    Break at pc:
+                    <input size="3" id="breakpoint" value="0">
+                    <button id="setbreak" onclick="setBreakPoint()">Set</button>
+                </div>
+
+            </div>
+
+            <div class="controllerCol" style="margin-left: auto">
+                <div>
+                    <button onclick="grow()">+</button>
+                    <button onclick="shrink()">-</button>
+                </div>
+            </div>
+
         </div>
 
+
+
+        <!-- Log Console -->
         <div class="debugger">
             <div style="display: flex; flex-direction: row; margin-left: 10px; flex-grow: 1">
                 <fieldset style="width: 100%">
                     <legend>LOG</legend>
                     <div class="log" style="color: #bebebe; display: inline-block">
-                        <ul>
-
-                        </ul>
+                        <ul></ul>
                     </div>
                 </fieldset>
             </div>
@@ -134,30 +154,30 @@
                         <br/>
                         <div>
                             <span class="header">Flags:</span>
-                                <div id="zero"></div>
-                                <div id="subtract"></div>
-                                <div id="halfcarry"></div>
-                                <div id="fullcarry"></div>
-                        </li>
+                            <div id="zero"></div>
+                            <div id="subtract"></div>
+                            <div id="halfcarry"></div>
+                            <div id="fullcarry"></div>
 
-                        <li>
-                            <span class="header">AF:</span>
-                            <span id="af"></span>
-                        </li>
-                        <li>
-                            <span class="header">BC:</span>
-                            <span id="bc"></span>
-                        </li>
-                        <li>
-                            <span class="header">DE:</span>
-                            <span id="de"></span>
-                        </li>
-                        <li>
-                            <span class="header">HL:</span>
-                            <span id="hl"></span>
-                        </li>
-                    </ul>
-                </div>
+                            </li>
+
+                            <li>
+                                <span class="header">AF:</span>
+                                <span id="af"></span>
+                            </li>
+                            <li>
+                                <span class="header">BC:</span>
+                                <span id="bc"></span>
+                            </li>
+                            <li>
+                                <span class="header">DE:</span>
+                                <span id="de"></span>
+                            </li>
+                            <li>
+                                <span class="header">HL:</span>
+                                <span id="hl"></span>
+                            </li>
+                        </div>
             </fieldset>
             <fieldset>
                 <legend>PPU Registers</legend>
@@ -187,27 +207,40 @@
             </fieldset>
         </div>
 
-        <fieldset>
-            <legend>Interrupts</legend>
-            <div style="color: #bebebe; display: inline-block">
-                <ul style="list-style: none;">
-                    <li>
-                        <span class="header">IME:</span>
-                        <span id="ime"></span>
-                    </li>
-                    <li>
-                        <span class="header">IE:</span>
-                        <span id="ie"></span>
-                    </li>
+        <div style="display: flex; flex-direction: row;">
 
-                    <br/>
-                    <li>
-                        <span class="header">IF:</span>
-                        <span id="if"></span>
-                    </li>
-                </ul>
+
+            <fieldset>
+                <legend>Interrupts</legend>
+                <div style="color: #bebebe; display: inline-block">
+                    <ul style="list-style: none;">
+                        <li>
+                            <span class="header">IME:</span>
+                            <span id="ime"></span>
+                        </li>
+                        <li>
+                            <span class="header">IE:</span>
+                            <span id="ie"></span>
+                        </li>
+
+                        <br/>
+                        <li>
+                            <span class="header">IF:</span>
+                            <span id="if"></span>
+                        </li>
+                    </ul>
+                </div>
+
+            </fieldset>
+
+            <div>
+                <legend>Run Conditions</legend>
+                <div style="color: #bebebe; display: inline-block">
+                </div>
             </div>
-        </fieldset>
+        </div>
+
+        <button onclick="toggleDebug()">Debug</button>
     </div>
 
 </div>
@@ -285,14 +318,16 @@
 
     var toggleDebug = function () {
         debug.status = !debug.status;
-        if(debug.status){ debug.display()};
+        if (debug.status) {
+            debug.display()
+        }
+        ;
     }
 
-    var setBreakPoint = function(){
+    var setBreakPoint = function () {
         var val = parseInt($("#breakpoint").val(), 16);
         gameboy.setPCBreak(val);
     }
-
 
 
 </script>

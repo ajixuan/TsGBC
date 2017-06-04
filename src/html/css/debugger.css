@@ -26,3 +26,20 @@ fieldset {
 .log .error {
     color: #ff3119;
 }
+
+.controllerRow {
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
+}
+
+.controllerCol {
+    display : flex;
+    flex-direction:column;
+    margin-right: 10px;
+}
+
+.controllerCol div {
+    margin-bottom: 5px;
+    display:flex;
+}
