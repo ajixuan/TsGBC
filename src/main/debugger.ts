@@ -7,16 +7,29 @@ export class Debugger {
     public static status : boolean = true;
     private static gameboy : GameBoy;
 
+    private static logBuffer : Array<String> = new Array<String>();
+
+
     public static display() : void {
-        if (!Debugger.status) {
-            return;
-        }
 
         if (Debugger.gameboy == null) {
-            console.error("Error: Debugger doesn't have GameBoy set!");
+            return console.error("Error: Debugger doesn't have GameBoy set!");
         }
 
         let gameboy = Debugger.gameboy;
+
+        //Add to log
+        var eventStr = "PC:" + gameboy.cpu.registers.getPC().toString(16).toUpperCase()
+            + " SP:" + gameboy.cpu.registers.getSP().toString(16).toUpperCase();
+        this.logBuffer.push(eventStr);
+
+        if (!Debugger.status) { return };
+
+        while(this.logBuffer.length > 0){
+            let  eventElement = $(".log ul");
+            eventElement.append("<li>"+this.logBuffer.pop()+"</li>");
+            $(".log").scrollTop($(".log").prop("scrollHeight"));
+        }
 
         if (gameboy.cpu.last == null) {
             let eventStr = "ERROR";
@@ -26,6 +39,7 @@ export class Debugger {
             return;
         }
 
+        //Print to screen
         $('#cpucycles').html(gameboy.cpu.clock.t.toString());
         $('#ppucycles').html(gameboy.ppu.clock.toString());
         $('#ticks').html(gameboy.ticks.toString());
@@ -69,12 +83,6 @@ export class Debugger {
             $('#type').html(gameboy.cartridge.type.name);
         }
 
-        //Add to log
-        var eventStr = "PC:" + gameboy.cpu.registers.getPC().toString(16).toUpperCase()
-            + " SP:" + gameboy.cpu.registers.getSP().toString(16).toUpperCase();
-        var eventElement = $(".log ul");
-        eventElement.append("<li>"+eventStr+"</li>");
-        $(".log").scrollTop($(".log").prop("scrollHeight"));
     }
 
     public static init(gameboy : GameBoy) {

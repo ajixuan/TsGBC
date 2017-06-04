@@ -285,6 +285,7 @@
 
     var toggleDebug = function () {
         debug.status = !debug.status;
+        if(debug.status){ debug.display()};
     }
 
     var setBreakPoint = function(){
