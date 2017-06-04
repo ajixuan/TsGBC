@@ -41,15 +41,11 @@
 
             </div>
 
-            <div class="controllerCol" style="margin-left: auto">
-                <div>
-                    <button onclick="grow()">+</button>
-                    <button onclick="shrink()">-</button>
-                </div>
+            <div style="display:flex;margin-left:auto;margin-bottom:auto">
+                <button onclick="grow()">+</button>
+                <button onclick="shrink()">-</button>
             </div>
-
         </div>
-
 
 
         <!-- Log Console -->
@@ -152,32 +148,32 @@
                         </li>
 
                         <br/>
-                        <div>
-                            <span class="header">Flags:</span>
-                            <div id="zero"></div>
-                            <div id="subtract"></div>
-                            <div id="halfcarry"></div>
-                            <div id="fullcarry"></div>
+                        <span class="header">Flags:</span>
+                        <div id="zero"></div>
+                        <div id="subtract"></div>
+                        <div id="halfcarry"></div>
+                        <div id="fullcarry"></div>
 
-                            </li>
+                        </li>
 
-                            <li>
-                                <span class="header">AF:</span>
-                                <span id="af"></span>
-                            </li>
-                            <li>
-                                <span class="header">BC:</span>
-                                <span id="bc"></span>
-                            </li>
-                            <li>
-                                <span class="header">DE:</span>
-                                <span id="de"></span>
-                            </li>
-                            <li>
-                                <span class="header">HL:</span>
-                                <span id="hl"></span>
-                            </li>
-                        </div>
+                        <li>
+                            <span class="header">AF:</span>
+                            <span id="af"></span>
+                        </li>
+                        <li>
+                            <span class="header">BC:</span>
+                            <span id="bc"></span>
+                        </li>
+                        <li>
+                            <span class="header">DE:</span>
+                            <span id="de"></span>
+                        </li>
+                        <li>
+                            <span class="header">HL:</span>
+                            <span id="hl"></span>
+                        </li>
+                    </ul>
+                </div>
             </fieldset>
             <fieldset>
                 <legend>PPU Registers</legend>
