@@ -25,11 +25,13 @@ export class Debugger {
 
         if (!Debugger.status) { return };
 
+        let html = "";
         while(this.logBuffer.length > 0){
-            let  eventElement = $(".log ul");
-            eventElement.append("<li>"+this.logBuffer.pop()+"</li>");
-            $(".log").scrollTop($(".log").prop("scrollHeight"));
+            html += "<li>"+this.logBuffer.pop()+"</li>";
         }
+
+        $(".log ul").append(html);
+        $(".log").scrollTop($(".log").prop("scrollHeight"));
 
         if (gameboy.cpu.last == null) {
             let eventStr = "ERROR";
