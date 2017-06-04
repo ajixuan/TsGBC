@@ -10,6 +10,13 @@ export class Debugger {
     private static logBuffer : Array<String> = new Array<String>();
 
 
+    public static pushLog() : void {
+        //Add to log
+        var eventStr = "PC:" + Debugger.gameboy.cpu.registers.getPC().toString(16).toUpperCase()
+            + " SP:" + Debugger.gameboy.cpu.registers.getSP().toString(16).toUpperCase();
+        this.logBuffer.push(eventStr);
+    }
+
     public static display() : void {
 
         if (Debugger.gameboy == null) {
@@ -18,16 +25,12 @@ export class Debugger {
 
         let gameboy = Debugger.gameboy;
 
-        //Add to log
-        var eventStr = "PC:" + gameboy.cpu.registers.getPC().toString(16).toUpperCase()
-            + " SP:" + gameboy.cpu.registers.getSP().toString(16).toUpperCase();
-        this.logBuffer.push(eventStr);
 
         if (!Debugger.status) { return };
 
         let html = "";
         while(this.logBuffer.length > 0){
-            html += "<li>"+this.logBuffer.pop()+"</li>";
+            html += "<li>"+this.logBuffer.shift()+"</li>";
         }
 
         $(".log ul").append(html);

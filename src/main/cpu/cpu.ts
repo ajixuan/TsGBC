@@ -118,7 +118,6 @@ export class Cpu {
             this.registers.setPC(this.registers.getPC() + operation.size & 0xFFFF);
         }
 
-
         //Debug Information
         this.last = {
             operation: operation,
@@ -126,6 +125,7 @@ export class Cpu {
             opaddr: opaddr
         };
 
+        Debugger.pushLog();
         Debugger.display();
 
         return operation.cycle;
