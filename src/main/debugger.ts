@@ -26,6 +26,15 @@ export class Debugger {
         let gameboy = Debugger.gameboy;
 
 
+        //Clear log if overflowing
+        if($(".log li").length > 100){
+            $(".log ul").empty();
+        }
+
+        if(this.logBuffer.length > 100){
+            this.logBuffer.length = 0;
+        }
+
         if (!Debugger.status) { return };
 
         let html = "";
