@@ -112,6 +112,25 @@ export class Operations {
         return full & limit;
     }
 
+
+    private checkSign(low: number, high: number): number {
+
+        let val = (high << 8) + low;
+        let shift = 7; // Shift to check last bit
+
+        if (high) {
+            //For a full word it is possible for the value to be negative
+            shift = 15;
+        }
+
+        //if val is negative
+        if ((val >> shift) === 1) {
+            val -= (1 << (shift + 1)); //Sign extension trick
+        }
+
+        return val
+    }
+
     /**
      * Create a list of opcodes with their respective addressing modes.
      */
@@ -133,31 +152,18 @@ export class Operations {
             memory: Memory = memory;
 
             getValue(addr: number, size: number): number {
-
-                let val;
-                let shift = 7; // Shift to check last bit
-
-
                 if (size == 2) {
-                    //For a full word it is possible for the value to be negative
-                    shift = 15;
-                    val = this.memory.readWord(addr);
-                } else {
-                    val = this.memory.readByte(addr);
+                    return this.memory.readWord(addr);
                 }
 
-                //if val is negative
-                if((val >> shift) === 1){
-                    val -= (1 << (shift + 1)); //Sign extension trick
-                }
-
-                return val
+                return this.memory.readByte(addr);
             }
         };
 
         //Helper functions
         let calcAddFlags = this.calcAddFlags.bind(this);
         let calcSubtractFlags = this.calcSubtractFlags.bind(this);
+        let checkSign = this.checkSign.bind(this);
 
         /**
          * Instructions for Gameboy (Not Gameboy Color)
@@ -208,7 +214,7 @@ export class Operations {
                 registers.setCarryFlag(result & 0x1)
                 result = result >> 1;
 
-                if(result == 0){
+                if (result == 0) {
                     registers.setZeroFlag(1);
                 }
 
@@ -904,7 +910,7 @@ export class Operations {
             name: "LD",
             cycle: 8,
             mode: immediate,
-            size: 1,
+            size: 2,
             execute(pc: number) {
                 registers.setA(pc);
             }
@@ -1051,11 +1057,11 @@ export class Operations {
 
         this.operations[0xF3] = {
             name: "Di",
-            cycle : 4,
-            mode : immediate,
-            size : 1,
-            execute (pc : number){
-                this.cpu.interrupts.disableAllInterrupts();
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute (pc: number){
+                cpu.interrupts.disableAllInterrupts();
             }
         };
 
@@ -3445,9 +3451,8 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                //Push onto stack
                 if (registers.getZeroFlag() == 0) {
-                    registers.setPC(registers.getPC() + pc + this.size);
+                    registers.setPC(registers.getPC() + checkSign(pc) + this.size);
                 }
             }
         };
