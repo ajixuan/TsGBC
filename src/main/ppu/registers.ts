@@ -131,34 +131,15 @@ export class Registers {
         this.scx = 0x00;
         this.ly = 0x00;
         this.lyc = 0x00;
-        this.bgp = 0xFC;
         this.wx = 0x00;
         this.wy = 0x00;
+        this.bgp = 0xFC;
+        this.obp0 = 0xFF;
+        this.obp1 = 0xFF;
 
         this.stat.reset();
         this.lcdc.lcdon.set();
         this.lcdc.tilemap.set();
         this.lcdc.bgon.set();
-    }
-
-    public setLCDC(lcdc: number): void {
-        //Turning lcdc off
-        if ((lcdc & 0x80) == 0) {
-            this.ly = 0;
-
-
-        }
-
-    }
-
-
-    public setLY(ly: number): void {
-
-        //If lcdc bit 7 is set
-        if (this.lcdc.bgmap) {
-            console.log("LCDC is locked, ly cannot be written");
-            return;
-        }
-        this.ly = ly;
     }
 }
