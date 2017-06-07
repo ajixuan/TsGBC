@@ -31,6 +31,7 @@ export class Debugger {
             $(".log ul").empty();
         }
 
+        //Clear the array log
         if(this.logBuffer.length > 100){
             this.logBuffer.length = 0;
         }

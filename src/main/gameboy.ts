@@ -68,7 +68,6 @@ export class GameBoy {
         //Continue if tick is not finished
         if(!this.tick()){
             requestAnimationFrame(this.tickAnimation.bind(this));
-            return;
         }
     }
 

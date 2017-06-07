@@ -29,7 +29,7 @@ export class Registers {
     public lcdc  = (function(self : Registers){
         let _val = 0x00;
         let set  = (val : number)=> { return ()=> { _val |= val } };
-        let unset = (val : number, callback ?: () => void )=> {  return ()=> {_val &= ~val; callback()} };
+        let unset = (val : number, callback ?: () => void )=> {  return ()=> {_val &= ~val; if(callback) callback()} };
         let get = (val : number)=> { return ()=> { return _val & val ? 1 : 0} };
 
         //Callback functions

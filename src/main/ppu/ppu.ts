@@ -116,50 +116,53 @@ export class Ppu {
      * Render scan on one tick
      */
     public renderscan(cycles: number): void {
+        let stat = this.registers.stat;
+        let lcdc = this.registers.lcdc;
+
         this.clock += cycles;
 
         //Set the ly,lyc coincidence interrupt
         if (this.registers.ly == this.registers.lyc) {
-            this.registers.stat.interrupts.lycoincidence.set();
+            stat.interrupts.lycoincidence.set();
         }
 
         //Cycle through stat
-        if (this.registers.stat.modeFlag.hblank.get() && this.clock >= 204) {
-            this.registers.stat.modeFlag.oamlock.set();
+        if (stat.modeFlag.hblank.get() && this.clock >= 204) {
+            stat.modeFlag.oamlock.set();
 
-            if (this.registers.stat.interrupts.lycoincidence.get()) {
-                this.registers.stat.interrupts.lycoincidence.unset()
+            if (stat.interrupts.lycoincidence.get()) {
+                stat.interrupts.lycoincidence.unset()
             }
 
             this.registers.ly++;
             this.clock = 0;
 
-        } else if (this.registers.stat.modeFlag.vblank.get() && this.clock >= 456) {
+        } else if (stat.modeFlag.vblank.get() && this.clock >= 456) {
 
             if (this.registers.ly > 153 || this.registers.ly == 0) {
                 this.registers.ly = 0;
-                this.registers.stat.modeFlag.vramlock.set();
-                this.registers.stat.interrupts.vblank.unset();
+                stat.modeFlag.vramlock.set();
+                stat.interrupts.vblank.unset();
             } else {
                 this.registers.ly++;
                 this.clock = 0;
             }
 
-        } else if (this.registers.stat.modeFlag.oamlock.get() && this.clock >= 80) {
-            this.registers.lcdc.bgon.set();
+        } else if (stat.modeFlag.oamlock.get() && this.clock >= 80) {
+            lcdc.bgon.set();
 
 
-            this.registers.stat.modeFlag.vramlock.set();
+            stat.modeFlag.vramlock.set();
             this.clock = 0;
 
 
-        } else if (this.registers.stat.modeFlag.vramlock.get() && this.clock >= 172) {
-            if (this.registers.lcdc.bgon.get() & this.registers.lcdc.lcdon.get()) {
+        } else if (stat.modeFlag.vramlock.get() && this.clock >= 172) {
+            if (lcdc.bgon.get() & lcdc.lcdon.get()) {
                 this.clock = 0;
 
                 //Vertical blank
                 if (this.registers.ly == 144) {
-                    this.registers.stat.interrupts.vblank.set();
+                    stat.interrupts.vblank.set();
                     //this.screen.printBuffer();
                     return;
                 }
@@ -180,7 +183,7 @@ export class Ppu {
                     this.screen.setBufferPixel(x, y, tile[y % Screen.PIXELS][x % Screen.PIXELS]);
                 }
                 this.screen.printBufferRow(y);
-                this.registers.stat.interrupts.hblank.set();
+                stat.interrupts.hblank.set();
 
 
             } else {
@@ -259,14 +262,14 @@ export class Ppu {
             this.memory.oam[addr - 0xFE00] = val;
             this.updateOamTile(addr);
         } else if (addr == 0xFF40) {
-            if (val & 0x01) this.registers.lcdc.bgon.set();
-            if (val & 0x02) this.registers.lcdc.objon.set();
-            if (val & 0x04) this.registers.lcdc.objsize.set();
-            if (val & 0x08) this.registers.lcdc.tilemap.set();
-            if (val & 0x10) this.registers.lcdc.bgwin.set();
-            if (val & 0x20) this.registers.lcdc.objon.set();
-            if (val & 0x40) this.registers.lcdc.bgwin.set();
-            if (val & 0x80) this.registers.lcdc.lcdon.set();
+            (val & 0x01) ? this.registers.lcdc.bgon.set() : this.registers.lcdc.bgon.unset();
+            (val & 0x02)? this.registers.lcdc.objon.set() : this.registers.lcdc.objon.unset();
+            (val & 0x04)? this.registers.lcdc.objsize.set() : this.registers.lcdc.objsize.unset();
+            (val & 0x08)? this.registers.lcdc.tilemap.set() : this.registers.lcdc.tilemap.unset();
+            (val & 0x10)? this.registers.lcdc.bgwin.set() : this.registers.lcdc.bgwin.unset();
+            (val & 0x20)? this.registers.lcdc.objon.set() : this.registers.lcdc.objon.unset();
+            (val & 0x40)? this.registers.lcdc.bgwin.set() : this.registers.lcdc.bgwin.unset();
+            (val & 0x80)? this.registers.lcdc.lcdon.set() : this.registers.lcdc.lcdon.unset();
         } else if (addr == 0xFF42) {
             this.registers.scy = val;
 
