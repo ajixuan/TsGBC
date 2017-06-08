@@ -2714,14 +2714,11 @@ export class Operations {
         this.operations[0xFE] = {
             name: "CP",
             cycle: 8,
-            size: 1,
+            size: 2,
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
                 calcSubtractFlags(val, pc, false);
-
-                registers.setF(0);
-                registers.setSubtractFlag(1);
             }
         };
 
@@ -3349,7 +3346,7 @@ export class Operations {
 
         this.operations[0xC3] = {
             name: "JP",
-            cycle: 12,
+            cycle: 16,
             size: 3,
             mode: immediate,
             execute(pc: number) {
