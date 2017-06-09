@@ -150,11 +150,8 @@ export class Ppu {
 
         } else if (stat.modeFlag.oamlock.get() && this.clock >= 80) {
             lcdc.bgon.set();
-
-
             stat.modeFlag.vramlock.set();
             this.clock = 0;
-
 
         } else if (stat.modeFlag.vramlock.get() && this.clock >= 172) {
             if (lcdc.bgon.get() & lcdc.lcdon.get()) {
@@ -262,14 +259,7 @@ export class Ppu {
             this.memory.oam[addr - 0xFE00] = val;
             this.updateOamTile(addr);
         } else if (addr == 0xFF40) {
-            (val & 0x01) ? this.registers.lcdc.bgon.set() : this.registers.lcdc.bgon.unset();
-            (val & 0x02)? this.registers.lcdc.objon.set() : this.registers.lcdc.objon.unset();
-            (val & 0x04)? this.registers.lcdc.objsize.set() : this.registers.lcdc.objsize.unset();
-            (val & 0x08)? this.registers.lcdc.tilemap.set() : this.registers.lcdc.tilemap.unset();
-            (val & 0x10)? this.registers.lcdc.bgwin.set() : this.registers.lcdc.bgwin.unset();
-            (val & 0x20)? this.registers.lcdc.objon.set() : this.registers.lcdc.objon.unset();
-            (val & 0x40)? this.registers.lcdc.bgwin.set() : this.registers.lcdc.bgwin.unset();
-            (val & 0x80)? this.registers.lcdc.lcdon.set() : this.registers.lcdc.lcdon.unset();
+            this.registers.lcdc.setAll(val);
         } else if (addr == 0xFF42) {
             this.registers.scy = val;
 

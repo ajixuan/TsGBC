@@ -43,7 +43,17 @@ export class Registers {
             objsize :   {set : set(0x04), unset : unset(0x04), get : get(0x04)},
             objon :     {set : set(0x02), unset : unset(0x02), get : get(0x02)},
             bgon :      {set : set(0x01), unset : unset(0x01), get : get(0x01)},
-            getAll :    function(){return _val}
+            getAll :    function(){return _val},
+            setAll :    function(val:number){
+                (val & 0x01) ? this.bgon.set() : this.bgon.unset();
+                (val & 0x02)? this.objon.set() : this.objon.unset();
+                (val & 0x04)? this.objsize.set() : this.objsize.unset();
+                (val & 0x08)? this.tilemap.set() : this.tilemap.unset();
+                (val & 0x10)? this.bgwin.set() : this.bgwin.unset();
+                (val & 0x20)? this.winon.set() : this.winon.unset();
+                (val & 0x40)? this.bgwin.set() : this.bgwin.unset();
+                (val & 0x80)? this.lcdon.set() : this.lcdon.unset();
+            }
         }
     })(this);
 
