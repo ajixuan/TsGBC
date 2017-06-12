@@ -179,10 +179,65 @@ export class Operations {
             }
         };
 
-        //----------------------------------------
-        // LD nn,n - Load (8 bits)
-        // pg 65
-        // ----------------------------------------
+
+        this.operations[0x01] = {
+            name: "LD",
+            cycle: 12,
+            mode: immediate,
+            size: 3,
+            execute(pc: number) {
+                registers.setBC(pc & 0xFFFF);
+            }
+        };
+
+
+        this.operations[0x02] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc: number) {
+                let addr = registers.getBC();
+                let val = registers.getA();
+                memory.writeByte(addr, val);
+            }
+        };
+
+
+        this.operations[0x03] = {
+            name: "INC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcAddFlags(registers.getBC(), 1, false);
+                registers.setBC(result);
+            }
+        };
+
+        this.operations[0x04] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcAddFlags(registers.getB(), 1);
+                registers.setB(result);
+            }
+        };
+
+
+        this.operations[0x05] = {
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcSubtractFlags(registers.getB(), 1);
+                registers.setB(result);
+            }
+        };
+
 
         this.operations[0x06] = {
             name: "LD",
@@ -193,6 +248,102 @@ export class Operations {
                 registers.setB(pc);
             }
         };
+
+
+        this.operations[0x07] = {
+            name: "RLCA",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let msb = (val & 0x80) >> 7;
+                let result = ((val << 1) & 0xFF) + msb;
+
+                //Set flags
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(0);
+                registers.setCarryFlag(msb);
+
+                if (result == 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        this.operations[0x08] = {
+            name: "LD",
+            cycle: 20,
+            mode: immediate,
+            size: 3,
+            execute(pc: number) {
+                memory.writeByte(pc + 1, registers.getSP());
+            }
+        };
+
+        this.operations[0x09] = {
+            name: "ADD",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getHL();
+                let oper = registers.getBC();
+
+                let result = calcAddFlags(val, oper, false);
+                registers.setHL(result);
+            }
+        };
+
+
+        this.operations[0x0A] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                let val = memory.readByte(registers.getBC());
+                registers.setA(val);
+            }
+        };
+
+        this.operations[0x0B] = {
+            name: "DEC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcSubtractFlags(registers.getBC(), 1, false);
+                registers.setBC(result);
+            }
+        };
+
+        this.operations[0x0C] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcAddFlags(registers.getC(), 1);
+                registers.setC(result);
+            }
+        };
+
+
+        this.operations[0x0D] = {
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcSubtractFlags(registers.getC(), 1);
+                registers.setC(result);
+            }
+        };
+
 
         this.operations[0x0E] = {
             name: "LD",
@@ -222,6 +373,67 @@ export class Operations {
             }
         };
 
+
+        this.operations[0x11] = {
+            name: "LD",
+            cycle: 12,
+            mode: immediate,
+            size: 3,
+            execute(pc: number) {
+                registers.setDE(pc & 0xFFFF);
+            }
+        };
+
+
+        this.operations[0x12] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc: number) {
+                let addr = registers.getDE();
+                let val = registers.getA();
+                memory.writeByte(addr, val);
+            }
+        };
+
+
+        this.operations[0x13] = {
+            name: "INC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcAddFlags(registers.getDE(), 1, false);
+                registers.setDE(result);
+            }
+        };
+
+
+        this.operations[0x14] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcAddFlags(registers.getD(), 1);
+                registers.setD(result);
+            }
+        };
+
+
+        this.operations[0x15] = {
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcSubtractFlags(registers.getD(), 1);
+                registers.setD(result);
+            }
+        };
+
+
         this.operations[0x16] = {
             name: "LD",
             cycle: 8,
@@ -232,6 +444,69 @@ export class Operations {
             }
         };
 
+
+        this.operations[0x19] = {
+            name: "ADD",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getHL();
+                let oper = registers.getDE();
+
+                let result = calcAddFlags(val, oper, false);
+                registers.setHL(result);
+            }
+        };
+
+
+        this.operations[0x1A] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                let val = memory.readByte(registers.getDE());
+                registers.setA(val);
+            }
+        };
+
+
+        this.operations[0x1B] = {
+            name: "DEC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcSubtractFlags(registers.getDE(), 1, false);
+                registers.setDE(result);
+            }
+        };
+
+        this.operations[0x1C] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcAddFlags(registers.getE(), 1);
+                registers.setE(result);
+            }
+        };
+
+
+        this.operations[0x1D] = {
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcSubtractFlags(registers.getE(), 1);
+                registers.setE(result);
+            }
+        };
+
+
         this.operations[0x1E] = {
             name: "LD",
             cycle: 8,
@@ -239,6 +514,74 @@ export class Operations {
             size: 2,
             execute(pc: number) {
                 registers.setE(pc);
+            }
+        };
+
+
+        this.operations[0x20] = {
+            name: "JR",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                if (registers.getZeroFlag() == 0) {
+                    registers.setPC(registers.getPC() + checkSign(pc) + this.size);
+                }
+            }
+        };
+
+
+        this.operations[0x21] = {
+            name: "LD",
+            cycle: 12,
+            mode: immediate,
+            size: 3,
+            execute(pc: number) {
+                registers.setHL(pc & 0xFFFF);
+            }
+        };
+        this.operations[0x22] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc: number) {
+                let addr = registers.getHL();
+                memory.writeByte(addr, registers.getA());
+                registers.setHL(addr + 1 & 0xFFFF);
+            }
+        };
+
+
+        this.operations[0x23] = {
+            name: "INC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcAddFlags(registers.getHL(), 1, false);
+                registers.setHL(result);
+            }
+        };
+
+
+        this.operations[0x24] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcAddFlags(registers.getH(), 1);
+                registers.setH(result);
+            }
+        };
+
+
+        this.operations[0x25] = {
+            name: "DEC", cycle: 4, size: 1, mode: immediate,
+            execute(pc: number) {
+                let result = calcSubtractFlags(registers.getH(), 1);
+                registers.setH(result);
             }
         };
 
@@ -252,6 +595,87 @@ export class Operations {
             }
         };
 
+
+        this.operations[0x27] = {
+            name: "DAA",
+            cycle: 16,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let lower = val & 0xFF;
+                let upper = (val & 0xFF00) >> 8;
+                let result = lower << 8 + upper;
+
+                if (result === 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        this.operations[0x29] = {
+            name: "ADD",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getHL();
+
+                let result = calcAddFlags(val, val, false);
+                registers.setHL(result);
+            }
+        };
+
+        this.operations[0x2A] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc: number) {
+                let addr = registers.getHL();
+                let val = memory.readByte(addr);
+                registers.setA(val);
+                registers.setHL(addr + 1 & 0xFFFF);
+            }
+        };
+
+        this.operations[0x2B] = {
+            name: "DEC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcSubtractFlags(registers.getHL(), 1, false);
+                registers.setHL(result);
+            }
+        };
+
+        this.operations[0x2C] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcAddFlags(registers.getL(), 1);
+                registers.setL(result);
+            }
+        };
+
+
+        this.operations[0x2D] = {
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcSubtractFlags(registers.getL(), 1);
+                registers.setL(result);
+            }
+        };
+
         this.operations[0x2E] = {
             name: "LD",
             cycle: 8,
@@ -262,20 +686,168 @@ export class Operations {
             }
         };
 
+        this.operations[0x2F] = {
+            name: "CPL",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let result = val ^ 0xFF;
+                registers.setSubtractFlag(1);
+                registers.setHalfFlag(1);
+                registers.setA(result);
+            }
+        };
 
-        //----------------------------------------
-        // LD r1, r2
-        // Pg 66
-        //----------------------------------------
 
-        this.operations[0x7E] = {
+        this.operations[0x31] = {
+            name: "LD",
+            cycle: 12,
+            mode: immediate,
+            size: 3,
+            execute(pc: number) {
+                registers.setSP(pc);
+            }
+        };
+
+
+
+        this.operations[0x32] = {
             name: "LD",
             cycle: 8,
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let val = memory.readByte(registers.getHL());
+                let addr = registers.getHL();
+                let val = registers.getA();
+                memory.writeByte(addr, val);
+                registers.setHL(addr - 1 & 0xFFFF);
+            }
+        };
+
+
+        this.operations[0x33] = {
+            name: "INC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcAddFlags(registers.getSP(), 1, false);
+                registers.setSP(result);
+            }
+        };
+
+
+        this.operations[0x34] = {
+            name: "INC",
+            cycle: 12,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcAddFlags(registers.getHL(), 1, false);
+                memory.writeWord(registers.getHL(), result);
+            }
+        };
+
+
+
+
+
+
+        this.operations[0x35] = {
+            name: "DEC",
+            cycle: 12,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcSubtractFlags(registers.getHL(), 1, false);
+                memory.writeWord(registers.getHL(), result);
+            }
+        };
+
+
+        this.operations[0x36] = {
+            name: "LD",
+            cycle: 12,
+            mode: immediate,
+            size: 2,
+            execute(pc: number) {
+                memory.writeByte(registers.getHL(), pc);
+            }
+        };
+
+
+        this.operations[0x39] = {
+            name: "ADD",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getHL();
+                let oper = registers.getSP();
+
+                let result = calcAddFlags(val, oper, false);
+                registers.setHL(result);
+            }
+        };
+
+        this.operations[0x3A] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc: number) {
+                let addr = registers.getHL();
+                let val = memory.readByte(addr);
                 registers.setA(val);
+                registers.setHL(addr - 1 & 0xFFFF);
+            }
+        };
+
+
+        this.operations[0x3B] = {
+            name: "DEC",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcSubtractFlags(registers.getSP(), 1, false);
+                registers.setSP(result);
+            }
+        };
+
+
+        this.operations[0x3C] = {
+            name: "INC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcAddFlags(registers.getA(), 1);
+                registers.setA(result);
+            }
+        };
+
+
+        this.operations[0x3D] = {
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let result = calcSubtractFlags(registers.getA(), 1);
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0x3E] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc: number) {
+                registers.setA(pc);
             }
         };
 
@@ -288,6 +860,8 @@ export class Operations {
 
             }
         };
+
+
 
         this.operations[0x41] = {
             name: "LD",
@@ -349,6 +923,17 @@ export class Operations {
                 registers.setB(val);
             }
         };
+
+        this.operations[0x47] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setB(registers.getA());
+            }
+        };
+
 
         this.operations[0x48] = {
             name: "LD",
@@ -417,6 +1002,17 @@ export class Operations {
             execute(pc: number) {
                 let val = memory.readByte(registers.getHL());
                 registers.setC(val);
+            }
+        };
+
+
+        this.operations[0x4F] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setC(registers.getA());
             }
         };
 
@@ -500,6 +1096,16 @@ export class Operations {
             }
         };
 
+        this.operations[0x57] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setD(registers.getA());
+            }
+        };
+
         this.operations[0x58] = {
             name: "LD",
             cycle: 4,
@@ -569,6 +1175,18 @@ export class Operations {
                 registers.setE(val);
             }
         };
+
+
+        this.operations[0x5F] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setE(registers.getA());
+            }
+        };
+
 
         this.operations[0x60] = {
             name: "LD",
@@ -640,6 +1258,17 @@ export class Operations {
             }
         };
 
+
+        this.operations[0x67] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setH(registers.getA());
+            }
+        };
+
         this.operations[0x68] = {
             name: "LD",
             cycle: 4,
@@ -680,6 +1309,7 @@ export class Operations {
             }
         };
 
+
         this.operations[0x6C] = {
             name: "LD",
             cycle: 4,
@@ -709,6 +1339,18 @@ export class Operations {
                 registers.setL(val);
             }
         };
+
+
+        this.operations[0x6F] = {
+            name: "LD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setL(registers.getA());
+            }
+        };
+
 
         this.operations[0x70] = {
             name: "LD",
@@ -782,33 +1424,19 @@ export class Operations {
             }
         };
 
-        this.operations[0x36] = {
+
+        this.operations[0x77] = {
             name: "LD",
-            cycle: 12,
+            cycle: 8,
             mode: immediate,
-            size: 2,
+            size: 3,
             execute(pc: number) {
-                memory.writeByte(registers.getHL(), pc);
+                let addr = registers.getHL();
+                let val = registers.getA();
+                memory.writeByte(addr, val);
             }
         };
 
-
-        //----------------------------------------
-        // LD r1, r2 - Put value r2 into r1
-        // LD A, n - Load n into A
-        // Pg 66 - 68
-        //----------------------------------------
-
-
-        this.operations[0x7F] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                //WHY!?!?! is this created!!!!!
-            }
-        };
 
         this.operations[0x78] = {
             name: "LD",
@@ -870,555 +1498,29 @@ export class Operations {
             }
         };
 
-        this.operations[0x0A] = {
+
+        this.operations[0x7E] = {
             name: "LD",
             cycle: 8,
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let val = memory.readByte(registers.getBC());
-                registers.setA(val);
-            }
-        };
-
-        this.operations[0x1A] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                let val = memory.readByte(registers.getDE());
-                registers.setA(val);
-            }
-        };
-
-        this.operations[0xFA] = {
-            name: "LD",
-            cycle: 16,
-            mode: immediate,
-            size: 2,
-            execute(pc: number) {
-                let high = memory.readByte(pc + 1 & 0xFFFF);
-                let low = memory.readWord(pc);
-                let val = high << 8 | low;
+                let val = memory.readByte(registers.getHL());
                 registers.setA(val);
             }
         };
 
 
-        this.operations[0x3E] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc: number) {
-                registers.setA(pc);
-            }
-        };
-
-
-        //----------------------------------------
-        // LD n, A - Load  value A into n
-        // Pg 69
-        //----------------------------------------
-
-        this.operations[0x47] = {
+        this.operations[0x7F] = {
             name: "LD",
             cycle: 4,
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                registers.setB(registers.getA());
+                //WHY!?!?! is this created!!!!!
             }
         };
 
-        this.operations[0x4F] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                registers.setC(registers.getA());
-            }
-        };
-
-        this.operations[0x57] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                registers.setD(registers.getA());
-            }
-        };
-
-        this.operations[0x5F] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                registers.setE(registers.getA());
-            }
-        };
-
-
-        this.operations[0x67] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                registers.setH(registers.getA());
-            }
-        };
-
-        this.operations[0x6F] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                registers.setL(registers.getA());
-            }
-        };
-
-
-        this.operations[0x02] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc: number) {
-                let addr = registers.getBC();
-                let val = registers.getA();
-                memory.writeByte(addr, val);
-            }
-        };
-
-        this.operations[0x12] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc: number) {
-                let addr = registers.getDE();
-                let val = registers.getA();
-                memory.writeByte(addr, val);
-            }
-        };
-
-        this.operations[0x77] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 3,
-            execute(pc: number) {
-                let addr = registers.getHL();
-                let val = registers.getA();
-                memory.writeByte(addr, val);
-            }
-        };
-
-        this.operations[0xEA] = {
-            name: "LD",
-            cycle: 16,
-            mode: immediate,
-            size: 3,
-            execute(pc: number) {
-                //TODO this might be wrong (reverse?)
-                let high = memory.readByte(pc + 1 & 0xFFFF);
-                let low = memory.readByte(pc & 0xFFFF);
-                let addr = high << 8 | low;
-                let val = registers.getA();
-                memory.writeByte(addr, val);
-            }
-        };
-
-        //----------------------------------------
-        // LD A, (C) - Put value at address 0xFF00 + C
-        // into A
-        // pg 70
-        //----------------------------------------
-
-        this.operations[0xF2] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc: number) {
-                let high = 0xff;
-                let low = registers.getC();
-                let addr = high << 8 | low;
-                let val = memory.readByte(addr);
-                registers.setA(val);
-            }
-        };
-
-        this.operations[0xF3] = {
-            name: "Di",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute (pc: number){
-                cpu.interrupts.disableAllInterrupts();
-            }
-        };
-
-
-        //----------------------------------------
-        // LD (C),A - Put value at address A to HL
-        // Pg 70
-        //----------------------------------------
-
-
-        this.operations[0xE2] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc: number) {
-                let high = 0xff;
-                let low = registers.getC();
-                let addr = high << 8 | low;
-                memory.writeByte(addr, registers.getA());
-            }
-        };
-
-
-        //----------------------------------------
-        // LD A, (HL) - Put value at address HL into A.
-        // Decrement HL
-        // Pg 71
-        //----------------------------------------
-
-
-        this.operations[0x3A] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc: number) {
-                let addr = registers.getHL();
-                let val = memory.readByte(addr);
-                registers.setA(val);
-                registers.setHL(addr - 1 & 0xFFFF);
-            }
-        };
-
-        //----------------------------------------
-        // LD (HLD), A - Put A int memory address HL.
-        // Decrement HL
-        // Pg 72
-        //----------------------------------------
-
-        this.operations[0x32] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                let addr = registers.getHL();
-                let val = registers.getA();
-                memory.writeByte(addr, val);
-                registers.setHL(addr - 1 & 0xFFFF);
-            }
-        };
-
-        //----------------------------------------
-        // LD A, (HL) - Put value at address HL into A
-        // Pg 73
-        //----------------------------------------
-
-
-        this.operations[0x2A] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc: number) {
-                let addr = registers.getHL();
-                let val = memory.readByte(addr);
-                registers.setA(val);
-                registers.setHL(addr + 1 & 0xFFFF);
-            }
-        };
-
-
-        //----------------------------------------
-        // LD (HL), A - Put value at address A to HL
-        // Pg 74
-        //----------------------------------------
-
-
-        this.operations[0x22] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 2,
-            execute(pc: number) {
-                let addr = registers.getHL();
-                memory.writeByte(addr, registers.getA());
-                registers.setHL(addr + 1 & 0xFFFF);
-            }
-        };
-
-        //----------------------------------------
-        // LD (n), A - Put A  into address 0xFF00 + n
-        // Pg 75
-        //----------------------------------------
-
-        this.operations[0xE0] = {
-            name: "LD",
-            cycle: 12,
-            mode: immediate,
-            size: 2,
-            execute(pc: number) {
-                let addr = 0xFF00 | pc;
-                memory.writeByte(addr, registers.getA());
-            }
-        };
-
-        //----------------------------------------
-        // LDH A, (n) - Put memory address 0xFF00+n into A
-        // Pg 75
-        //----------------------------------------
-
-
-        this.operations[0xF0] = {
-            name: "LD",
-            cycle: 12,
-            mode: immediate,
-            size: 2,
-            execute(pc: number) {
-                let addr = 0xFF00 | pc;
-                let val = memory.readByte(addr);
-                registers.setA(val & 0xFFFF);
-            }
-        };
-
-
-        //----------------------------------------
-        // LD - Load (16 bits) page 76
-        //----------------------------------------
-        //----------------------------------------
-        // LD n, nn - Put value nn into n
-        // page 76
-        //----------------------------------------
-
-
-        this.operations[0x01] = {
-            name: "LD",
-            cycle: 12,
-            mode: immediate,
-            size: 3,
-            execute(pc: number) {
-                registers.setBC(pc & 0xFFFF);
-            }
-        };
-
-        this.operations[0x11] = {
-            name: "LD",
-            cycle: 12,
-            mode: immediate,
-            size: 3,
-            execute(pc: number) {
-                registers.setDE(pc & 0xFFFF);
-            }
-        };
-
-        this.operations[0x21] = {
-            name: "LD",
-            cycle: 12,
-            mode: immediate,
-            size: 3,
-            execute(pc: number) {
-                registers.setHL(pc & 0xFFFF);
-            }
-        };
-
-
-        this.operations[0x31] = {
-            name: "LD",
-            cycle: 12,
-            mode: immediate,
-            size: 3,
-            execute(pc: number) {
-                registers.setSP(pc);
-            }
-        };
-
-        //----------------------------------------
-        // LD SP, HL - Put value HL into SP
-        // page 76
-        //----------------------------------------
-
-
-        this.operations[0xF9] = {
-            name: "LD",
-            cycle: 8,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                registers.setSP(registers.getHL());
-            }
-        };
-
-        //----------------------------------------
-        // LDHL SP, n - Put SP + n effective address into HL
-        // page 77
-        //----------------------------------------
-
-
-        this.operations[0xF8] = {
-            name: "LDHL",
-            cycle: 12,
-            mode: immediate,
-            size: 2,
-            execute(pc: number) {
-
-                let val = pc + registers.getSP();
-                let orig = registers.getHL();
-
-                //Set flags
-                registers.setZeroFlag(0);
-                registers.setSubtractFlag(0);
-                let result = calcAddFlags(val, orig, false);
-
-                memory.writeByte(result, val);
-            }
-        };
-
-        //----------------------------------------
-        // LD (nn), SP - Put SP at address (nn)
-        // page 78
-        //----------------------------------------
-
-        this.operations[0x08] = {
-            name: "LD",
-            cycle: 20,
-            mode: immediate,
-            size: 3,
-            execute(pc: number) {
-                memory.writeByte(pc + 1, registers.getSP());
-            }
-        };
-
-        //----------------------------------------
-        // PUSH nn - push register pair nn onto stack
-        //      Decrement stack pointer twice
-        // page 78
-        //----------------------------------------
-
-        this.operations[0xF5] = {
-            name: "PUSH",
-            cycle: 16,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                stack.pushWord(registers.getAF());
-            }
-        };
-
-        this.operations[0xC5] = {
-            name: "PUSH",
-            cycle: 16,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                stack.pushWord(registers.getBC());
-            }
-        };
-
-        this.operations[0xD5] = {
-            name: "PUSH",
-            cycle: 16,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                stack.pushWord(registers.getDE());
-            }
-        };
-
-        this.operations[0xE5] = {
-            name: "PUSH",
-            cycle: 16,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                stack.pushWord(registers.getHL());
-            }
-        };
-
-
-        //----------------------------------------
-        // POP nn - pop two bytes off stack into register pair
-        //      Increment stack pointer twice
-        // page 79
-        //----------------------------------------
-
-        this.operations[0xF1] = {
-            name: "POP",
-            cycle: 16,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                registers.setAF(stack.popWord());
-            }
-        };
-
-        this.operations[0xC1] = {
-            name: "POP",
-            cycle: 16,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                registers.setBC(stack.popWord());
-            }
-        };
-
-        this.operations[0xD1] = {
-            name: "POP",
-            cycle: 16,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                registers.setDE(stack.popWord());
-            }
-        };
-
-        this.operations[0xE1] = {
-            name: "POP",
-            cycle: 16,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                registers.setHL(stack.popWord());
-            }
-        };
-
-        /************************
-         * 8-Bit ALU
-         ************************/
-
-        //----------------------------------------
-        // ADD A, n - Add n to A
-        // page 80
-        //----------------------------------------
-
-        this.operations[0x87] = {
-            name: "ADD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                let addr = registers.getA();
-                let val = memory.readByte(addr);
-                let result = calcAddFlags(val, val, false);
-                registers.setSubtractFlag(0);
-                memory.writeByte(registers.getA(), result);
-            }
-        };
 
         this.operations[0x80] = {
             name: "ADD",
@@ -1543,40 +1645,20 @@ export class Operations {
             }
         };
 
-
-        this.operations[0xC6] = {
+        this.operations[0x87] = {
             name: "ADD",
             cycle: 4,
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let val = memory.readByte(registers.getA());
-                let oper = memory.readByte(registers.getB());
-                let result = calcAddFlags(val, oper, false);
-
+                let addr = registers.getA();
+                let val = memory.readByte(addr);
+                let result = calcAddFlags(val, val, false);
                 registers.setSubtractFlag(0);
                 memory.writeByte(registers.getA(), result);
             }
         };
 
-        //----------------------------------------
-        // ADC A, n - Add n + Carry flag to A
-        // page 81
-        //----------------------------------------
-
-        this.operations[0x8F] = {
-            name: "ADC",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                let val = registers.getA();
-                let result = calcAddFlags(val, val + registers.getCarryFlag());
-
-                registers.setSubtractFlag(0);
-                registers.setA(result);
-            }
-        };
 
         this.operations[0x88] = {
             name: "ADC",
@@ -1687,41 +1769,22 @@ export class Operations {
         };
 
 
-        //TODO: I htink this is immediate value???
-
-        this.operations[0xCE] = {
+        this.operations[0x8F] = {
             name: "ADC",
-            cycle: 8,
+            cycle: 4,
             mode: immediate,
             size: 1,
             execute(pc: number) {
                 let val = registers.getA();
-
-                let result = calcAddFlags(val, pc + registers.getCarryFlag());
+                let result = calcAddFlags(val, val + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
             }
         };
 
-        //----------------------------------------
-        // SUB n - Subtract n from A
-        // page 82
-        //----------------------------------------
 
-        this.operations[0x97] = {
-            name: "SUB",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let result = calcSubtractFlags(val, val, true);
 
-                registers.setSubtractFlag(1);
-                registers.setA(result);
-            }
-        };
 
         this.operations[0x90] = {
             name: "SUB",
@@ -1830,39 +1893,20 @@ export class Operations {
         };
 
 
-        //TODO: Not sure if # means immediate value
-        this.operations[0xD6] = {
+        this.operations[0x97] = {
             name: "SUB",
             cycle: 4,
             size: 1,
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let result = calcSubtractFlags(val, pc, false);
+                let result = calcSubtractFlags(val, val, true);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
             }
         };
 
-        //----------------------------------------
-        // SBC n - Subtract n + Carryflag from A
-        // page 83
-        //----------------------------------------
-
-        this.operations[0x9F] = {
-            name: "SUB",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let result = calcSubtractFlags(val, val - registers.getCarryFlag(), false);
-
-                registers.setSubtractFlag(1);
-                registers.setA(result);
-            }
-        };
 
         this.operations[0x98] = {
             name: "SUB",
@@ -1955,63 +1999,21 @@ export class Operations {
             }
         };
 
-        this.operations[0x96] = {
-            name: "SUB",
-            cycle: 8,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let oper = memory.readWord(registers.getHL());
-                let result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
-
-                registers.setSubtractFlag(1);
-                registers.setA(result);
-            }
-        };
-
-
-        //TODO: Not sure if # means immediate value
-        this.operations[0xD6] = {
+        this.operations[0x9F] = {
             name: "SUB",
             cycle: 4,
             size: 1,
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let result = calcSubtractFlags(val, pc, false);
+                let result = calcSubtractFlags(val, val - registers.getCarryFlag(), false);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
             }
         };
 
-        //----------------------------------------
-        // AND n - Logically AND n with A, result in A
-        // page 84
-        //----------------------------------------
 
-
-        this.operations[0xA7] = {
-            name: "AND",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let result = val & val;
-
-                //reset all flags
-                registers.setF(0);
-                registers.setSubtractFlag(1);
-
-                if (result == 0) {
-                    registers.setZeroFlag(1);
-                }
-
-                registers.setA(result);
-            }
-        };
 
         this.operations[0xA0] = {
             name: "AND",
@@ -2171,15 +2173,14 @@ export class Operations {
         };
 
 
-        //TODO: Not sure if # means immediate value
-        this.operations[0xE6] = {
+        this.operations[0xA7] = {
             name: "AND",
-            cycle: 8,
+            cycle: 4,
             size: 1,
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let result = val & pc;
+                let result = val & val;
 
                 //reset all flags
                 registers.setF(0);
@@ -2190,24 +2191,19 @@ export class Operations {
                 }
 
                 registers.setA(result);
-
             }
         };
 
 
-        //----------------------------------------
-        // OR n - Logically OR n with A, result in A
-        // page 85
-        //----------------------------------------
-
-        this.operations[0xB7] = {
-            name: "OR",
+        this.operations[0xA8] = {
+            name: "XOR",
             cycle: 4,
             size: 1,
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let result = val | val;
+                let oper = registers.getB();
+                let result = val ^ oper;
 
                 //reset all flags
                 registers.setF(0);
@@ -2217,6 +2213,148 @@ export class Operations {
                 }
 
                 registers.setA(result);
+            }
+        };
+
+        this.operations[0xA9] = {
+            name: "XOR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let oper = registers.getC();
+                let result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if (result == 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        this.operations[0xAA] = {
+            name: "XOR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let oper = registers.getD();
+                let result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if (result == 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xAB] = {
+            name: "XOR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let oper = registers.getE();
+                let result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if (result == 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
+            }
+        };
+
+        this.operations[0xAC] = {
+            name: "XOR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let oper = registers.getH();
+                let result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if (result == 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
+            }
+        };
+
+        this.operations[0xAD] = {
+            name: "XOR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let oper = registers.getL();
+                let result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if (result == 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xAE] = {
+            name: "XOR",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let oper = memory.readWord(registers.getHL());
+                let result = val ^ oper;
+
+                //reset all flags
+                registers.setF(0);
+
+                if (result == 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+        //Ummm xoring myself...
+        this.operations[0xAF] = {
+            name: "XOR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                registers.setF(0);
+                registers.setZeroFlag(1);
+                registers.setA(0);
             }
         };
 
@@ -2370,19 +2508,71 @@ export class Operations {
             }
         };
 
+        this.operations[0xB7] = {
+            name: "OR",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let result = val | val;
+
+                //reset all flags
+                registers.setF(0);
+
+                if (result == 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+            }
+        };
+
+
+        this.operations[0xCE] = {
+            name: "ADC",
+            cycle: 8,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                let val = registers.getA();
+
+                let result = calcAddFlags(val, pc + registers.getCarryFlag());
+
+                registers.setSubtractFlag(0);
+                registers.setA(result);
+            }
+        };
+
 
         //TODO: Not sure if # means immediate value
-        this.operations[0xF6] = {
-            name: "OR",
+        this.operations[0xD6] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let result = calcSubtractFlags(val, pc, false);
+
+                registers.setSubtractFlag(1);
+                registers.setA(result);
+            }
+        };
+
+
+        this.operations[0xE6] = {
+            name: "AND",
             cycle: 8,
             size: 1,
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let result = val | pc;
+                let result = val & pc;
 
                 //reset all flags
                 registers.setF(0);
+                registers.setSubtractFlag(1);
 
                 if (result == 0) {
                     registers.setZeroFlag(1);
@@ -2390,177 +2580,6 @@ export class Operations {
 
                 registers.setA(result);
 
-            }
-        };
-
-
-        //----------------------------------------
-        // XOR n - Logically exclusive OR n with A, result in A
-        // page 86
-        //----------------------------------------
-
-        /*
-         * who dafaq xors themselves
-         * */
-        this.operations[0xAF] = {
-            name: "XOR",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                registers.setF(0);
-                registers.setZeroFlag(1);
-                registers.setA(0);
-            }
-        };
-
-        this.operations[0xA8] = {
-            name: "XOR",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let oper = registers.getB();
-                let result = val ^ oper;
-
-                //reset all flags
-                registers.setF(0);
-
-                if (result == 0) {
-                    registers.setZeroFlag(1);
-                }
-
-                registers.setA(result);
-            }
-        };
-
-        this.operations[0xA9] = {
-            name: "XOR",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let oper = registers.getC();
-                let result = val ^ oper;
-
-                //reset all flags
-                registers.setF(0);
-
-                if (result == 0) {
-                    registers.setZeroFlag(1);
-                }
-
-                registers.setA(result);
-            }
-        };
-
-
-        this.operations[0xAA] = {
-            name: "XOR",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let oper = registers.getD();
-                let result = val ^ oper;
-
-                //reset all flags
-                registers.setF(0);
-
-                if (result == 0) {
-                    registers.setZeroFlag(1);
-                }
-
-                registers.setA(result);
-            }
-        };
-
-        this.operations[0xAB] = {
-            name: "XOR",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let oper = registers.getE();
-                let result = val ^ oper;
-
-                //reset all flags
-                registers.setF(0);
-
-                if (result == 0) {
-                    registers.setZeroFlag(1);
-                }
-
-                registers.setA(result);
-
-            }
-        };
-
-        this.operations[0xAC] = {
-            name: "XOR",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let oper = registers.getH();
-                let result = val ^ oper;
-
-                //reset all flags
-                registers.setF(0);
-
-                if (result == 0) {
-                    registers.setZeroFlag(1);
-                }
-
-                registers.setA(result);
-
-            }
-        };
-
-        this.operations[0xAD] = {
-            name: "XOR",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let oper = registers.getL();
-                let result = val ^ oper;
-
-                //reset all flags
-                registers.setF(0);
-
-                if (result == 0) {
-                    registers.setZeroFlag(1);
-                }
-
-                registers.setA(result);
-            }
-        };
-
-        this.operations[0xAE] = {
-            name: "XOR",
-            cycle: 8,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let oper = memory.readWord(registers.getHL());
-                let result = val ^ oper;
-
-                //reset all flags
-                registers.setF(0);
-
-                if (result == 0) {
-                    registers.setZeroFlag(1);
-                }
-
-                registers.setA(result);
             }
         };
 
@@ -2587,22 +2606,6 @@ export class Operations {
             }
         };
 
-        //-----------------------------------------------
-        // CP n - Compare A with n: A - n, discard results
-        // page 87
-        //------------------------------------------------
-
-        this.operations[0xBF] = {
-            name: "CP",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                registers.setF(0);
-                registers.setSubtractFlag(1);
-                registers.setZeroFlag(1);
-            }
-        };
 
         this.operations[0xB8] = {
             name: "CP",
@@ -2710,274 +2713,208 @@ export class Operations {
         };
 
 
-        //TODO: Not sure if # means immediate value
-        this.operations[0xFE] = {
+
+        this.operations[0xBF] = {
             name: "CP",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                registers.setF(0);
+                registers.setSubtractFlag(1);
+                registers.setZeroFlag(1);
+            }
+        };
+
+        this.operations[0xC0] = {
+            name: "RET",
+            cycle: 12,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                if (registers.getZeroFlag() == 0) {
+                    //Pop from stack pointer to pc
+                    let sp = registers.getSP();
+
+                    let lower = stack.popByte();
+                    registers.setSP(sp + 1);
+
+                    let higher = stack.popByte();
+                    registers.setSP(sp + 1);
+
+                    let result = lower & (higher << 8);
+                    registers.setPC(result);
+                }
+            }
+        };
+
+
+
+        this.operations[0xC1] = {
+            name: "POP",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setBC(stack.popWord());
+            }
+        };
+
+
+
+        this.operations[0xC3] = {
+            name: "JP",
+            cycle: 16,
+            size: 3,
+            mode: immediate,
+            execute(pc: number) {
+                registers.setPC(pc);
+            }
+        };
+
+
+
+        this.operations[0xC5] = {
+            name: "PUSH",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                stack.pushWord(registers.getBC());
+            }
+        };
+
+
+
+
+
+        this.operations[0xC6] = {
+            name: "ADD",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                let val = memory.readByte(registers.getA());
+                let oper = memory.readByte(registers.getB());
+                let result = calcAddFlags(val, oper, false);
+
+                registers.setSubtractFlag(0);
+                memory.writeByte(registers.getA(), result);
+            }
+        };
+
+
+
+        this.operations[0xC8] = {
+            name: "RET",
             cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                if (registers.getZeroFlag() == 1) {
+                    //Pop from stack pointer to pc
+                    let sp = registers.getSP();
+
+                    let lower = stack.popByte();
+                    registers.setSP(sp + 1);
+
+                    let higher = stack.popByte();
+                    registers.setSP(sp + 1);
+
+                    let result = lower & (higher << 8);
+                    registers.setPC(result);
+                }
+            }
+        };
+
+
+
+        this.operations[0xCC] = {
+            name: "CALL",
+            cycle: 12,
+            size: 3,
+            mode: immediate,
+            execute(pc: number) {
+                if (registers.getZeroFlag() == 1) {
+                    registers.setSP(registers.getSP() - 2);
+                    stack.pushWord(pc + 2);
+
+                    registers.setPC(pc);
+                }
+            }
+        };
+
+        this.operations[0xCD];
+
+
+
+
+        this.operations[0xD1] = {
+            name: "POP",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setDE(stack.popWord());
+            }
+        };
+
+
+        this.operations[0xD5] = {
+            name: "PUSH",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                stack.pushWord(registers.getDE());
+            }
+        };
+
+        this.operations[0xE0] = {
+            name: "LD",
+            cycle: 12,
+            mode: immediate,
             size: 2,
-            mode: immediate,
             execute(pc: number) {
-                let val = registers.getA();
-                calcSubtractFlags(val, pc, false);
+                let addr = 0xFF00 | pc;
+                memory.writeByte(addr, registers.getA());
             }
         };
 
 
-        //-----------------------------------------------
-        // INC n - Increment register n
-        // page 88
-        //------------------------------------------------
-
-        this.operations[0x3C] = {
-            name: "INC",
-            cycle: 4,
+        this.operations[0xE1] = {
+            name: "POP",
+            cycle: 16,
+            mode: immediate,
             size: 1,
-            mode: immediate,
             execute(pc: number) {
-                let result = calcAddFlags(registers.getA(), 1);
-                registers.setA(result);
+                registers.setHL(stack.popWord());
             }
         };
 
-        this.operations[0x04] = {
-            name: "INC",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcAddFlags(registers.getB(), 1);
-                registers.setB(result);
-            }
-        };
-
-        this.operations[0x0C] = {
-            name: "INC",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcAddFlags(registers.getC(), 1);
-                registers.setC(result);
-            }
-        };
-
-
-        this.operations[0x14] = {
-            name: "INC",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcAddFlags(registers.getD(), 1);
-                registers.setD(result);
-            }
-        };
-
-        this.operations[0x1C] = {
-            name: "INC",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcAddFlags(registers.getE(), 1);
-                registers.setE(result);
-            }
-        };
-
-        this.operations[0x24] = {
-            name: "INC",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcAddFlags(registers.getH(), 1);
-                registers.setH(result);
-            }
-        };
-
-        this.operations[0x2C] = {
-            name: "INC",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcAddFlags(registers.getL(), 1);
-                registers.setL(result);
-            }
-        };
-
-        this.operations[0x34] = {
-            name: "INC",
-            cycle: 12,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcAddFlags(registers.getHL(), 1, false);
-                memory.writeWord(registers.getHL(), result);
-            }
-        };
-
-        //-----------------------------------------------
-        // DEC n - Decrement register n
-        // page 89
-        //------------------------------------------------
-
-        this.operations[0x3D] = {
-            name: "DEC",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcSubtractFlags(registers.getA(), 1);
-                registers.setA(result);
-            }
-        };
-
-        this.operations[0x05] = {
-            name: "DEC",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcSubtractFlags(registers.getB(), 1);
-                registers.setB(result);
-            }
-        };
-
-        this.operations[0x0D] = {
-            name: "DEC",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcSubtractFlags(registers.getC(), 1);
-                registers.setC(result);
-            }
-        };
-
-
-        this.operations[0x15] = {
-            name: "DEC",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcSubtractFlags(registers.getD(), 1);
-                registers.setD(result);
-            }
-        };
-
-        this.operations[0x1D] = {
-            name: "DEC",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcSubtractFlags(registers.getE(), 1);
-                registers.setE(result);
-            }
-        };
-
-        this.operations[0x25] = {
-            name: "DEC",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcSubtractFlags(registers.getH(), 1);
-                registers.setH(result);
-            }
-        };
-
-        this.operations[0x2D] = {
-            name: "DEC",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcSubtractFlags(registers.getL(), 1);
-                registers.setL(result);
-            }
-        };
-
-        this.operations[0x35] = {
-            name: "DEC",
-            cycle: 12,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcSubtractFlags(registers.getHL(), 1, false);
-                memory.writeWord(registers.getHL(), result);
-            }
-        };
-
-        /**
-         * 16 Bit Arithmetic
-         */
-        //-----------------------------------------------
-        // ADD HL, n - Add n to HL
-        // page 90
-        //------------------------------------------------
-
-        this.operations[0x09] = {
-            name: "ADD",
+        this.operations[0xE2] = {
+            name: "LD",
             cycle: 8,
-            size: 1,
             mode: immediate,
+            size: 2,
             execute(pc: number) {
-                let val = registers.getHL();
-                let oper = registers.getBC();
-
-                let result = calcAddFlags(val, oper, false);
-                registers.setHL(result);
+                let high = 0xff;
+                let low = registers.getC();
+                let addr = high << 8 | low;
+                memory.writeByte(addr, registers.getA());
             }
         };
 
-        this.operations[0x19] = {
-            name: "ADD",
-            cycle: 8,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getHL();
-                let oper = registers.getDE();
 
-                let result = calcAddFlags(val, oper, false);
-                registers.setHL(result);
+        this.operations[0xE5] = {
+            name: "PUSH",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                stack.pushWord(registers.getHL());
             }
         };
-
-        this.operations[0x29] = {
-            name: "ADD",
-            cycle: 8,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getHL();
-
-                let result = calcAddFlags(val, val, false);
-                registers.setHL(result);
-            }
-        };
-
-        this.operations[0x39] = {
-            name: "ADD",
-            cycle: 8,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getHL();
-                let oper = registers.getSP();
-
-                let result = calcAddFlags(val, oper, false);
-                registers.setHL(result);
-            }
-        };
-
-        //-----------------------------------------------
-        // ADD SP, n - Add n to stackpointer
-        // page 91
-        //------------------------------------------------
 
         this.operations[0xE8] = {
             name: "ADD",
@@ -2991,110 +2928,186 @@ export class Operations {
             }
         };
 
-        //-----------------------------------------------
-        // INC nn - Increment register nn
-        // page 92
-        //------------------------------------------------
-
-        this.operations[0x03] = {
-            name: "INC",
-            cycle: 8,
-            size: 1,
+        this.operations[0xEA] = {
+            name: "LD",
+            cycle: 16,
             mode: immediate,
+            size: 3,
             execute(pc: number) {
-                let result = calcAddFlags(registers.getBC(), 1, false);
-                registers.setBC(result);
-            }
-        };
-
-        this.operations[0x13] = {
-            name: "INC",
-            cycle: 8,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcAddFlags(registers.getDE(), 1, false);
-                registers.setDE(result);
-            }
-        };
-
-        this.operations[0x23] = {
-            name: "INC",
-            cycle: 8,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcAddFlags(registers.getHL(), 1, false);
-                registers.setHL(result);
+                //TODO this might be wrong (reverse?)
+                let high = memory.readByte(pc + 1 & 0xFFFF);
+                let low = memory.readByte(pc & 0xFFFF);
+                let addr = high << 8 | low;
+                let val = registers.getA();
+                memory.writeByte(addr, val);
             }
         };
 
 
-        this.operations[0x33] = {
-            name: "INC",
-            cycle: 8,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcAddFlags(registers.getSP(), 1, false);
-                registers.setSP(result);
-            }
-        };
 
-        //-----------------------------------------------
-        // DEC nn - Decrement register nn
-        // page 93
-        //------------------------------------------------
 
-        this.operations[0x0B] = {
-            name: "DEC",
-            cycle: 8,
-            size: 1,
+        this.operations[0xF0] = {
+            name: "LD",
+            cycle: 12,
             mode: immediate,
+            size: 2,
             execute(pc: number) {
-                let result = calcSubtractFlags(registers.getBC(), 1, false);
-                registers.setBC(result);
-            }
-        };
-
-        this.operations[0x1B] = {
-            name: "DEC",
-            cycle: 8,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcSubtractFlags(registers.getDE(), 1, false);
-                registers.setDE(result);
-            }
-        };
-
-        this.operations[0x2B] = {
-            name: "DEC",
-            cycle: 8,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let result = calcSubtractFlags(registers.getHL(), 1, false);
-                registers.setHL(result);
+                let addr = 0xFF00 | pc;
+                let val = memory.readByte(addr);
+                registers.setA(val & 0xFFFF);
             }
         };
 
 
-        this.operations[0x3B] = {
-            name: "DEC",
+
+        this.operations[0xF1] = {
+            name: "POP",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setAF(stack.popWord());
+            }
+        };
+
+
+        this.operations[0xF2] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 2,
+            execute(pc: number) {
+                let high = 0xff;
+                let low = registers.getC();
+                let addr = high << 8 | low;
+                let val = memory.readByte(addr);
+                registers.setA(val);
+            }
+        };
+
+        this.operations[0xF3] = {
+            name: "Di",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute (pc: number){
+                cpu.interrupts.disableAllInterrupts();
+            }
+        };
+
+
+
+        this.operations[0xF5] = {
+            name: "PUSH",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                stack.pushWord(registers.getAF());
+            }
+        };
+
+
+        this.operations[0xF6] = {
+            name: "OR",
             cycle: 8,
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                let result = calcSubtractFlags(registers.getSP(), 1, false);
-                registers.setSP(result);
+                let val = registers.getA();
+                let result = val | pc;
+
+                //reset all flags
+                registers.setF(0);
+
+                if (result == 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
             }
         };
 
-        //-----------------------------------------------
-        // SWAP n - Swap upper & lower nibbles of  n
-        // page 94
-        //------------------------------------------------
+        this.operations[0xF8] = {
+            name: "LDHL",
+            cycle: 12,
+            mode: immediate,
+            size: 2,
+            execute(pc: number) {
+
+                let val = pc + registers.getSP();
+                let orig = registers.getHL();
+
+                //Set flags
+                registers.setZeroFlag(0);
+                registers.setSubtractFlag(0);
+                let result = calcAddFlags(val, orig, false);
+
+                memory.writeByte(result, val);
+            }
+        };
+
+        this.operations[0xF9] = {
+            name: "LD",
+            cycle: 8,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setSP(registers.getHL());
+            }
+        };
+
+        this.operations[0xFA] = {
+            name: "LD",
+            cycle: 16,
+            mode: immediate,
+            size: 2,
+            execute(pc: number) {
+                let high = memory.readByte(pc + 1 & 0xFFFF);
+                let low = memory.readWord(pc);
+                let val = high << 8 | low;
+                registers.setA(val);
+            }
+        };
+
+        this.operations[0xFB] = {
+            name: "EI",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                //Create async observer
+                throw "not finished yet";
+            }
+        };
+
+        //TODO: Not sure if # means immediate value
+        this.operations[0xFE] = {
+            name: "CP",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                calcSubtractFlags(val, pc, false);
+            }
+        };
+
+        this.operations[0xFF] = {
+            name: "RST",
+            cycle: 16,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                //Push onto stack
+                registers.setSP(registers.getSP() - 1);
+                stack.pushWord(pc);
+                registers.setPC(0x38);
+            }
+        };
+
+
         this.operations[0xCB37] = {
             name: "SWAP",
             cycle: 8,
@@ -3248,213 +3261,9 @@ export class Operations {
             }
         };
 
-        //-----------------------------------------------
-        // DAA - Decimal adjust register A.
-        // This instruction adjusts register A so that the
-        // correct representation of Binary Coded Decimal (BCD)
-        // is obtained.
-        // page 95
-        //------------------------------------------------
-
-        this.operations[0x27] = {
-            name: "DAA",
-            cycle: 16,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let lower = val & 0xFF;
-                let upper = (val & 0xFF00) >> 8;
-                let result = lower << 8 + upper;
-
-                if (result === 0) {
-                    registers.setZeroFlag(1);
-                }
-
-                registers.setA(result);
-            }
-        };
-
-
-        //-----------------------------------------------
-        // CPL - Complement register A(flip all bits).
-        // page 95
-        //------------------------------------------------
-
-        this.operations[0x2F] = {
-            name: "CPL",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let result = val ^ 0xFF;
-                registers.setSubtractFlag(1);
-                registers.setHalfFlag(1);
-                registers.setA(result);
-            }
-        };
-
-        //-----------------------------------------------
-        // EI - Enable interrupts after next instruction.
-        // page 98
-        //------------------------------------------------
-        this.operations[0xFB] = {
-            name: "EI",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                //Create async observer
-
-            }
-        };
-
-        //-----------------------------------------------
-        // RLCA - Rotate A left
-        // page 99
-        //------------------------------------------------
-
-        this.operations[0x07] = {
-            name: "RLCA",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let msb = (val & 0x80) >> 7;
-                let result = ((val << 1) & 0xFF) + msb;
-
-                //Set flags
-                registers.setSubtractFlag(0);
-                registers.setHalfFlag(0);
-                registers.setCarryFlag(msb);
-
-                if (result == 0) {
-                    registers.setZeroFlag(1);
-                }
-
-                registers.setA(result);
-            }
-        };
-
-
-        //-----------------------------------------------
-        // JP nn - Jump to address nn
-        // page 111
-        //------------------------------------------------
-
-        this.operations[0xC3] = {
-            name: "JP",
-            cycle: 16,
-            size: 3,
-            mode: immediate,
-            execute(pc: number) {
-                registers.setPC(pc);
-            }
-        };
-
-        //-----------------------------------------------
-        // RET cc - Return cc if condition is true
-        // page 111
-        //------------------------------------------------
-
-        this.operations[0xC0] = {
-            name: "RET",
-            cycle: 12,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                if (registers.getZeroFlag() == 0) {
-                    //Pop from stack pointer to pc
-                    let sp = registers.getSP();
-
-                    let lower = stack.popByte();
-                    registers.setSP(sp + 1);
-
-                    let higher = stack.popByte();
-                    registers.setSP(sp + 1);
-
-                    let result = lower & (higher << 8);
-                    registers.setPC(result);
-                }
-            }
-        };
-
-        this.operations[0xC8] = {
-            name: "RET",
-            cycle: 8,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                if (registers.getZeroFlag() == 1) {
-                    //Pop from stack pointer to pc
-                    let sp = registers.getSP();
-
-                    let lower = stack.popByte();
-                    registers.setSP(sp + 1);
-
-                    let higher = stack.popByte();
-                    registers.setSP(sp + 1);
-
-                    let result = lower & (higher << 8);
-                    registers.setPC(result);
-                }
-            }
-        };
-
-        //-----------------------------------------------
-        // CALL cc,nn - Call address n based on conditions
-        // page 115
-        //------------------------------------------------
-
-        this.operations[0xCC] = {
-            name: "CALL",
-            cycle: 12,
-            size: 3,
-            mode: immediate,
-            execute(pc: number) {
-                if (registers.getZeroFlag() == 1) {
-                    registers.setSP(registers.getSP() - 2);
-                    stack.pushWord(pc + 2);
-
-                    registers.setPC(pc);
-                }
-            }
-        };
-
-
-        //-----------------------------------------------
-        // RST n - Push present address onto stack
-        // page 116
-        //------------------------------------------------
-
-        this.operations[0xFF] = {
-            name: "RST",
-            cycle: 16,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                //Push onto stack
-                registers.setSP(registers.getSP() - 1);
-                stack.pushWord(pc);
-                registers.setPC(0x38);
-            }
-        };
-
-        this.operations[0x20] = {
-            name: "JR",
-            cycle: 8,
-            size: 2,
-            mode: immediate,
-            execute(pc: number) {
-                if (registers.getZeroFlag() == 0) {
-                    registers.setPC(registers.getPC() + checkSign(pc) + this.size);
-                }
-            }
-        };
 
     }
+
 
 }
 
