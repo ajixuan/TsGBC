@@ -39,13 +39,15 @@ export class Memory {
             this.ppu.requestWrite(addr, val);
         } else if (addr < 0xFF80) {
             if (addr < 0xFF00) {
-                throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
+                //Empty but usable for io
+                //throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
             } else if (addr == 0xFF0F) {
                 this.interrupt.if = val & 0xFF;
             } else if (addr < 0xFF6C) {
                 this.ppu.requestWrite(addr, val);
             } else if (addr < 0xFF80) {
-                throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
+                //CGB
+                //throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
             }
         } else if (addr < 0xFFFF) {
             this.cpu.stack[addr - 0xFF80] = val;
@@ -77,13 +79,14 @@ export class Memory {
             val = this.ppu.requestRead(addr);
         } else if (addr < 0xFF80) {
             if (addr < 0xFF00) {
+                //Empty but usable for io
                 throw "Invalid read on unused i/o at 0x" + addr.toString(16);
             } else if (addr == 0xFF0F) {
                 return this.interrupt.if & 0xFF;
             } else if (addr < 0xFF6C) {
                 return this.ppu.requestRead(addr);
             } else if (addr < 0xFF80) {
-                throw "Invalid write on unused i/o at 0x" + addr.toString(16);
+                throw "Invalid read on unused i/o at 0x" + addr.toString(16);
             }
         } else if (addr < 0xFFFF) {
             val = this.cpu.stack[addr - 0xFF80];
