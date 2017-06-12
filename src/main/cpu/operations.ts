@@ -2529,6 +2529,17 @@ export class Operations {
         };
 
 
+        this.operations[0xC9] = {
+            name: "RET",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setPC(cpu.stack.popWord());
+            }
+        };
+
+
         this.operations[0xCE] = {
             name: "ADC",
             cycle: 8,
@@ -2831,22 +2842,29 @@ export class Operations {
 
         this.operations[0xCC] = {
             name: "CALL",
-            cycle: 12,
+            cycle: 24,
             size: 3,
             mode: immediate,
             execute(pc: number) {
                 if (registers.getZeroFlag() == 1) {
                     registers.setSP(registers.getSP() - 2);
-                    stack.pushWord(pc + 2);
+                    stack.pushWord(pc + 3);
 
                     registers.setPC(pc);
                 }
             }
         };
 
-        this.operations[0xCD];
-
-
+        this.operations[0xCD] = { //pg 114
+            name: "CALL",
+            cycle: 24,
+            size: 3,
+            mode: immediate,
+            execute(pc: number) {
+                stack.pushWord(registers.getPC() + 3);
+                registers.setPC(pc);
+            }
+        };
 
 
         this.operations[0xD1] = {

@@ -17,45 +17,74 @@ export class Stack {
     }
 
     public popByte() : number {
-        var addr = this.register.getSP();
+        let addr = this.register.getSP();
+        let val;
 
         if (addr > 0x7F) {
             throw "Stack pop error on addr 0x" + addr.toString(16);
         }
 
-        var val = this.memory.cpu.stack[addr];
+        if(addr < 0xA000){
+            throw "Stack pop error on addr 0x" + addr.toString(16);
+        } else if(addr < 0xE000) {
+            val = this.memory.cpu.ram[addr - 0xC000];
+        }else if (addr < 0xFF80) {
+            throw "Stack push error on addr 0x" + addr.toString(16);
+        } else {
+            val = this.memory.cpu.stack[addr - 0xFF80];
+        }
 
-        var next = addr + 1 > 0xFFFE ? 0xFFFE : addr + 1;
+        let next = addr + 1;
+
+        if(next == 0xE000){
+            next = 0xFF80;
+        } else if(next > 0xFFFE){
+            next = 0xFFFE;
+        }
+
         this.register.setSP(next);
         return val;
     }
 
     public popWord() : number {
-        var high = this.popByte();
-        var low = this.popByte();
-        var val = high << 8 || low;
+        let high = this.popByte();
+        let low = this.popByte();
+        let val = high << 8 || low;
         return val;
     }
 
     public pushByte(val : number) : void {
-        var addr = this.register.getSP();
-
-        if (addr < 0xFF80) {
-            throw "Stack push error on addr 0x" + addr.toString(16);
-        }
+        //Stack pointer decremets by 1 before address is written
+        let addr = this.register.getSP();
 
         if (val > 0xFF) {
             throw "Stack push val is to big 0x" + val.toString(16);
         }
 
-        this.memory.cpu.stack[addr] = val;
-        var next = addr  - 1 < 0xFF80 ? 0xFF80 : addr - 1;
+        if(addr < 0xA000){
+            throw "Stack push error on addr 0x" + addr.toString(16);
+        } else if(addr < 0xE000) {
+            this.memory.cpu.ram[addr - 0xC000] = val;
+        }else if (addr < 0xFF80) {
+            throw "Stack push error on addr 0x" + addr.toString(16);
+        } else {
+            this.memory.cpu.stack[addr - 0xFF80] = val;
+        }
+
+        let next = addr  - 1;
+
+        if(next == 0xFF7F){
+            next = 0xE000;
+        } else if(next < 0xA000){
+            throw "stack overflow";
+        }
+
         this.register.setSP(next);
     }
 
     public pushWord(val : number) : void {
-        var high = val  >> 8;
-        var low = val & 0xFF;
+        let high = val  >> 8;
+        let low = val & 0xFF;
         this.pushByte(high);
         this.pushByte(low);
     }
