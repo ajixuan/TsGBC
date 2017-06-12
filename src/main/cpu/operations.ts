@@ -786,7 +786,7 @@ export class Operations {
             name: "LD",
             cycle: 12,
             mode: immediate,
-            size: 1,
+            size: 2,
             execute(pc: number) {
                 memory.writeByte(registers.getHL(), pc);
             }
@@ -1024,7 +1024,7 @@ export class Operations {
             name: "LD",
             cycle: 16,
             mode: immediate,
-            size: 2,
+            size: 3,
             execute(pc: number) {
                 //TODO this might be wrong (reverse?)
                 let high = memory.readByte(pc + 1 & 0xFFFF);

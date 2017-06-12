@@ -154,7 +154,7 @@ export class Ppu {
             this.clock = 0;
 
         } else if (stat.modeFlag.vramlock.get() && this.clock >= 172) {
-            if (lcdc.bgon.get() & lcdc.lcdon.get()) {
+            if (lcdc.bgon.get() && lcdc.lcdon.get()) {
                 this.clock = 0;
 
                 //Vertical blank
@@ -183,9 +183,10 @@ export class Ppu {
                 stat.interrupts.hblank.set();
 
 
-            } else {
-                console.log("ERROR, lcdc does not have bg enabled");
             }
+            /*else {
+                console.log("ERROR, lcdc does not have bg enabled");
+            }*/
         }
     }
 
