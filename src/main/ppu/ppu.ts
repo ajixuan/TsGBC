@@ -59,12 +59,14 @@ export class Ppu {
         // Last byte doesn't matter because each row is
         // 2 bytes, so the second byte of the row will
         // belong to the same row of bytes
+
+        //Total number of rows of pixels needed
         addr &= 0x1FFE;
 
-        // Each tile has 8 rows, each row takes 2 bytes. Divide the rows
-        // by 16 (shift 4 == divide 16)
+        // Each tile has 8 rows, each row takes 2 bytes.
+        // Divide the rows by 16 (shift 8 == divide 16)
         // This will give us the tile number that the row belongs to
-        let tile = (addr >> 4) & 0x1FF;
+        let tile = (addr >> 8) & 0x1FF;
 
         // Find the row number of the tile
         let y = (addr >> 1) & 0x7;
