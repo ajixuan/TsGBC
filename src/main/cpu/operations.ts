@@ -2924,9 +2924,6 @@ export class Operations {
             }
         };
 
-
-
-        //TODO: Not sure if # means immediate value
         this.operations[0xEE] = {
             name: "XOR",
             cycle: 8,
@@ -2949,15 +2946,25 @@ export class Operations {
         };
 
 
+        this.operations[0xEF] = {
+            name: "RST",
+            cycle: 16,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                stack.pushWord(registers.getSP());
+                registers.setPC(0x28);
+            }
+        };
+
 
         this.operations[0xF0] = {
-            name: "LD",
+            name: "LDH",
             cycle: 12,
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                let addr = 0xFF00 | pc;
-                let val = memory.readByte(addr);
+                let val = memory.readByte(0xFF00 | pc);
                 registers.setA(val & 0xFFFF);
             }
         };
