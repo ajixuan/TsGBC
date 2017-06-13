@@ -315,6 +315,7 @@
     var toggleDebug = function () {
         debug.status = !debug.status;
         if (debug.status) {
+            debug.clearLog();
             debug.display()
         }
         ;

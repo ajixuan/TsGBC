@@ -6,16 +6,30 @@ import {GameBoy} from './gameboy';
 export class Debugger {
     public static status : boolean = true;
     private static gameboy : GameBoy;
-
+    private static logLines : number = 500;
     private static logBuffer : Array<String> = new Array<String>();
 
 
     public static pushLog() : void {
         //Add to log
-        var eventStr = "PC:" + Debugger.gameboy.cpu.registers.getPC().toString(16).toUpperCase()
-            + " SP:" + Debugger.gameboy.cpu.registers.getSP().toString(16).toUpperCase();
+
+        let eventStr =
+            "PC:" + Debugger.gameboy.cpu.registers.getPC().toString(16).toUpperCase()
+//            + " Op:" + Debugger.gameboy.cpu.last.opcode.toString(16).toUpperCase()
+            + " SP:" + Debugger.gameboy.cpu.registers.getSP().toString(16).toUpperCase()
+            + " AF:" + Debugger.gameboy.cpu.registers.getAF().toString(16).toUpperCase()
+            + " BC:" + Debugger.gameboy.cpu.registers.getBC().toString(16).toUpperCase()
+            + " DE:" + Debugger.gameboy.cpu.registers.getDE().toString(16).toUpperCase()
+            + " HL:" + Debugger.gameboy.cpu.registers.getHL().toString(16).toUpperCase()
+
         this.logBuffer.push(eventStr);
     }
+
+    public static clearLog() : void {
+        $(".log ul").empty();
+        this.logBuffer.length = 0;
+    }
+
 
     public static display() : void {
 
@@ -25,15 +39,9 @@ export class Debugger {
 
         let gameboy = Debugger.gameboy;
 
-
         //Clear log if overflowing
-        if($(".log li").length > 100){
-            $(".log ul").empty();
-        }
-
-        //Clear the array log
-        if(this.logBuffer.length > 100){
-            this.logBuffer.length = 0;
+        if($(".log li").length > Debugger.logLines || this.logBuffer.length > Debugger.logLines){
+            Debugger.clearLog();
         }
 
         if (!Debugger.status) { return };
