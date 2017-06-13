@@ -24,16 +24,6 @@ export class Registers {
     private sp : number = 0;
     private pc : number = 0;
 
-    //Controller
-    private p1 : number = 0;
-
-    //Divider
-    private div : number = 0;
-
-    //Timers
-    private tma : number = 0;
-    private tima : number = 0;
-    private tac : number = 0;
 
 
     public clock : {m : number, t : number} = {
@@ -265,62 +255,6 @@ export class Registers {
 
     public getHL() : number {
         return this.getH() << 8 | this.getL();
-    }
-
-    /**
-     * Controller
-     */
-    public setP1(num:number): void {
-        this.isValid(num, 0xFF, "Register argument too large for p1: " + num);
-        this.p1 = num;
-    }
-
-    public getP1() : number {
-        return this.p1;
-    }
-
-    /**
-     * Divider
-     */
-    public setDiv(num:number): void {
-        this.isValid(num, 0xFF, "Register argument too large for p1: " + num);
-        this.div = num;
-    }
-
-    public getDiv() : number {
-        return this.div;
-    }
-
-    /**
-     * Timer
-     */
-    public setTima(num:number):void{
-        this.isValid(num, 0xFF, "Register argument too large for p1: " + num);
-        this.tima = num;
-    }
-
-    public getTima() : number {
-        return this.tima;
-    }
-
-
-    public setTma(num:number):void{
-        this.isValid(num, 0xFF, "Register argument too large for p1: " + num);
-        this.tma = num;
-    }
-
-    public getTma() : number {
-        return this.tma;
-    }
-
-
-    public setTac(num:number):void{
-        this.isValid(num, 0xFF, "Register argument too large for p1: " + num);
-        this.tac = num;
-    }
-
-    public getTac() : number {
-        return this.tac;
     }
 
 

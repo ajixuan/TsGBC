@@ -27,7 +27,6 @@ export class Debugger {
 
     public static clearLog() : void {
         $(".log ul").empty();
-        this.logBuffer.length = 0;
     }
 
 
@@ -40,8 +39,12 @@ export class Debugger {
         let gameboy = Debugger.gameboy;
 
         //Clear log if overflowing
-        if($(".log li").length > Debugger.logLines || this.logBuffer.length > Debugger.logLines){
+        if($(".log li").length > Debugger.logLines){
             Debugger.clearLog();
+        }
+
+        if( this.logBuffer.length > Debugger.logLines){
+            this.logBuffer.length = 0;
         }
 
         if (!Debugger.status) { return };
