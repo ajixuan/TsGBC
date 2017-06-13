@@ -8,6 +8,7 @@ export class Ppu {
     private vramTileset: Array<Array<Array<number>>>;
     private oamTileset: Array<Array<Array<number>>>;
 
+
     public clock: number = 0;
     public registers: Registers;
 
@@ -92,11 +93,11 @@ export class Ppu {
         //BGmap 1 0x9800
         let tile;
         if (this.registers.lcdc.bgwin.get()) {
-            tile = this.memory.readWord(block + 0x9C00);
+            tile = this.memory.readByte(block + 0x9C00);
         }
         //BGmap 2 0x9C00
         else {
-            tile = this.memory.readWord(block + 0x9800);
+            tile = this.memory.readByte(block + 0x9800);
         }
 
         // Memory in map 2
@@ -243,7 +244,7 @@ export class Ppu {
     public requestWrite(addr: number, val: number): void {
 
         //Vram
-        if (addr < 0xA000) {
+        if (addr < 0x9800){
             if (!this.registers.stat.modeFlag.vramlock.get()) {
                 console.log("ERROR: VRAM locked");
                 return;
