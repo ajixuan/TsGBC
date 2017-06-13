@@ -3079,8 +3079,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                //Create async observer
-                throw "not finished yet";
+                cpu.interrupts.ime = 1;
             }
         };
 
