@@ -712,7 +712,6 @@ export class Operations {
         };
 
 
-
         this.operations[0x32] = {
             name: "LD",
             cycle: 8,
@@ -749,10 +748,6 @@ export class Operations {
                 memory.writeWord(registers.getHL(), result);
             }
         };
-
-
-
-
 
 
         this.operations[0x35] = {
@@ -860,7 +855,6 @@ export class Operations {
 
             }
         };
-
 
 
         this.operations[0x41] = {
@@ -1784,8 +1778,6 @@ export class Operations {
         };
 
 
-
-
         this.operations[0x90] = {
             name: "SUB",
             cycle: 4,
@@ -2012,7 +2004,6 @@ export class Operations {
                 registers.setA(result);
             }
         };
-
 
 
         this.operations[0xA0] = {
@@ -2529,95 +2520,6 @@ export class Operations {
         };
 
 
-        this.operations[0xC9] = {
-            name: "RET",
-            cycle: 16,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                registers.setPC(cpu.stack.popWord());
-            }
-        };
-
-
-        this.operations[0xCE] = {
-            name: "ADC",
-            cycle: 8,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                let val = registers.getA();
-
-                let result = calcAddFlags(val, pc + registers.getCarryFlag());
-
-                registers.setSubtractFlag(0);
-                registers.setA(result);
-            }
-        };
-
-
-        //TODO: Not sure if # means immediate value
-        this.operations[0xD6] = {
-            name: "SUB",
-            cycle: 4,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let result = calcSubtractFlags(val, pc, false);
-
-                registers.setSubtractFlag(1);
-                registers.setA(result);
-            }
-        };
-
-
-        this.operations[0xE6] = {
-            name: "AND",
-            cycle: 8,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let result = val & pc;
-
-                //reset all flags
-                registers.setF(0);
-                registers.setSubtractFlag(1);
-
-                if (result == 0) {
-                    registers.setZeroFlag(1);
-                }
-
-                registers.setA(result);
-
-            }
-        };
-
-
-        //TODO: Not sure if # means immediate value
-        this.operations[0xEE] = {
-            name: "XOR",
-            cycle: 8,
-            size: 1,
-            mode: immediate,
-            execute(pc: number) {
-                let val = registers.getA();
-                let result = val ^ pc;
-
-                //reset all flags
-                registers.setF(0);
-
-                if (result == 0) {
-                    registers.setZeroFlag(1);
-                }
-
-                registers.setA(result);
-
-            }
-        };
-
-
         this.operations[0xB8] = {
             name: "CP",
             cycle: 4,
@@ -2724,7 +2626,6 @@ export class Operations {
         };
 
 
-
         this.operations[0xBF] = {
             name: "CP",
             cycle: 4,
@@ -2736,6 +2637,7 @@ export class Operations {
                 registers.setZeroFlag(1);
             }
         };
+
 
         this.operations[0xC0] = {
             name: "RET",
@@ -2760,7 +2662,6 @@ export class Operations {
         };
 
 
-
         this.operations[0xC1] = {
             name: "POP",
             cycle: 16,
@@ -2770,7 +2671,6 @@ export class Operations {
                 registers.setBC(stack.popWord());
             }
         };
-
 
 
         this.operations[0xC3] = {
@@ -2784,7 +2684,6 @@ export class Operations {
         };
 
 
-
         this.operations[0xC5] = {
             name: "PUSH",
             cycle: 16,
@@ -2794,9 +2693,6 @@ export class Operations {
                 stack.pushWord(registers.getBC());
             }
         };
-
-
-
 
 
         this.operations[0xC6] = {
@@ -2813,7 +2709,6 @@ export class Operations {
                 memory.writeByte(registers.getA(), result);
             }
         };
-
 
 
         this.operations[0xC8] = {
@@ -2838,6 +2733,15 @@ export class Operations {
             }
         };
 
+        this.operations[0xC9] = {
+            name: "RET",
+            cycle: 16,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setPC(cpu.stack.popWord());
+            }
+        };
 
 
         this.operations[0xCC] = {
@@ -2867,6 +2771,24 @@ export class Operations {
         };
 
 
+        this.operations[0xCE] = {
+            name: "ADC",
+            cycle: 8,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                let val = registers.getA();
+
+                let result = calcAddFlags(val, pc + registers.getCarryFlag());
+
+                registers.setSubtractFlag(0);
+                registers.setA(result);
+            }
+        };
+
+
+
+
         this.operations[0xD1] = {
             name: "POP",
             cycle: 16,
@@ -2887,6 +2809,23 @@ export class Operations {
                 stack.pushWord(registers.getDE());
             }
         };
+
+
+        //TODO: Not sure if # means immediate value
+        this.operations[0xD6] = {
+            name: "SUB",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let result = calcSubtractFlags(val, pc, false);
+
+                registers.setSubtractFlag(1);
+                registers.setA(result);
+            }
+        };
+
 
         this.operations[0xE0] = {
             name: "LD",
@@ -2934,6 +2873,30 @@ export class Operations {
             }
         };
 
+
+        this.operations[0xE6] = {
+            name: "AND",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let result = val & pc;
+
+                //reset all flags
+                registers.setF(0);
+                registers.setSubtractFlag(1);
+
+                if (result == 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
+            }
+        };
+
+
         this.operations[0xE8] = {
             name: "ADD",
             cycle: 16,
@@ -2963,6 +2926,29 @@ export class Operations {
 
 
 
+        //TODO: Not sure if # means immediate value
+        this.operations[0xEE] = {
+            name: "XOR",
+            cycle: 8,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let result = val ^ pc;
+
+                //reset all flags
+                registers.setF(0);
+
+                if (result == 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setA(result);
+
+            }
+        };
+
+
 
         this.operations[0xF0] = {
             name: "LD",
@@ -2975,7 +2961,6 @@ export class Operations {
                 registers.setA(val & 0xFFFF);
             }
         };
-
 
 
         this.operations[0xF1] = {
@@ -3012,7 +2997,6 @@ export class Operations {
                 cpu.interrupts.disableAllInterrupts();
             }
         };
-
 
 
         this.operations[0xF5] = {
