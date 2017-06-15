@@ -113,23 +113,18 @@ export class Interrupts {
         var result = (this.ie & this.if);
 
         if (result == Interrupts.VBLANK.mask) {
-            this.clearInterruptFlag(Interrupts.VBLANK);
             return Interrupts.VBLANK;
 
         } else if (result == Interrupts.LCDC.mask) {
-            this.clearInterruptFlag(Interrupts.LCDC);
             return Interrupts.LCDC;
 
         } else if (result == Interrupts.TIMER.mask) {
-            this.clearInterruptFlag(Interrupts.TIMER);
             return Interrupts.TIMER;
 
         } else if (result == Interrupts.SERIAL.mask) {
-            this.clearInterruptFlag(Interrupts.SERIAL);
             return Interrupts.SERIAL;
 
         } else if (result == Interrupts.JOYPAD.mask) {
-            this.clearInterruptFlag(Interrupts.JOYPAD);
             return Interrupts.JOYPAD;
 
         } else {

@@ -69,12 +69,7 @@ export class Cpu {
     /**
      * Handler for the CPU interrupts.
      */
-    private handledInterrupts(): void {
-        if (!this.interrupts.hasInterrupts()) {
-            return;
-        }
-
-        let interrupt: Interrupt = this.interrupts.getInterrupt();
+    private handledInterrupts(interrupt : Interrupt): void {
 
         if (interrupt == null) {
             this.interrupts.enableAllInterrupts();
@@ -83,14 +78,17 @@ export class Cpu {
 
         this.halt = false;
         this.interrupts.disableAllInterrupts();
+        this.interrupts.clearInterruptFlag(interrupt);
 
         //Push all registers on to the stack
+        /* Just push pc onto stack
         this.stack.pushWord(this.registers.getHL());
         this.stack.pushWord(this.registers.getAF());
         this.stack.pushWord(this.registers.getBC());
         this.stack.pushWord(this.registers.getDE());
 
         this.stack.pushWord(this.registers.getSP());
+        */
         this.stack.pushWord(this.registers.getPC());
 
         this.registers.setPC(interrupt.address);
@@ -101,7 +99,13 @@ export class Cpu {
      */
     public tick(): number {
 
-        this.handledInterrupts();
+        //Interrupt check must occur before opcode exection
+        //  This is to prevent during ei execution, where interrupt
+        //  flags would get set AND executed at the same pc tick
+        let interrupt :Interrupt;
+        if(this.interrupts.hasInterrupts()){
+            interrupt = this.interrupts.getInterrupt();
+        }
 
         let pc = this.registers.getPC();
 
@@ -124,19 +128,25 @@ export class Cpu {
             throw "Unknown opcode execution 0x" + opcode.toString(16).toUpperCase();
         }
 
-        //Update Infromation
-        let oldPC = this.registers.getPC();
-        this.clock.t += operation.cycle;
-        this.clock.m = this.clock.t / 4;
-
         //Execute Operation
+        let oldPC = this.registers.getPC();
         let opaddr = operation.mode.getValue(pc, operation.size - 1);
         operation.execute(opaddr);
 
-        //If pc did not change during op execution, increment pc
-        if (oldPC === this.registers.getPC()) {
-            this.registers.setPC(this.registers.getPC() + operation.size & 0xFFFF);
+        //Update Infromation
+        this.clock.t += operation.cycle;
+        this.clock.m = this.clock.t / 4;
+
+        //Handle interrupts
+        if(interrupt){
+            this.handledInterrupts(interrupt);
+        } else {
+            //If pc did not change during op execution, increment pc
+            if (oldPC === this.registers.getPC()) {
+                this.registers.setPC(this.registers.getPC() + operation.size & 0xFFFF);
+            }
         }
+
 
         //Debug Information
         this.last = {
@@ -147,6 +157,7 @@ export class Cpu {
 
         Debugger.pushLog();
         Debugger.display();
+
 
         return operation.cycle;
     }
