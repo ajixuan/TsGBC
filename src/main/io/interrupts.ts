@@ -92,8 +92,8 @@ export class Interrupts {
     }
 
     public hasInterrupts(): boolean {
-        var isInterruptEnabled: boolean = ((this.ime & 0x1) == 1);
-        var hasInterrupt: boolean = (this.ie != 0);
+        let isInterruptEnabled: boolean = (this.ime == 1);
+        let hasInterrupt: boolean = (this.ie != 0);
 
         return isInterruptEnabled && hasInterrupt;
     }
@@ -101,6 +101,7 @@ export class Interrupts {
     public clearInterruptFlag(interrupt: Interrupt) {
         var mask = (1 << (interrupt.id + 1)) - 1;
         this.ie = this.ie & mask;
+        this.ime = 0;
     }
 
     public setInterruptFlag(interrupt: Interrupt) {
@@ -109,7 +110,7 @@ export class Interrupts {
     }
 
     public getInterrupt(): Interrupt {
-        var result = (this.ie & this.ie);
+        var result = (this.ie & this.if);
 
         if (result == Interrupts.VBLANK.mask) {
             this.clearInterruptFlag(Interrupts.VBLANK);

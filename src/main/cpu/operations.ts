@@ -138,7 +138,7 @@ export class Operations {
         this.operations = [];
 
         //System Pointers
-        let cpu = this.cpu;
+        let interrupts = this.cpu.interrupts;
         let registers = this.cpu.registers;
         let memory = this.cpu.memory;
         let stack = this.cpu.stack;
@@ -316,8 +316,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                let result = calcSubtractFlags(registers.getBC(), 1, false);
-                registers.setBC(result);
+                registers.setBC(registers.getBC() - 1);
             }
         };
 
@@ -478,8 +477,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                let result = calcSubtractFlags(registers.getDE(), 1, false);
-                registers.setDE(result);
+                registers.setDE(registers.getDE() - 1);
             }
         };
 
@@ -648,8 +646,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                let result = calcSubtractFlags(registers.getHL(), 1, false);
-                registers.setHL(result);
+                registers.setHL(registers.getHL() - 1);
             }
         };
 
@@ -807,8 +804,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                let result = calcSubtractFlags(registers.getSP(), 1, false);
-                registers.setSP(result);
+                registers.setSP(registers.getSP());
             }
         };
 
@@ -2739,7 +2735,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                registers.setPC(cpu.stack.popWord());
+                registers.setPC(stack.popWord());
             }
         };
 
@@ -3001,7 +2997,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute (pc: number){
-                cpu.interrupts.disableAllInterrupts();
+                interrupts.disableAllInterrupts();
             }
         };
 
@@ -3086,7 +3082,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                cpu.interrupts.ime = 1;
+                interrupts.enableAllInterrupts();
             }
         };
 

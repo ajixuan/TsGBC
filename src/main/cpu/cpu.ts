@@ -23,9 +23,9 @@ export class Cpu {
     constructor(memory: Memory) {
         this.registers = new Registers();
         this.memory = memory;
-        this.stack = new Stack(this.memory, this.registers);
+        this.interrupts = memory.interrupt;
+        this.stack = new Stack(memory, this.registers);
         this.operations = new Operations(this);
-        this.interrupts = this.memory.interrupt;
     }
 
     /**
@@ -111,6 +111,7 @@ export class Cpu {
         if (this.halt) {
             opcode = 0x00; //NOP
         }
+
         if (opcode == 0xCB) {
             opcode = (opcode << 8) | this.memory.readByte(pc++);
         }
