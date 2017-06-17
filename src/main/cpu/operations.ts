@@ -614,6 +614,18 @@ export class Operations {
         };
 
 
+        this.operations[0x28] = {
+            name: "JR",
+            cycle: 12,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                if(registers.getZeroFlag()){
+                    registers.setPC(registers.getPC() + this.size + pc);
+                }
+            }
+        };
+
         this.operations[0x29] = {
             name: "ADD",
             cycle: 8,
@@ -2651,7 +2663,7 @@ export class Operations {
                     let higher = stack.popByte();
                     registers.setSP(sp + 1);
 
-                    let result = lower & (higher << 8);
+                    let result = lower | (higher << 8);
                     registers.setPC(result);
                 }
             }
