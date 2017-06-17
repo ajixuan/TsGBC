@@ -327,6 +327,29 @@
     }
 
 
+
+
+    //Debugger hot keys
+    $(document).keypress(function (event) {
+        //$(this.body).prepend("<span>" + event.keyCode + "</span>");
+        switch (event.keyCode) {
+            case 13:
+                toggleDebug();
+                break;
+            case 114:
+                run();
+                break;
+            case 115:
+                stop();
+                break;
+            case 116:
+                tick();
+                break;
+        }
+    });
+
+
+
 </script>
 </body>
 </html>
