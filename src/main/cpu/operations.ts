@@ -620,7 +620,7 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                if(registers.getZeroFlag()){
+                if (registers.getZeroFlag()) {
                     registers.setPC(registers.getPC() + this.size + pc);
                 }
             }
@@ -643,7 +643,7 @@ export class Operations {
             name: "LD",
             cycle: 8,
             mode: immediate,
-            size: 2,
+            size: 1,
             execute(pc: number) {
                 let addr = registers.getHL();
                 let val = memory.readByte(addr);
@@ -2787,8 +2787,6 @@ export class Operations {
         };
 
 
-
-
         this.operations[0xD1] = {
             name: "POP",
             cycle: 16,
@@ -2811,7 +2809,6 @@ export class Operations {
         };
 
 
-        //TODO: Not sure if # means immediate value
         this.operations[0xD6] = {
             name: "SUB",
             cycle: 4,
@@ -2823,6 +2820,21 @@ export class Operations {
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
+            }
+        };
+
+        this.operations[0xD9] = {
+            name: "RETI",
+            cycle: 16,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                //Pop from stack pointer to pc
+                let lower = stack.popByte();
+                let higher = stack.popByte();
+                let result = lower | (higher << 8);
+                registers.setPC(result);
+                interrupts.enableAllInterrupts();
             }
         };
 
@@ -2853,7 +2865,7 @@ export class Operations {
             name: "LD",
             cycle: 8,
             mode: immediate,
-            size: 2,
+            size: 1, //TODO: ???? this is 2 on the links doc but 1 during debugger run
             execute(pc: number) {
                 let high = 0xff;
                 let low = registers.getC();

@@ -297,6 +297,11 @@
 
     var run = function () {
         gameboy.tpf = $('#tpf').val();
+
+        if(debug.status){
+            gameboy.tpf = 1;
+        }
+
         gameboy.run();
     }
 
@@ -313,13 +318,20 @@
     }
 
     var toggleDebug = function () {
-        debug.status = !debug.status;
-        if (debug.status) {
-            debug.clearLog();
-            debug.display()
+        var _tpf = $('#tpf').val();
+        return function () {
+            debug.status = !debug.status;
+            if (debug.status) {
+                debug.clearLog();
+                debug.display();
+                _tpf = gameboy.tpf;
+                gameboy.tpf = 1;
+            } else {
+                console.log(_tpf);
+                gameboy.tpf = _tpf;
+            }
         }
-        ;
-    }
+    }();
 
     var setBreakPoint = function () {
         var val = parseInt($("#breakpoint").val(), 16);
@@ -327,8 +339,8 @@
     }
 
     //Debugger hot keys
-    $("#breakpoint").blur(function(){
-        if($("#breakpoint").val() != 0){
+    $("#breakpoint").blur(function () {
+        if ($("#breakpoint").val() != 0) {
             $("#setbreak").click();
         }
     });
@@ -351,15 +363,15 @@
         }
     });
 
-    $(document).keydown(function(event){
-        if(event.keyCode == 16){
-           var input = $("#breakpoint");
-           if(input.is(":focus")){
-               input.blur();
-           } else {
-               input.focus();
-           }
-       }
+    $(document).keydown(function (event) {
+        if (event.keyCode == 16) {
+            var input = $("#breakpoint");
+            if (input.is(":focus")) {
+                input.blur();
+            } else {
+                input.focus();
+            }
+        }
     });
 
 </script>
