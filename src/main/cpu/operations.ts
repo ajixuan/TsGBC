@@ -2183,7 +2183,7 @@ export class Operations {
 
                 //reset all flags
                 registers.setF(0);
-                registers.setSubtractFlag(1);
+                registers.setHalfFlag(1);
 
                 if (result == 0) {
                     registers.setZeroFlag(1);
@@ -2658,10 +2658,7 @@ export class Operations {
                     let sp = registers.getSP();
 
                     let lower = stack.popByte();
-                    registers.setSP(sp + 1);
-
                     let higher = stack.popByte();
-                    registers.setSP(sp + 1);
 
                     let result = lower | (higher << 8);
                     registers.setPC(result);
@@ -2727,15 +2724,10 @@ export class Operations {
             execute(pc: number) {
                 if (registers.getZeroFlag() == 1) {
                     //Pop from stack pointer to pc
-                    let sp = registers.getSP();
-
                     let lower = stack.popByte();
-                    registers.setSP(sp + 1);
-
                     let higher = stack.popByte();
-                    registers.setSP(sp + 1);
 
-                    let result = lower & (higher << 8);
+                    let result = lower | (higher << 8);
                     registers.setPC(result);
                 }
             }
@@ -3079,11 +3071,9 @@ export class Operations {
             name: "LD",
             cycle: 16,
             mode: immediate,
-            size: 2,
+            size: 3,
             execute(pc: number) {
-                let high = memory.readByte(pc + 1 & 0xFFFF);
-                let low = memory.readWord(pc);
-                let val = high << 8 | low;
+                let val = memory.readByte(pc);
                 registers.setA(val);
             }
         };

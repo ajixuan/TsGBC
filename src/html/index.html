@@ -35,7 +35,7 @@
                 </div>
                 <div>
                     Break at pc:
-                    <input id="breakpoint" size="3" value="0">
+                    <input id="breakpoint" size="3">
                     <button id="setbreak" onclick="setBreakPoint()">Set</button>
                 </div>
 
@@ -326,14 +326,13 @@
         gameboy.setPCBreak(val);
     }
 
+    //Debugger hot keys
     $("#breakpoint").blur(function(){
         if($("#breakpoint").val() != 0){
             $("#setbreak").click();
         }
     });
 
-
-    //Debugger hot keys
     $(document).keypress(function (event) {
         //$(this.body).prepend("<span>" + event.keyCode + "</span>");
         switch (event.keyCode) {
