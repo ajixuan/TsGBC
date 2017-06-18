@@ -138,15 +138,14 @@ export class Cpu {
         this.clock.m = this.clock.t / 4;
 
         //Handle interrupts
-        if(interrupt){
-            this.handledInterrupts(interrupt);
-        } else {
-            //If pc did not change during op execution, increment pc
-            if (oldPC === this.registers.getPC()) {
-                this.registers.setPC(this.registers.getPC() + operation.size & 0xFFFF);
-            }
+        //If pc did not change during op execution, increment pc
+        if (oldPC === this.registers.getPC()) {
+            this.registers.setPC(this.registers.getPC() + operation.size & 0xFFFF);
         }
 
+        if(interrupt){
+            this.handledInterrupts(interrupt);
+        }
 
         //Debug Information
         this.last = {
