@@ -31,11 +31,11 @@
 
                 <div>
                     Ticks per frame:
-                    <input size="2" id="tpf" value="1">
+                    <input size="2" id="tpf" value="1000">
                 </div>
                 <div>
                     Break at pc:
-                    <input size="3" id="breakpoint" value="0">
+                    <input id="breakpoint" size="3" value="0">
                     <button id="setbreak" onclick="setBreakPoint()">Set</button>
                 </div>
 
@@ -326,7 +326,11 @@
         gameboy.setPCBreak(val);
     }
 
-
+    $("#breakpoint").blur(function(){
+        if($("#breakpoint").val() != 0){
+            $("#setbreak").click();
+        }
+    });
 
 
     //Debugger hot keys
@@ -348,7 +352,16 @@
         }
     });
 
-
+    $(document).keydown(function(event){
+        if(event.keyCode == 16){
+           var input = $("#breakpoint");
+           if(input.is(":focus")){
+               input.blur();
+           } else {
+               input.focus();
+           }
+       }
+    });
 
 </script>
 </body>
