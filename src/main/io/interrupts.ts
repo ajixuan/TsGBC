@@ -99,8 +99,8 @@ export class Interrupts {
     }
 
     public clearInterruptFlag(interrupt: Interrupt) {
-        var mask = (1 << (interrupt.id + 1)) - 1;
-        this.ie = this.ie & mask;
+        var mask = 1 << interrupt.id;
+        this.ie = this.ie & ~mask;
         this.ime = 0;
     }
 
