@@ -39,7 +39,7 @@ export class Operations {
 
         //If short is false (if it is 16bit operation)
         if (short === false) {
-            let garb = 0xFFFF;
+            garb = 0xFFFF;
             mask = 0xFFF;
             low = 12;
             high = 16;
@@ -48,10 +48,7 @@ export class Operations {
         let half = (first & mask) + (second & mask);
         let full = first + second;
 
-        this.cpu.registers.setSubtractFlag(0);
-        this.cpu.registers.setHalfFlag(0);
-        this.cpu.registers.setCarryFlag(0);
-        this.cpu.registers.setZeroFlag(0);
+        this.cpu.registers.setF(0);
 
         if (half >> low == 1) {
             this.cpu.registers.setHalfFlag(1);
@@ -2929,7 +2926,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                stack.pushWord(registers.getSP());
+                stack.pushWord(registers.getPC() + this.size);
                 registers.setPC(0x28);
             }
         };
