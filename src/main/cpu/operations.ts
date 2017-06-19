@@ -1530,14 +1530,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let addr = registers.getA();
-                let val = memory.readByte(addr);
-                addr = registers.getB();
-                let oper = memory.readByte(addr);
-                let result = calcAddFlags(val, oper, false);
-
-                registers.setSubtractFlag(0);
-                memory.writeByte(registers.getA(), result);
+                let result = calcAddFlags(registers.getA(), registers.getB());
+                registers.setA(result);
             }
         };
 
@@ -1547,14 +1541,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let addr = registers.getA();
-                let val = memory.readByte(addr);
-                addr = registers.getC();
-                let oper = memory.readByte(addr);
-                let result = calcAddFlags(val, oper, false);
-
-                registers.setSubtractFlag(0);
-                memory.writeByte(registers.getA(), result);
+                let result = calcAddFlags(registers.getA(), registers.getC());
+                registers.setA(result);
             }
         };
 
@@ -1565,14 +1553,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let addr = registers.getA();
-                let val = memory.readByte(addr);
-                addr = registers.getD();
-                let oper = memory.readByte(addr);
-
-                let result = calcAddFlags(val, oper, false);
-                registers.setSubtractFlag(0);
-                memory.writeByte(registers.getA(), result);
+                let result = calcAddFlags(registers.getA(), registers.getD());
+                registers.setA(result);
             }
         };
 
@@ -1583,14 +1565,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let addr = registers.getA();
-                let val = memory.readByte(addr);
-                addr = registers.getE();
-                let oper = memory.readByte(addr);
-                let result = calcAddFlags(val, oper, false);
-
-                registers.setSubtractFlag(0);
-                memory.writeByte(registers.getA(), result);
+                let result = calcAddFlags(registers.getA(), registers.getE());
+                registers.setA(result);
             }
         };
 
@@ -1600,14 +1576,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let addr = registers.getA();
-                let val = memory.readByte(addr);
-                addr = registers.getH();
-                let oper = memory.readByte(addr);
-                let result = calcAddFlags(val, oper, false);
-
-                registers.setSubtractFlag(0);
-                memory.writeByte(registers.getA(), result);
+                let result = calcAddFlags(registers.getA(), registers.getH());
+                registers.setA(result);
             }
         };
 
@@ -1618,14 +1588,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let addr = registers.getA();
-                let val = memory.readByte(addr);
-                addr = registers.getL();
-                let oper = memory.readByte(addr);
-                let result = calcAddFlags(val, oper, false);
-
-                registers.setSubtractFlag(0);
-                memory.writeByte(registers.getA(), result);
+                let result = calcAddFlags(registers.getA(), registers.getL());
+                registers.setA(result);
             }
         };
 
@@ -1636,14 +1600,10 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let addr = registers.getA();
+                let addr = registers.getHL();
                 let val = memory.readByte(addr);
-                addr = registers.getHL();
-                let oper = memory.readByte(addr);
-                let result = calcAddFlags(val, oper, false);
-
-                registers.setSubtractFlag(0);
-                memory.writeByte(registers.getA(), result);
+                let result = calcAddFlags(registers.getA(), val);
+                registers.setA(result);
             }
         };
 
@@ -1653,11 +1613,9 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let addr = registers.getA();
-                let val = memory.readByte(addr);
-                let result = calcAddFlags(val, val, false);
-                registers.setSubtractFlag(0);
-                memory.writeByte(registers.getA(), result);
+                let val = registers.getA();
+                let result = calcAddFlags(val, val);
+                registers.setA(result);
             }
         };
 
@@ -2048,7 +2006,7 @@ export class Operations {
 
                 //reset all flags
                 registers.setF(0);
-                registers.setSubtractFlag(1);
+                registers.setHalfFlag(1);
 
                 if (result == 0) {
                     registers.setZeroFlag(1);
@@ -2706,12 +2664,8 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let val = memory.readByte(registers.getA());
-                let oper = memory.readByte(registers.getB());
-                let result = calcAddFlags(val, oper, false);
-
-                registers.setSubtractFlag(0);
-                memory.writeByte(registers.getA(), result);
+                let result = calcAddFlags(registers.getA(), registers.getB());
+                registers.setA(result);
             }
         };
 
@@ -2922,6 +2876,16 @@ export class Operations {
             }
         };
 
+        this.operations[0xE9] = {
+            name: "JP",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                registers.setPC(registers.getHL());
+            }
+        };
+        
         this.operations[0xEA] = {
             name: "LD",
             cycle: 16,
