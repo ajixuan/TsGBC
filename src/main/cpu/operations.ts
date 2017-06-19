@@ -2889,7 +2889,7 @@ export class Operations {
         this.operations[0xE6] = {
             name: "AND",
             cycle: 8,
-            size: 1,
+            size: 2,
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
@@ -2897,7 +2897,8 @@ export class Operations {
 
                 //reset all flags
                 registers.setF(0);
-                registers.setSubtractFlag(1);
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
 
                 if (result == 0) {
                     registers.setZeroFlag(1);
@@ -2977,7 +2978,7 @@ export class Operations {
             size: 2,
             execute(pc: number) {
                 let val = memory.readByte(0xFF00 | pc);
-                registers.setA(val & 0xFFFF);
+                registers.setA(val & 0xFF);
             }
         };
 
@@ -3137,6 +3138,7 @@ export class Operations {
                 let upper = (val & 0xF0) >> 4;
                 let result = lower << 4 + upper;
 
+                registers.setF(0);
                 if (result === 0) {
                     registers.setZeroFlag(1);
                 }

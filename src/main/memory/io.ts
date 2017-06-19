@@ -26,7 +26,9 @@ export class Io {
      */
     public setP1(num:number): void {
         this.isValid(num, 0xFF, "Register argument too large for p1: " + num);
-        this.p1 += num;
+        num &= 0x3F;
+        this.p1 &= 0xCF;
+        this.p1 |= num;
     }
 
     public getP1() : number {
