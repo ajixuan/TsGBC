@@ -3242,7 +3242,16 @@ export class Operations {
             }
         };
 
-
+        this.operations[0xCB87] = {
+            name: "RES",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let a = registers.getA();
+                registers.setA(a & ~(1 << pc));
+            }
+        };
     }
 
 
