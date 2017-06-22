@@ -17,7 +17,7 @@ export class Interrupts {
      ||--------- Serial
      |---------- Controller
      */
-    public if: number = 0x0;
+    public if: number = 0xE1;
 
     /*
      Name: IE (Register)
@@ -48,35 +48,35 @@ export class Interrupts {
     public static VBLANK: Interrupt = {
         name: "VBLANK",
         mask: 0x1,
-        id: 0,
+        priority: 1,
         address: 0x0040
     };
 
     public static LCDC: Interrupt = {
         name: "LCDC",
         mask: 0x2,
-        id: 1,
+        priority: 2,
         address: 0x0048
     };
 
     public static TIMER: Interrupt = {
         name: "TIMER",
         mask: 0x4,
-        id: 2,
+        priority: 3,
         address: 0x0050
     };
 
     public static SERIAL: Interrupt = {
         name: "SERIAL",
         mask: 0x8,
-        id: 3,
+        priority: 4,
         address: 0x0058
     };
 
     public static JOYPAD: Interrupt = {
         name: "JOYPAD",
         mask: 0x10,
-        id: 4,
+        priority: 5,
         address: 0x0060
     };
 
@@ -99,18 +99,20 @@ export class Interrupts {
     }
 
     public clearInterruptFlag(interrupt: Interrupt) {
-        var mask = 1 << interrupt.id;
-        this.ie = this.ie & ~mask;
+        this.if &= ~interrupt.mask;
         this.ime = 0;
     }
 
+    public setRequestInterrupt(interrupt : Interrupt){
+        this.if |= interrupt.mask;
+    }
+
     public setInterruptFlag(interrupt: Interrupt) {
-        var mask = 1 << interrupt.id;
-        this.ie = this.ie | mask;
+        this.ie |= interrupt.mask;
     }
 
     public getInterrupt(): Interrupt {
-        var result = (this.ie & this.if);
+        let result = (this.ie & this.if);
 
         if (result == Interrupts.VBLANK.mask) {
             return Interrupts.VBLANK;
@@ -136,6 +138,6 @@ export class Interrupts {
 export interface Interrupt {
     name: string;
     mask: number;
-    id: number;
+    priority: number;
     address: number;
 }

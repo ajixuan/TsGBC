@@ -124,19 +124,23 @@ export class Ppu {
 
         this.clock += cycles;
 
+        stat.lyco.unset();
+
+        //LCD is off, reset renderscan
+        if(!this.registers.lcdc.lcdon.get()){
+            stat.interrupts.hblank.set();
+            this.clock = 0;
+            return;
+        }
+
         //Set the ly,lyc coincidence interrupt
         if (this.registers.ly == this.registers.lyc) {
-            stat.interrupts.lycoincidence.set();
+            stat.lyco.set();
         }
 
         //Cycle through stat
         if (stat.modeFlag.hblank.get() && this.clock >= 204) {
             stat.modeFlag.oamlock.set();
-
-            if (stat.interrupts.lycoincidence.get()) {
-                stat.interrupts.lycoincidence.unset()
-            }
-
             this.registers.ly++;
             this.clock = 0;
 
@@ -152,12 +156,11 @@ export class Ppu {
             }
 
         } else if (stat.modeFlag.oamlock.get() && this.clock >= 80) {
-            lcdc.bgon.set();
+            //lcdc.bgon.set();
             stat.modeFlag.vramlock.set();
             this.clock = 0;
 
         } else if (stat.modeFlag.vramlock.get() && this.clock >= 172) {
-            if (lcdc.bgon.get() && lcdc.lcdon.get()) {
                 this.clock = 0;
 
                 //Vertical blank
@@ -183,13 +186,7 @@ export class Ppu {
                     this.screen.setBufferPixel(x, y, tile[y % Screen.PIXELS][x % Screen.PIXELS]);
                 }
                 this.screen.printBufferRow(y);
-                stat.interrupts.hblank.set();
-
-
-            }
-            /*else {
-                console.log("ERROR, lcdc does not have bg enabled");
-            }*/
+                stat.modeFlag.hblank.set();
         }
     }
 
@@ -246,7 +243,7 @@ export class Ppu {
         //Vram
         if (addr < 0x9800){
             if (!this.registers.stat.modeFlag.vramlock.get()) {
-                console.log("ERROR: VRAM locked");
+                //console.log("ERROR: VRAM locked");
                 return;
             }
 
@@ -256,7 +253,7 @@ export class Ppu {
         //OAM
         else if (addr < 0xFEA0) {
             if (!this.registers.stat.modeFlag.vramlock.get()) {
-                console.log("ERROR: OAM locked");
+                //console.log("ERROR: OAM locked");
                 return;
             }
 

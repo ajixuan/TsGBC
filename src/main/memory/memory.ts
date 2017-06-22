@@ -68,7 +68,7 @@ export class Memory {
                       break;
               }
             } else if (addr == 0xFF0F) {
-                this.interrupt.if = val & 0xFF;
+                this.interrupt.if = (0xE0 | val) & 0xFF;
             } else if (addr < 0xFF6C) {
                 this.ppu.requestWrite(addr, val);
             }
@@ -152,16 +152,16 @@ export class Memory {
 
     public writeWord(addr: number, val: number): void {
         //TODO this might be wrong
-        var high = val >> 8;
-        var low = val & 0xFF;
+        let high = val >> 8;
+        let low = val & 0xFF;
 
         this.writeByte(addr, high);
         this.writeByte(addr + 1, low);
 }
 
     public readWord(addr: number): number {
-        var high = this.readByte(addr + 1);
-        var low = this.readByte(addr);
+        let high = this.readByte(addr + 1);
+        let low = this.readByte(addr);
         return high << 8 | low;
     }
 

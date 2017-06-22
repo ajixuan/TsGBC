@@ -28,14 +28,15 @@ export class Registers {
     // LCD Controller
     public lcdc  = (function(self : Registers){
         let _val = 0x00;
-        let set  = (val : number)=> { return ()=> { _val |= val } };
-        let unset = (val : number, callback ?: () => void )=> {  return ()=> {_val &= ~val; if(callback) callback()} };
+        let set  = (val : number, callback ?: () => void ) => { return ()=> { _val |= val ; if(callback) callback()}};
+        let unset = (val : number, callback ?: () => void )=> { return ()=> { _val &= ~val ; if(callback) callback()}};
         let get = (val : number)=> { return ()=> { return _val & val ? 1 : 0} };
 
         //Callback functions
-        let lyreset = () => { self.ly = 0 };
-        return { //Toggles for the flags
-            lcdon :     {set : set(0x80), unset : unset(0x80, lyreset), get : get(0x80)},
+        let lyreset = () => { self.ly = 0; self.stat.interrupts.hblank.set(); };
+        let checkLyc = ()=> {if(self.ly == self.lyc) self.stat.lyco.set()}
+        return { //Toggles for the flagsp
+            lcdon :     {set : set(0x80, checkLyc), unset : unset(0x80, lyreset), get : get(0x80)},
             bgwin :     {set : set(0x40), unset : unset(0x40), get : get(0x40)},    //BGmap 1 or 2
             winon :     {set : set(0x20), unset : unset(0x20), get : get(0x20)},
             tilemap :   {set : set(0x10), unset : unset(0x10), get : get(0x10)},
@@ -67,14 +68,14 @@ export class Registers {
     // 03 : VRAM read mode
     public stat = (function (self : Registers) {
         let _val = 0x00;
-        let set  = (val : number, intr : Interrupt, setflag : Function) => {
+        let set  = (val : number, intr : Interrupt, setflag ?: Function) => {
             return ()=> {
-                setflag();
+                if(setflag){ setflag() }
 
                 //Set interrupt flag only if interrupt is allowed
                 if(self.memory.interrupt.ime){
+                    self.memory.interrupt.setRequestInterrupt(intr);
                     _val |= val ;
-                    self.memory.interrupt.setInterruptFlag(intr);
                 }
             }
         };
@@ -86,7 +87,7 @@ export class Registers {
             reset : function(){ _val = 0x85},
             interrupts: {
                 lycoincidence: {
-                    set : set(0x40, Interrupts.LCDC, function(){_val |= 0x04}),
+                    set : set(0x44, Interrupts.LCDC),
                     unset : unset(0x44),
                     get : get(0x40)
                 },
@@ -111,6 +112,11 @@ export class Registers {
                 vblank:     {set : setFlag(0x01), get : function(){return ((_val & 0x03) == 0x01) ? 1 : 0}},
                 oamlock:    {set : setFlag(0x02), get : function(){return ((_val & 0x03) == 0x02) ? 1 : 0}},
                 vramlock:   {set : setFlag(0x03), get : function(){return ((_val & 0x03) == 0x03) ? 1 : 0}}
+            },
+            lyco : {
+                set :   function(){_val |= 0x04},
+                unset : function(){_val &= ~(0x04)},
+                get :   function(){return (_val & 0x04) ? 1 : 0}
             }
         }
     })(this);
