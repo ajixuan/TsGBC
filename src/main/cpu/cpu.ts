@@ -80,6 +80,7 @@ export class Cpu {
         this.interrupts.disableAllInterrupts();
         this.interrupts.clearInterruptFlag(interrupt);
 
+
         //Push all registers on to the stack
         /* Just push pc onto stack
          this.stack.pushWord(this.registers.getHL());
@@ -98,55 +99,58 @@ export class Cpu {
      */
     public tick(): number {
         let cycles = 0;
-        if (this.interrupts.hasInterrupts()) {
+
+        //Check ime  here
+        let hardwareInterrupt;
+        if(this.interrupts.ime){hardwareInterrupt = true}
+
+
+        let pc = this.registers.getPC();
+
+        //Get opcode
+        let opcode = this.memory.readByte(pc++);
+
+        if (this.halt) {
+            opcode = 0x00; //NOP
+        }
+
+        if (opcode == 0xCB) {
+            opcode = (opcode << 8) | this.memory.readByte(pc++);
+        }
+        //Get Operation
+        let operation = this.operations.get(opcode);
+
+        if (operation == null) {
+            this.last = null;
+            Debugger.display();
+            throw "Unknown opcode execution 0x" + opcode.toString(16).toUpperCase();
+        }
+
+        //Execute Operation
+        let oldPC = this.registers.getPC();
+        let opaddr = operation.mode.getValue(pc, operation.size - 1);
+
+        operation.execute(opaddr);
+
+        //If pc did not change during op execution, increment pc
+        if (oldPC === this.registers.getPC()) {
+            this.registers.setPC(this.registers.getPC() + operation.size & 0xFFFF);
+        }
+
+        //Debug Information
+        this.last = {
+            operation: operation,
+            opcode: opcode,
+            opaddr: opaddr
+        };
+
+        //Update Infromation
+        cycles = operation.cycle;
+
+        //Service interrupt only if IME is set prior to execution
+        if (this.interrupts.hasInterrupts() && hardwareInterrupt) {
             this.handledInterrupts(this.interrupts.getInterrupt());
-            cycles = 12;
-
-        } else {
-
-            let pc = this.registers.getPC();
-
-            //Get opcode
-            let opcode = this.memory.readByte(pc++);
-
-            if (this.halt) {
-                opcode = 0x00; //NOP
-            }
-
-            if (opcode == 0xCB) {
-                opcode = (opcode << 8) | this.memory.readByte(pc++);
-            }
-            //Get Operation
-            let operation = this.operations.get(opcode);
-
-            if (operation == null) {
-                this.last = null;
-                Debugger.display();
-                throw "Unknown opcode execution 0x" + opcode.toString(16).toUpperCase();
-            }
-
-            //Execute Operation
-            let oldPC = this.registers.getPC();
-            let opaddr = operation.mode.getValue(pc, operation.size - 1);
-
-
-            operation.execute(opaddr);
-
-
-            //If pc did not change during op execution, increment pc
-            if (oldPC === this.registers.getPC()) {
-                this.registers.setPC(this.registers.getPC() + operation.size & 0xFFFF);
-            }
-
-            //Debug Information
-            this.last = {
-                operation: operation,
-                opcode: opcode,
-                opaddr: opaddr
-            };
-
-            //Update Infromation
-            cycles = operation.cycle;
+            cycles += 12;
         }
 
         this.clock.t += cycles;
