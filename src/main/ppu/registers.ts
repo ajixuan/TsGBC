@@ -75,7 +75,9 @@ export class Registers {
                 //Set interrupt flag only if interrupt is allowed
                 if(self.memory.interrupt.ime){
                     self.memory.interrupt.setRequestInterrupt(intr);
-                    _val |= val ;
+                    if(self.memory.interrupt.ie & intr.mask){
+                        _val |= val
+                    }
                 }
             }
         };

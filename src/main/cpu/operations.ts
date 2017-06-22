@@ -515,14 +515,14 @@ export class Operations {
 
         this.operations[0x20] = {
             name: "JR",
-            cycle: 12,
+            cycle: 8,
             size: 2,
             mode: immediate,
             execute(pc: number) {
                 if (registers.getZeroFlag() == 0) {
                     registers.setPC(registers.getPC() + checkSign(pc) + this.size);
+                    this.cycle = 12;
                 }
-                this.cycle = 8;
             }
         };
 

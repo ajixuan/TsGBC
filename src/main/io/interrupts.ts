@@ -93,7 +93,7 @@ export class Interrupts {
 
     public hasInterrupts(): boolean {
         let isInterruptEnabled: boolean = (this.ime == 1);
-        let hasInterrupt: boolean = (this.ie != 0);
+        let hasInterrupt: boolean = ((this.ie & this.if) != 0);
 
         return isInterruptEnabled && hasInterrupt;
     }
