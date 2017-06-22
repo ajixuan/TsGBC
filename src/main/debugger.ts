@@ -22,7 +22,9 @@ export class Debugger {
             +" DE:" + Debugger.gameboy.cpu.registers.getDE().toString(16).toUpperCase() + "|"
             +" HL:" + Debugger.gameboy.cpu.registers.getHL().toString(16).toUpperCase() + "|"
             +" LCDC:" + Debugger.gameboy.ppu.registers.lcdc.getAll().toString(16).toUpperCase() + "|"
-            +" STAT:" + Debugger.gameboy.ppu.registers.stat.getAll().toString(16).toUpperCase();
+            +" STAT:" + Debugger.gameboy.ppu.registers.stat.getAll().toString(16).toUpperCase() + "|"
+            +" ie:" + Debugger.gameboy.cpu.interrupts.ie.toString(16).toUpperCase() + "|"
+            +" if:" + Debugger.gameboy.cpu.interrupts.if.toString(16).toUpperCase();
 
         this.logBuffer.push(eventStr);
     }
