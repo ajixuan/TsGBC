@@ -192,7 +192,7 @@ export class Operations {
             name: "LD",
             cycle: 8,
             mode: immediate,
-            size: 2,
+            size: 1,
             execute(pc: number) {
                 let addr = registers.getBC();
                 let val = registers.getA();
@@ -385,7 +385,7 @@ export class Operations {
             name: "LD",
             cycle: 8,
             mode: immediate,
-            size: 2,
+            size: 1,
             execute(pc: number) {
                 let addr = registers.getDE();
                 let val = registers.getA();
@@ -515,13 +515,14 @@ export class Operations {
 
         this.operations[0x20] = {
             name: "JR",
-            cycle: 8,
+            cycle: 12,
             size: 2,
             mode: immediate,
             execute(pc: number) {
                 if (registers.getZeroFlag() == 0) {
                     registers.setPC(registers.getPC() + checkSign(pc) + this.size);
                 }
+                this.cycle = 8;
             }
         };
 
@@ -535,11 +536,12 @@ export class Operations {
                 registers.setHL(pc & 0xFFFF);
             }
         };
+
         this.operations[0x22] = {
             name: "LD",
             cycle: 8,
             mode: immediate,
-            size: 2,
+            size: 1,
             execute(pc: number) {
                 let addr = registers.getHL();
                 memory.writeByte(addr, registers.getA());
@@ -573,7 +575,10 @@ export class Operations {
 
 
         this.operations[0x25] = {
-            name: "DEC", cycle: 4, size: 1, mode: immediate,
+            name: "DEC",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
             execute(pc: number) {
                 let result = calcSubtractFlags(registers.getH(), 1);
                 registers.setH(result);
@@ -593,7 +598,7 @@ export class Operations {
 
         this.operations[0x27] = {
             name: "DAA",
-            cycle: 16,
+            cycle: 4,
             size: 1,
             mode: immediate,
             execute(pc: number) {
@@ -620,6 +625,7 @@ export class Operations {
                 if (registers.getZeroFlag()) {
                     registers.setPC(registers.getPC() + this.size + pc);
                 }
+                this.cycle=8;
             }
         };
 
@@ -797,7 +803,7 @@ export class Operations {
             name: "LD",
             cycle: 8,
             mode: immediate,
-            size: 2,
+            size: 1,
             execute(pc: number) {
                 let addr = registers.getHL();
                 let val = memory.readByte(addr);
@@ -995,7 +1001,7 @@ export class Operations {
 
         this.operations[0x4E] = {
             name: "LD",
-            cycle: 4,
+            cycle: 8,
             mode: immediate,
             size: 1,
             execute(pc: number) {
@@ -1012,16 +1018,6 @@ export class Operations {
             size: 1,
             execute(pc: number) {
                 registers.setC(registers.getA());
-            }
-        };
-
-        this.operations[0x50] = {
-            name: "LD",
-            cycle: 4,
-            mode: immediate,
-            size: 1,
-            execute(pc: number) {
-                registers.setD(registers.getB());
             }
         };
 
@@ -1086,7 +1082,7 @@ export class Operations {
 
         this.operations[0x56] = {
             name: "LD",
-            cycle: 4,
+            cycle: 8,
             mode: immediate,
             size: 1,
             execute(pc: number) {
@@ -1166,7 +1162,7 @@ export class Operations {
 
         this.operations[0x5E] = {
             name: "LD",
-            cycle: 4,
+            cycle: 8,
             mode: immediate,
             size: 1,
             execute(pc: number) {
@@ -1248,7 +1244,7 @@ export class Operations {
 
         this.operations[0x66] = {
             name: "LD",
-            cycle: 4,
+            cycle: 8,
             mode: immediate,
             size: 1,
             execute(pc: number) {
@@ -1330,7 +1326,7 @@ export class Operations {
 
         this.operations[0x6E] = {
             name: "LD",
-            cycle: 4,
+            cycle: 8,
             mode: immediate,
             size: 1,
             execute(pc: number) {
@@ -1428,7 +1424,7 @@ export class Operations {
             name: "LD",
             cycle: 8,
             mode: immediate,
-            size: 3,
+            size: 1,
             execute(pc: number) {
                 let addr = registers.getHL();
                 let val = registers.getA();
@@ -2604,7 +2600,7 @@ export class Operations {
 
         this.operations[0xC0] = {
             name: "RET",
-            cycle: 12,
+            cycle: 8,
             size: 1,
             mode: immediate,
             execute(pc: number) {
@@ -2617,6 +2613,7 @@ export class Operations {
 
                     let result = lower | (higher << 8);
                     registers.setPC(result);
+                    this.cycle = 20;
                 }
             }
         };
@@ -2624,7 +2621,7 @@ export class Operations {
 
         this.operations[0xC1] = {
             name: "POP",
-            cycle: 16,
+            cycle: 12,
             mode: immediate,
             size: 1,
             execute(pc: number) {
@@ -2657,9 +2654,9 @@ export class Operations {
 
         this.operations[0xC6] = {
             name: "ADD",
-            cycle: 4,
+            cycle: 8,
             mode: immediate,
-            size: 1,
+            size: 2,
             execute(pc: number) {
                 let result = calcAddFlags(registers.getA(), registers.getB());
                 registers.setA(result);
@@ -2680,6 +2677,7 @@ export class Operations {
 
                     let result = lower | (higher << 8);
                     registers.setPC(result);
+                    this.cycle = 20;
                 }
             }
         };
@@ -2707,6 +2705,7 @@ export class Operations {
 
                     registers.setPC(pc);
                 }
+                this.cycle = 12;
             }
         };
 
@@ -2726,7 +2725,7 @@ export class Operations {
             name: "ADC",
             cycle: 8,
             mode: immediate,
-            size: 1,
+            size: 2,
             execute(pc: number) {
                 let val = registers.getA();
 
@@ -2740,7 +2739,7 @@ export class Operations {
 
         this.operations[0xD1] = {
             name: "POP",
-            cycle: 16,
+            cycle: 12,
             mode: immediate,
             size: 1,
             execute(pc: number) {
@@ -2762,8 +2761,8 @@ export class Operations {
 
         this.operations[0xD6] = {
             name: "SUB",
-            cycle: 4,
-            size: 1,
+            cycle: 8,
+            size: 2,
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
@@ -2804,7 +2803,7 @@ export class Operations {
 
         this.operations[0xE1] = {
             name: "POP",
-            cycle: 16,
+            cycle: 12,
             mode: immediate,
             size: 1,
             execute(pc: number) {
@@ -2864,7 +2863,7 @@ export class Operations {
         this.operations[0xE8] = {
             name: "ADD",
             cycle: 16,
-            size: 1,
+            size: 2,
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getSP();
@@ -2901,7 +2900,7 @@ export class Operations {
         this.operations[0xEE] = {
             name: "XOR",
             cycle: 8,
-            size: 1,
+            size: 2,
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
@@ -2946,7 +2945,7 @@ export class Operations {
 
         this.operations[0xF1] = {
             name: "POP",
-            cycle: 16,
+            cycle: 12,
             mode: immediate,
             size: 1,
             execute(pc: number) {
@@ -2994,7 +2993,7 @@ export class Operations {
         this.operations[0xF6] = {
             name: "OR",
             cycle: 8,
-            size: 1,
+            size: 2,
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
