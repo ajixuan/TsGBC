@@ -4,33 +4,35 @@
 import {GameBoy} from './gameboy';
 
 export class Debugger {
-    public static status : boolean = true;
-    private static gameboy : GameBoy;
-    private static logLines : number = 500;
-    private static logBuffer : Array<String> = new Array<String>();
+    public static status: boolean = true;
+    private static gameboy: GameBoy;
+    private static logLines: number = 500;
+    private static logBuffer: Array<String> = new Array<String>();
 
 
-    public static pushLog() : void {
+    public static pushLog(): void {
         //Add to log
 
         let eventStr =
             "PC:" + Debugger.gameboy.cpu.registers.getPC().toString(16).toUpperCase()
 //            + " Op:" + Debugger.gameboy.cpu.last.opcode.toString(16).toUpperCase()
-            + " SP:" + Debugger.gameboy.cpu.registers.getSP().toString(16).toUpperCase()
-            + " AF:" + Debugger.gameboy.cpu.registers.getAF().toString(16).toUpperCase()
-            + " BC:" + Debugger.gameboy.cpu.registers.getBC().toString(16).toUpperCase()
-            + " DE:" + Debugger.gameboy.cpu.registers.getDE().toString(16).toUpperCase()
-            + " HL:" + Debugger.gameboy.cpu.registers.getHL().toString(16).toUpperCase()
+            + " SP:" + Debugger.gameboy.cpu.registers.getSP().toString(16).toUpperCase() + "|"
+            +" AF:" + Debugger.gameboy.cpu.registers.getAF().toString(16).toUpperCase() + "|"
+            +" BC:" + Debugger.gameboy.cpu.registers.getBC().toString(16).toUpperCase() + "|"
+            +" DE:" + Debugger.gameboy.cpu.registers.getDE().toString(16).toUpperCase() + "|"
+            +" HL:" + Debugger.gameboy.cpu.registers.getHL().toString(16).toUpperCase() + "|"
+            +" LCDC:" + Debugger.gameboy.ppu.registers.lcdc.getAll().toString(16).toUpperCase() + "|"
+            +" STAT:" + Debugger.gameboy.ppu.registers.stat.getAll().toString(16).toUpperCase();
 
         this.logBuffer.push(eventStr);
     }
 
-    public static clearLog() : void {
+    public static clearLog(): void {
         $(".log ul").empty();
     }
 
 
-    public static display() : void {
+    public static display(): void {
 
         if (Debugger.gameboy == null) {
             return console.error("Error: Debugger doesn't have GameBoy set!");
@@ -39,19 +41,22 @@ export class Debugger {
         let gameboy = Debugger.gameboy;
 
         //Clear log if overflowing
-        if($(".log li").length > Debugger.logLines){
+        if ($(".log li").length > Debugger.logLines) {
             Debugger.clearLog();
         }
 
-        if( this.logBuffer.length > Debugger.logLines){
+        if (this.logBuffer.length > Debugger.logLines) {
             this.logBuffer.length = 0;
         }
 
-        if (!Debugger.status) { return };
+        if (!Debugger.status) {
+            return
+        }
+        ;
 
         let html = "";
-        while(this.logBuffer.length > 0){
-            html += "<li>"+this.logBuffer.shift()+"</li>";
+        while (this.logBuffer.length > 0) {
+            html += "<li>" + this.logBuffer.shift() + "</li>";
         }
 
         $(".log ul").append(html);
@@ -98,8 +103,8 @@ export class Debugger {
         $('#if').html("0x" + gameboy.memory.interrupt.if.toString(16));
         $('#ie').html("0x" + gameboy.memory.interrupt.ie.toString(16));
 
-        $('#tpf').change(function(){
-            if($(this).val()) {
+        $('#tpf').change(function () {
+            if ($(this).val()) {
                 gameboy.tpf = $(this).val()
             }
         });
@@ -111,7 +116,7 @@ export class Debugger {
 
     }
 
-    public static init(gameboy : GameBoy) {
+    public static init(gameboy: GameBoy) {
         Debugger.gameboy = gameboy;
         console.info("Debugger is ready!");
         Debugger.display();
