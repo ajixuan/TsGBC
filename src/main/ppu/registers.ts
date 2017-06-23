@@ -72,24 +72,33 @@ export class Registers {
             return ()=> {
                 if(setflag){ setflag() }
 
-                //Set interrupt flag only if interrupt is allowed
-                if(self.memory.interrupt.ime){
-                    self.memory.interrupt.setRequestInterrupt(intr);
-                    if(self.memory.interrupt.ie & intr.mask){
-                        _val |= val
+                //set only if ime is set
+                if(self.memory.interrupts.ime){
+                    //Set stat val only if corresponding ie is set
+                    if(self.memory.interrupts.ie & intr.mask){
+                        _val |= val;
                     }
+
+                    //If it is lcdc, more strict requirements
+                    if(!(intr == Interrupts.LCDC && self.memory.interrupts.ie & intr.mask)){
+                        return;
+                    }
+
+                    self.memory.interrupts.setRequestInterrupt(intr);
                 }
             }
         };
         let unset = (val : number)=> { return ()=> {_val &= ~val}};
         let get = (val : number)=> { return ()=> { return _val & val ? 1 : 0}};
         let setFlag = (val : number) => { return ()=> {_val &= 0xFC; _val |= val}};
+
         return {
             getAll: function () { return _val },
             reset : function(){ _val = 0x85},
+            clear : function() { _val &= 0x8F },
             interrupts: {
                 lycoincidence: {
-                    set : set(0x44, Interrupts.LCDC),
+                    set : set(0x40, Interrupts.LCDC),
                     unset : unset(0x44),
                     get : get(0x40)
                 },

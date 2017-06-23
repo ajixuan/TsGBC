@@ -161,6 +161,7 @@ export class Ppu {
             this.clock = 0;
 
         } else if (stat.modeFlag.vramlock.get() && this.clock >= 172) {
+            if (lcdc.lcdon.get()) {
                 this.clock = 0;
 
                 //Vertical blank
@@ -187,6 +188,7 @@ export class Ppu {
                 }
                 this.screen.printBufferRow(y);
                 stat.modeFlag.hblank.set();
+            }
         }
     }
 

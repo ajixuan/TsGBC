@@ -3069,7 +3069,7 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                calcSubtractFlags(val, pc, false);
+                calcSubtractFlags(val, pc);
             }
         };
 
