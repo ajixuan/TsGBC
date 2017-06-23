@@ -96,7 +96,7 @@ export class Ppu {
 
         let tile;
         //BGmap 2 0x9C00
-        if (this.registers.lcdc.bgwin.get()) {
+        if (this.registers.lcdc.bgmap.get()) {
             tile = this.memory.vram[block + 0x9C00 - 0x8000];
         }
         //BGmap 1 0x9800
@@ -104,16 +104,18 @@ export class Ppu {
             tile = this.memory.vram[block + 0x9800 - 0x8000];
         }
 
-        // Memory in map 2
-        if (this.registers.lcdc.bgmap.get() == 0) {
-            //If lcdc is set to map 2
-            //0x8800 is beginning of address, which starts from +128 tiles
+        // In tile map 2
+        if (this.registers.lcdc.tilemap.get() == 0) {
 
             //Check if negative
             if (tile & 0x80) {
                 tile -= (1 << 8); //Sign extension
-                tile += 0x80;     //-0x80 is index 0, pad 128
+                tile += 0x80;     //convert -0x08 to 0
             }
+
+            //Since 0x8800 is beginning of address,
+            //which is 0x80 tiles ahead of 0x8000
+            tile += 0x80;
         }
 
         return this.vramTileset[tile];
@@ -176,21 +178,23 @@ export class Ppu {
                 }
 
                 //Get the tiles of our current ly
-                let y, x, tile, ycoor, xcoor;
-
+                let mapy, mapx, tile;
+                let row = this.registers.ly;
                 //Y coordinate does not change during line render
-                y = this.registers.ly + this.registers.scy;
+                mapy = this.registers.ly + this.registers.scy;
                 //ycoor = Screen.TILES * Math.floor(y / Screen.PIXELS);
 
                 //Render whole line
                 for (let cell = 0; cell < this.screen.WIDTH; cell++) {
-                    x = this.registers.scx + cell;
+                    mapx = this.registers.scx + cell;
                     //xcoor = Math.floor(x / Screen.PIXELS);
 
-                    tile = this.getVramTile(x + (y * 32));
-                    this.screen.setBufferPixel(x, y, tile[y % Screen.PIXELS][x % Screen.PIXELS]);
+                    //TODO: Make it so it only gets tile when needs to
+                    let tilenum = ((mapx >> 3) + ((mapy >> 3) * 0x10));
+                    tile = this.getVramTile(tilenum);
+                    this.screen.setBufferPixel(cell, row, tile[cell % Screen.PIXELS][row % Screen.PIXELS]);
                 }
-                this.screen.printBufferRow(y);
+                this.screen.printBufferRow(row);
                 stat.modeFlag.hblank.set();
             }
         }
