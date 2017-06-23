@@ -214,7 +214,7 @@ export class Registers {
     }
 
     public setDE(num : number) : void {
-        this.isValid(num, 0xFF, "Register argument to large for DE: " + num);
+        this.isValid(num, 0xFFFF, "Register argument to large for DE: " + num);
         this.setD(num >> 8);      //high
         this.setE(num & 0xFF);    //low
     }
