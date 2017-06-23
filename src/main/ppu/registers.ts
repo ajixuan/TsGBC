@@ -49,8 +49,8 @@ export class Registers {
                 (val & 0x01) ? this.bgon.set() : this.bgon.unset();
                 (val & 0x02)? this.objon.set() : this.objon.unset();
                 (val & 0x04)? this.objsize.set() : this.objsize.unset();
-                (val & 0x08)? this.tilemap.set() : this.tilemap.unset();
-                (val & 0x10)? this.bgwin.set() : this.bgwin.unset();
+                (val & 0x08)? this.bgmap.set() : this.bgmap.unset();
+                (val & 0x10)? this.tilemap.set() : this.tilemap.unset();
                 (val & 0x20)? this.winon.set() : this.winon.unset();
                 (val & 0x40)? this.bgwin.set() : this.bgwin.unset();
                 (val & 0x80)? this.lcdon.set() : this.lcdon.unset();
