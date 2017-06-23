@@ -62,24 +62,28 @@ export class Ppu {
         // belong to the same row of bytes
 
         //Total number of rows of pixels needed
-        addr &= 0x1FFE;
+        let line = addr - 0x8000;
 
         // Each tile has 8 rows, each row takes 2 bytes.
-        // Divide the rows by 16 (shift 8 == divide 16)
+        // Divide the rows by 16 (shift 4 == divide 16)
         // This will give us the tile number that the row belongs to
-        let tile = (addr >> 8) & 0x1FF;
+        let tile = (line >> 4);
 
         // Find the row number of the tile
-        let y = (addr >> 1) & 0x7;
+        let y = (line >> 1) % 8;
         let pindex;
 
         //8 bits
         for (let x = 0; x < 8; x++) {
             pindex = 1 << x;
 
-            this.vramTileset[tile][y][x] =
-                ((this.memory.readByte(addr) & pindex) ? 1 : 0) +
-                ((this.memory.readByte(addr + 1) & pindex) ? 2 : 0);
+            if(line % 2){
+                this.vramTileset[tile][y][x] +=
+                    ((this.memory.vram[line+1] & pindex) ? 2 : 0);
+            } else {
+                this.vramTileset[tile][y][x] +=
+                    ((this.memory.vram[line] & pindex)? 1 : 0);
+            }
         }
     }
 
@@ -244,7 +248,7 @@ export class Ppu {
 
         //Vram
         if (addr < 0x9800){
-            if (!this.registers.stat.modeFlag.vramlock.get()) {
+            if (this.registers.stat.modeFlag.vramlock.get()) {
                 //console.log("ERROR: VRAM locked");
                 return;
             }
@@ -254,7 +258,7 @@ export class Ppu {
         }
         //OAM
         else if (addr < 0xFEA0) {
-            if (!this.registers.stat.modeFlag.vramlock.get()) {
+            if (this.registers.stat.modeFlag.vramlock.get() || this.registers.stat.modeFlag.oamlock.get()) {
                 //console.log("ERROR: OAM locked");
                 return;
             }

@@ -400,8 +400,8 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                let result = calcAddFlags(registers.getDE(), 1, false);
-                registers.setDE(result);
+                //No flags affected
+                registers.setDE(registers.getDE() + 1);
             }
         };
 
@@ -437,6 +437,17 @@ export class Operations {
             size: 2,
             execute(pc: number) {
                 registers.setD(pc);
+            }
+        };
+
+
+        this.operations[0x18] = {
+            name: "JR",
+            cycle: 12,
+            mode: immediate,
+            size: 2,
+            execute(pc: number) {
+                registers.setPC(registers.getPC() + pc);
             }
         };
 
@@ -2672,11 +2683,7 @@ export class Operations {
             execute(pc: number) {
                 if (registers.getZeroFlag() == 1) {
                     //Pop from stack pointer to pc
-                    let lower = stack.popByte();
-                    let higher = stack.popByte();
-
-                    let result = lower | (higher << 8);
-                    registers.setPC(result);
+                    registers.setPC(stack.popWord());
                     this.cycle = 20;
                 }
             }
@@ -2689,6 +2696,19 @@ export class Operations {
             size: 1,
             execute(pc: number) {
                 registers.setPC(stack.popWord());
+            }
+        };
+
+        this.operations[0xCA] = {
+            name: "JP",
+            cycle: 16,
+            mode: immediate,
+            size: 3,
+            execute(pc: number) {
+                if(registers.getZeroFlag()){
+                    registers.setPC(pc);
+                }
+                this.cycle = 12;
             }
         };
 
@@ -3238,6 +3258,18 @@ export class Operations {
                 }
 
                 registers.setHL(result);
+            }
+        };
+
+
+        this.operations[0xCB7F] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let a = registers.getA();
+                registers.setA(a & ~(1 << pc));
             }
         };
 
