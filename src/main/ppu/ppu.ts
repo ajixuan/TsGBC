@@ -94,14 +94,14 @@ export class Ppu {
      */
     private getVramTile(block: number): Array<Array<number>> {
 
-        //BGmap 1 0x9800
         let tile;
-        if (this.registers.lcdc.bgwin.get()) {
-            tile = this.memory.readByte(block + 0x9C00);
-        }
         //BGmap 2 0x9C00
+        if (this.registers.lcdc.bgwin.get()) {
+            tile = this.memory.vram[block + 0x9C00 - 0x8000];
+        }
+        //BGmap 1 0x9800
         else {
-            tile = this.memory.readByte(block + 0x9800);
+            tile = this.memory.vram[block + 0x9800 - 0x8000];
         }
 
         // Memory in map 2
