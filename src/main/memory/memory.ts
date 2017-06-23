@@ -10,22 +10,21 @@ import {Io} from './io'
 export class Memory {
 
     public cartridge: Cartridge;
-    public interrupt: Interrupts = new Interrupts();
-    public io : Io = new Io();
-
+    public io: Io = new Io();
     public vram: Array<number> = Array.apply(null, Array(0x2000)).map(Number.prototype.valueOf, 0);
-    public oam: Array<number> = Array.apply(null, Array(0xA0)).map(Number.prototype.valueOf, 0);
-    public ppu : Ppu;
+    public oam: Array<number>  = Array.apply(null, Array(0xA0)).map(Number.prototype.valueOf, 0);
 
     public cpu: any = new class {
         public ram: Array<number> = Array.apply(null, Array(0x2000)).map(Number.prototype.valueOf, 0);
         public stack: Array<number> = Array.apply(null, Array(0x7F)).map(Number.prototype.valueOf, 0);
     };
+    public ppu: Ppu;
+    public interrupts : Interrupts = new Interrupts();
 
     public writeByte(addr: number, val: number): void {
         if (val == null || val > 0xFF || addr == null || addr > 0xFFFF) {
             throw "Invalid write at 0x" + addr.toString(16) + " with " + val;
-        } else if(addr < 0){
+        } else if (addr < 0) {
             addr &= 0xFFFF;
         }
 
@@ -44,38 +43,38 @@ export class Memory {
                 //Empty but usable for io
                 //throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
             } else if (addr < 0xFF08) {
-              switch(addr & 0xFF){
-                  case 0:
-                      this.io.setP1(val);
-                      break;
-                  case 1:
-                      //SB
-                      break;
-                  case 2:
-                      //SC
-                      break;
-                  case 4:
-                      this.io.setDiv(val);
-                      break;
-                  case 5:
-                      this.io.setTima(val);
-                      break;
-                  case 6:
-                      this.io.setTma(val);
-                      break;
-                  case 7:
-                      this.io.setTac(val);
-                      break;
-              }
+                switch (addr & 0xFF) {
+                    case 0:
+                        this.io.setP1(val);
+                        break;
+                    case 1:
+                        //SB
+                        break;
+                    case 2:
+                        //SC
+                        break;
+                    case 4:
+                        this.io.setDiv(val);
+                        break;
+                    case 5:
+                        this.io.setTima(val);
+                        break;
+                    case 6:
+                        this.io.setTma(val);
+                        break;
+                    case 7:
+                        this.io.setTac(val);
+                        break;
+                }
             } else if (addr == 0xFF0F) {
-                this.interrupt.if = (0xE0 | val) & 0xFF;
+                this.interrupts.if = (0xE0 | val) & 0xFF;
             } else if (addr < 0xFF6C) {
                 this.ppu.requestWrite(addr, val);
             }
         } else if (addr < 0xFFFF) {
             this.cpu.stack[addr - 0xFF80] = val;
         } else if (addr == 0xFFFF) {
-            this.interrupt.ie = val & 0xFF;
+            this.interrupts.ie = val & 0xFF;
         } else {
             throw "Invalid write led to unknown address at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
         }
@@ -84,8 +83,8 @@ export class Memory {
     public readByte(addr: number): number {
 
         if (addr == null || addr > 0xFFFF) {
-                throw "Invalid read at 0x" + addr.toString(16);
-        } else if(addr < 0){
+            throw "Invalid read at 0x" + addr.toString(16);
+        } else if (addr < 0) {
             addr &= 0xFFFF;
         }
 
@@ -105,7 +104,7 @@ export class Memory {
                 //Empty but usable for io
                 throw "Invalid read on unused i/o at 0x" + addr.toString(16);
             } else if (addr < 0xFF08) {
-                switch(addr & 0xFF){
+                switch (addr & 0xFF) {
                     case 0:
                         val = this.io.getP1();
                         break;
@@ -129,7 +128,7 @@ export class Memory {
                         break;
                 }
             } else if (addr == 0xFF0F) {
-                return this.interrupt.if & 0xFF;
+                return this.interrupts.if & 0xFF;
             } else if (addr < 0xFF6C) {
                 return this.ppu.requestRead(addr);
             } else if (addr < 0xFF80) {
@@ -138,7 +137,7 @@ export class Memory {
         } else if (addr < 0xFFFF) {
             val = this.cpu.stack[addr - 0xFF80];
         } else if (addr == 0xFFFF) {
-            val = this.interrupt.ie;
+            val = this.interrupts.ie;
         } else {
             throw "Invalid read led to unknown address at 0x" + addr.toString(16);
         }
@@ -157,7 +156,7 @@ export class Memory {
 
         this.writeByte(addr, high);
         this.writeByte(addr + 1, low);
-}
+    }
 
     public readWord(addr: number): number {
         let high = this.readByte(addr + 1);

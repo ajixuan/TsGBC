@@ -80,9 +80,6 @@ export class Interrupts {
         address: 0x0060
     };
 
-    constructor() {
-    }
-
     public disableAllInterrupts(): void {
         this.ime = 0;
     }

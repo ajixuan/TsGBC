@@ -23,7 +23,7 @@ export class Cpu {
     constructor(memory: Memory) {
         this.registers = new Registers();
         this.memory = memory;
-        this.interrupts = memory.interrupt;
+        this.interrupts = memory.interrupts;
         this.stack = new Stack(memory, this.registers);
         this.operations = new Operations(this);
     }
@@ -80,6 +80,10 @@ export class Cpu {
         this.interrupts.disableAllInterrupts();
         this.interrupts.clearInterruptFlag(interrupt);
 
+        //Clear stat interrupts flags
+        if(interrupt == Interrupts.LCDC){
+            this.memory.ppu.registers.stat.clear();
+        }
 
         //Push all registers on to the stack
         /* Just push pc onto stack

@@ -101,9 +101,9 @@ export class Debugger {
         $('#ly').html(gameboy.ppu.registers.ly.toString());
 
         //Interrupts
-        $('#ime').html("0x" + gameboy.memory.interrupt.ime.toString(16));
-        $('#if').html("0x" + gameboy.memory.interrupt.if.toString(16));
-        $('#ie').html("0x" + gameboy.memory.interrupt.ie.toString(16));
+        $('#ime').html("0x" + gameboy.memory.interrupts.ime.toString(16));
+        $('#if').html("0x" + gameboy.memory.interrupts.if.toString(16));
+        $('#ie').html("0x" + gameboy.memory.interrupts.ie.toString(16));
 
         $('#tpf').change(function () {
             if ($(this).val()) {

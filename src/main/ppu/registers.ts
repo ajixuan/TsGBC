@@ -80,10 +80,11 @@ export class Registers {
                     }
 
                     //If it is lcdc, more strict requirements
-                    if(!(intr == Interrupts.LCDC && self.memory.interrupts.ie & intr.mask)){
+                    if(intr == Interrupts.LCDC && !(self.memory.interrupts.ie & intr.mask)){
                         return;
                     }
 
+                    console.log("yessir");
                     self.memory.interrupts.setRequestInterrupt(intr);
                 }
             }
