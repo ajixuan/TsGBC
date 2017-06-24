@@ -98,7 +98,7 @@ export class Operations {
             this.cpu.registers.setHalfFlag(1);
         }
 
-        if (full < 0 && short === false) {
+        if (full < 0) {
             this.cpu.registers.setCarryFlag(1);
         }
 
@@ -3081,7 +3081,6 @@ export class Operations {
             }
         };
 
-        //TODO: Not sure if # means immediate value
         this.operations[0xFE] = {
             name: "CP",
             cycle: 8,
