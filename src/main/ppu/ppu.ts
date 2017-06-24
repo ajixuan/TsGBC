@@ -192,7 +192,7 @@ export class Ppu {
                     //TODO: Make it so it only gets tile when needs to
                     let tilenum = ((mapx >> 3) + ((mapy >> 3) * 0x10));
                     tile = this.getVramTile(tilenum);
-                    this.screen.setBufferPixel(cell, row, tile[cell % Screen.PIXELS][row % Screen.PIXELS]);
+                    this.screen.setBufferPixel(cell, row, tile[row % Screen.PIXELS][cell % Screen.PIXELS]);
                 }
                 this.screen.printBufferRow(row);
                 stat.modeFlag.hblank.set();
@@ -251,14 +251,16 @@ export class Ppu {
     public requestWrite(addr: number, val: number): void {
 
         //Vram
-        if (addr < 0x9800){
+        if (addr < 0xA000){
             if (this.registers.stat.modeFlag.vramlock.get()) {
                 //console.log("ERROR: VRAM locked");
                 return;
             }
 
             this.memory.vram[addr - 0x8000] = val;
-            this.updateVramTile(addr);
+            if (addr < 0x9800){
+                this.updateVramTile(addr);
+            }
         }
         //OAM
         else if (addr < 0xFEA0) {
