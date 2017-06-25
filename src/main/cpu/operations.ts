@@ -110,7 +110,7 @@ export class Operations {
     }
 
 
-    private checkSign(low: number, high: number): number {
+    private checkSign(low: number, high ?: number): number {
 
         let val = (high << 8) + low;
         let shift = 7; // Shift to check last bit
@@ -447,7 +447,7 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                registers.setPC(registers.getPC() + pc);
+                registers.setPC(registers.getPC() + this.size + checkSign(pc));
             }
         };
 

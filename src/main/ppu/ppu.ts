@@ -92,7 +92,7 @@ export class Ppu {
      * object form
      * @param tile
      */
-    private getVramTile(block: number): Array<Array<number>> {
+    public getVramTile(block: number): Array<Array<number>> {
 
         let tile;
         //BGmap 2 0x9C00
@@ -115,6 +115,7 @@ export class Ppu {
 
             //Since 0x8800 is beginning of address,
             //which is 0x80 tiles ahead of 0x8000
+            // 0x80 x 8 x 2 = 0x800
             tile += 0x80;
         }
 
@@ -181,12 +182,12 @@ export class Ppu {
                 let mapy, mapx, tile;
                 let row = this.registers.ly;
                 //Y coordinate does not change during line render
-                mapy = this.registers.ly + this.registers.scy;
+                mapy = (this.registers.ly + this.registers.scy) % this.screen.WIDTH;
                 //ycoor = Screen.TILES * Math.floor(y / Screen.PIXELS);
 
                 //Render whole line
                 for (let cell = 0; cell < this.screen.WIDTH; cell++) {
-                    mapx = this.registers.scx + cell;
+                    mapx = (this.registers.scx + cell) % this.screen.WIDTH;
                     //xcoor = Math.floor(x / Screen.PIXELS);
 
                     //TODO: Make it so it only gets tile when needs to
@@ -258,6 +259,8 @@ export class Ppu {
             }
 
             this.memory.vram[addr - 0x8000] = val;
+
+            //If it is in tile range
             if (addr < 0x9800){
                 this.updateVramTile(addr);
             }
