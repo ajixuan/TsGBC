@@ -75,7 +75,7 @@ export class Ppu {
 
         //8 bits
         for (let x = 0; x < 8; x++) {
-            pindex = 1 << x;
+            pindex = 0x80 >> x;
 
             if(line % 2){
                 this.vramTileset[tile][y][x] +=
