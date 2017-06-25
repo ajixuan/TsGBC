@@ -239,6 +239,17 @@
         <button onclick="toggleDebug()">Debug</button>
     </div>
 
+    <!--VRAM viewer-->
+
+    <div class="debugger">
+        <div>
+            <canvas id="map"></canvas>
+        </div>
+        <button onclick="renderTilemap()">RenderTilemap</button>
+        <button onclick="renderBGmap()">RenderBGmap</button>
+    </div>
+
+
 </div>
 
 <script>
@@ -328,6 +339,14 @@
     var setBreakPoint = function () {
         var val = parseInt($("#breakpoint").val(), 16);
         gameboy.setPCBreak(val);
+    }
+
+    var renderBGmap = function(){
+        debug.renderBGmap();
+    }
+
+    var renderTilemap = function(){
+        debug.renderTilemap();
     }
 
     //Debugger hot keys

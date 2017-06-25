@@ -5,7 +5,7 @@ import {Registers} from "./registers";
 export class Ppu {
     private screen: Screen;
     private memory: Memory;
-    private vramTileset: Array<Array<Array<number>>>;
+    public vramTileset: Array<Array<Array<number>>>;
     private oamTileset: Array<Array<Array<number>>>;
 
 
@@ -119,7 +119,11 @@ export class Ppu {
             tile += 0x80;
         }
 
-        return this.vramTileset[tile];
+        if(this.vramTileset[tile]){
+            return this.vramTileset[tile];
+        }
+
+        throw "ERROR: Tile number: " + tile + " does not exist";
     }
 
     /**
