@@ -30,6 +30,15 @@ export class Screen {
         console.info("Screen is ready!");
 
         this.FRAME = [this.HEIGHT * this.WIDTH];
+
+        //Print static
+        for (let y = 0; y < this.HEIGHT; y++) {
+            for (let x = 0; x < this.WIDTH; x++) {
+                let random : number = Math.floor(Math.random() * this.COLORS.length);
+                this.setBufferPixel(x, y, random);
+            }
+        }
+
         this.reset();
     }
 
@@ -38,12 +47,6 @@ export class Screen {
         this.canvas.height = this.HEIGHT * (this.ZOOM + this.SPACING);
         this.context = this.canvas.getContext('2d');
 
-        for (let y = 0; y < this.HEIGHT; y++) {
-            for (let x = 0; x < this.WIDTH; x++) {
-                let random : number = Math.floor(Math.random() * this.COLORS.length);
-                this.setBufferPixel(x, y, random);
-            }
-        }
         this.printBuffer();
     }
 

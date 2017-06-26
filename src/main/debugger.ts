@@ -124,7 +124,6 @@ export class Debugger {
             $('#url').html(gameboy.cartridge.url);
             $('#type').html(gameboy.cartridge.type.name);
         }
-
     }
 
 
