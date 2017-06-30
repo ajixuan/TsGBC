@@ -124,6 +124,8 @@ export class Debugger {
             $('#url').html(gameboy.cartridge.url);
             $('#type').html(gameboy.cartridge.type.name);
         }
+
+        Debugger.printStack();
     }
 
 
@@ -190,6 +192,47 @@ export class Debugger {
             for (let x = 0; x < 9; x++) {
                 context.fillStyle = Debugger.COLORS[4];
                 context.fillRect(((block % 16) * 9 + x )* zoom, (Math.floor(block / 16) * 9 + 8) * zoom, zoom, zoom);
+            }
+        }
+    }
+
+    public static printStack(){
+        let gameboy = Debugger.gameboy;
+        let sp = gameboy.cpu.registers.getSP();
+
+        //Cleanup
+        $("#stack ul").html('');
+
+        //Print up and down 10 addresses in stack
+        for(let i = sp + 10; i > sp - 10; i-=2){
+            let upper: number = 0;
+            let lower: number = 0;
+
+            if(i > 0xFFFE){
+                continue
+            } else if (i < 0xC000) {
+                upper = gameboy.memory.cartridge.readByte(i) ; lower = gameboy.memory.cartridge.readByte(i - 1);
+            } else if (i < 0xE000) {
+                upper = gameboy.memory.cpu.ram[i - 0xC000] ; lower = gameboy.memory.cpu.ram[i - 1 - 0xC000];
+                console.log()
+            } else if (i <= 0xFFFE) {
+                upper = gameboy.memory.cpu.stack[i - 0xFF80]  ; lower = gameboy.memory.cpu.stack[i - 1 - 0xFF80];
+
+            } else {
+                continue
+            }
+
+            if(i == sp){
+                //Create cursor
+                $("#stack ul").append("<li style='background-color:#3394FF'>"
+                    + "<div style='float:left;margin-left: 20px'>" + i.toString(16) + ":" + upper.toString(16)
+                    + "</div><div style='float:left;margin-left: 20px'>" + (i-1).toString(16) + ":" + lower.toString(16)
+                    + "</div><div style='clear:both'></div></li>");
+            } else {
+                $("#stack ul").append("<li>" +
+                    "<div style='float:left;margin-left: 20px'>"
+                    + i.toString(16) + ":" + upper.toString(16) + "</div><div style='float:left;margin-left:20px'> "
+                    + (i-1).toString(16) + ":" + lower.toString(16) + "</div><div style='clear:both'></div></li>");
             }
         }
     }
