@@ -186,16 +186,15 @@ export class Ppu {
                 let mapy, mapx, tile;
                 let row = this.registers.ly;
                 //Y coordinate does not change during line render
-                mapy = (this.registers.ly + this.registers.scy) % this.screen.WIDTH;
+                mapy = (this.registers.ly + this.registers.scy);
                 //ycoor = Screen.TILES * Math.floor(y / Screen.PIXELS);
 
                 //Render whole line
                 for (let cell = 0; cell < this.screen.WIDTH; cell++) {
-                    mapx = (this.registers.scx + cell) % this.screen.WIDTH;
-                    //xcoor = Math.floor(x / Screen.PIXELS);
+                    mapx = (this.registers.scx + cell);
 
                     //TODO: Make it so it only gets tile when needs to
-                    let tilenum = ((mapx >> 3) + ((mapy >> 3) * 0x10));
+                    let tilenum = (mapx >> 3) + ((mapy >> 3) * 0x20);
                     tile = this.getVramTile(tilenum);
                     this.screen.setBufferPixel(cell, row, tile[row % Screen.PIXELS][cell % Screen.PIXELS]);
                 }

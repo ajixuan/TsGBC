@@ -634,8 +634,10 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 if (registers.getZeroFlag()) {
-                    registers.setPC(registers.getPC() + this.size + pc);
+                    registers.setPC(registers.getPC() + this.size + checkSign(pc));
+                    return;
                 }
+
                 this.cycle=8;
             }
         };
