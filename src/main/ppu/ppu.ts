@@ -178,7 +178,8 @@ export class Ppu {
                 //Vertical blank
                 if (this.registers.ly == 144) {
                     stat.interrupts.vblank.set();
-                    //this.screen.printBuffer();
+                    this.screen.printBuffer();
+                    console.log("vblank");
                     return;
                 }
 
@@ -198,7 +199,7 @@ export class Ppu {
                     tile = this.getVramTile(tilenum);
                     this.screen.setBufferPixel(cell, row, tile[row % Screen.PIXELS][cell % Screen.PIXELS]);
                 }
-                this.screen.printBufferRow(row);
+                //this.screen.printBufferRow(row);
                 stat.modeFlag.hblank.set();
             }
         }

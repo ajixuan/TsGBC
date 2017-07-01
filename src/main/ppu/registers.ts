@@ -84,7 +84,6 @@ export class Registers {
                         return;
                     }
 
-                    console.log("yessir");
                     self.memory.interrupts.setRequestInterrupt(intr);
                 }
             }
