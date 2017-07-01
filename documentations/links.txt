@@ -1,3 +1,8 @@
 http://gbdev.gg8.se/wiki/articles/Pan_Docs#Overview		- Overview of the GBC
 http://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html	- contains Opcodes for Gameboy and Gameboy color (CB)
 https://www.linuxvoice.com/issues/012/ASM.pdf
+
+
+
+https://www.planetemu.net/roms/nintendo-game-boy-public-domain?screenshots=true&page=0&startId=0
+http://www.ladecadence.net/trastero/listado%20juegos%20gameboy.html - rom list with types
