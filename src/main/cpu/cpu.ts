@@ -81,9 +81,7 @@ export class Cpu {
         this.interrupts.clearInterruptFlag(interrupt);
 
         //Clear stat interrupts flags
-        if(interrupt == Interrupts.LCDC){
-            this.memory.ppu.registers.stat.clear();
-        }
+        this.memory.ppu.registers.stat.clear();
 
         //Push all registers on to the stack
         /* Just push pc onto stack

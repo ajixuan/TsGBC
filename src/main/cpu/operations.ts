@@ -2619,12 +2619,7 @@ export class Operations {
             execute(pc: number) {
                 if (registers.getZeroFlag() == 0) {
                     //Pop from stack pointer to pc
-                    let sp = registers.getSP();
-
-                    let lower = stack.popByte();
-                    let higher = stack.popByte();
-
-                    let result = lower | (higher << 8);
+                    let result = stack.popWord();
                     registers.setPC(result);
                     this.cycle = 20;
                 }
@@ -2802,9 +2797,7 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 //Pop from stack pointer to pc
-                let lower = stack.popByte();
-                let higher = stack.popByte();
-                let result = lower | (higher << 8);
+                let result = stack.popWord();
                 registers.setPC(result);
                 interrupts.enableAllInterrupts();
             }

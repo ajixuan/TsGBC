@@ -16,8 +16,7 @@ export class Stack {
         this.memory = memory;
     }
 
-    public popByte(): number {
-        let addr = this.register.getSP() + 1;
+    public readByte(addr : number): number {
         let val;
 
         if (addr == 0xE000) {
@@ -39,21 +38,19 @@ export class Stack {
             val = this.memory.cpu.stack[addr - 0xFF80];
         }
 
-        this.register.setSP(addr);
         return val;
     }
 
     public popWord(): number {
-        let low = this.popByte();
-        let high = this.popByte();
-        let val = high << 8 | low;
-        return val;
+        let sp = this.register.getSP();
+        let high = this.readByte(sp);
+        let low = this.readByte(sp - 1);
+        this.register.setSP(sp + 2);
+        return high << 8 | low;;
     }
 
-    public pushByte(val: number): void {
+    public writeByte(val: number, addr: number): void {
         //Stack pointer decremets by 1 before address is written
-        let addr = this.register.getSP();
-
         if (val > 0xFF) {
             throw "Stack push val is to big 0x" + val.toString(16);
         }
@@ -69,22 +66,14 @@ export class Stack {
         } else {
             this.memory.cpu.stack[addr - 0xFF80] = val;
         }
-
-        let next = addr - 1;
-
-        if (next == 0xFF7F) {
-            next = 0xDFFF;
-        } else if (next < 0xA000) {
-            throw "stack overflow";
-        }
-
-        this.register.setSP(next);
     }
 
     public pushWord(val: number): void {
         let high = val >> 8;
         let low = val & 0xFF;
-        this.pushByte(high);
-        this.pushByte(low);
+        let sp = this.register.getSP() -2;
+        this.writeByte(high, sp);
+        this.writeByte(low, sp - 1);
+        this.register.setSP(sp);
     }
 }
