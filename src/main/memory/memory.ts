@@ -36,7 +36,7 @@ export class Memory {
             this.cartridge.writeByte(addr, val);
         } else if (addr < 0xFE00) {
             this.cpu.ram[(addr - 0xC000) % 0x2000] = val;
-        } else if (addr < 0xFEA0) {
+        } else if (addr < 0xFEA0) { //OAM
             this.ppu.requestWrite(addr, val);
         } else if (addr < 0xFF80) {
             if (addr < 0xFF00) {

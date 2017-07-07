@@ -77,12 +77,12 @@ export class Ppu {
         for (let x = 0; x < 8; x++) {
             pindex = 0x80 >> x;
 
-            if(line % 2){
+            if (line % 2) {
                 this.vramTileset[tile][y][x] +=
-                    ((this.memory.vram[line+1] & pindex) ? 2 : 0);
+                    ((this.memory.vram[line + 1] & pindex) ? 2 : 0);
             } else {
                 this.vramTileset[tile][y][x] +=
-                    ((this.memory.vram[line] & pindex)? 1 : 0);
+                    ((this.memory.vram[line] & pindex) ? 1 : 0);
             }
         }
     }
@@ -119,7 +119,7 @@ export class Ppu {
             tile += 0x80;
         }
 
-        if(this.vramTileset[tile]){
+        if (this.vramTileset[tile]) {
             return this.vramTileset[tile];
         }
 
@@ -134,11 +134,10 @@ export class Ppu {
         let lcdc = this.registers.lcdc;
 
         this.clock += cycles;
-
         stat.lyco.unset();
 
         //LCD is off, reset renderscan
-        if(!this.registers.lcdc.lcdon.get()){
+        if (!this.registers.lcdc.lcdon.get()) {
             stat.interrupts.hblank.set();
             this.clock = 0;
             return;
@@ -210,39 +209,39 @@ export class Ppu {
         let val;
         if (addr < 0xA000) {
             if (this.registers.stat.modeFlag.vramlock.get()) {
-                val =  0xFF;
+                val = 0xFF;
             }
-            val =  this.memory.vram[addr - 0x8000];
+            val = this.memory.vram[addr - 0x8000];
         }
         //OAM
         else if (addr < 0xFEA0) {
             if (this.registers.stat.modeFlag.vramlock.get() || this.registers.stat.modeFlag.oamlock.get()) {
-                val =  0xFF;
+                val = 0xFF;
             }
 
-            val =  this.memory.oam[addr - 0xFE00];
+            val = this.memory.oam[addr - 0xFE00];
         } else if (addr == 0xFF40) {
-            val =  this.registers.lcdc.getAll();
+            val = this.registers.lcdc.getAll();
         } else if (addr == 0xFF42) {
-            val =  this.registers.scy;
+            val = this.registers.scy;
         } else if (addr == 0xFF43) {
-            val =  this.registers.scx;
+            val = this.registers.scx;
         } else if (addr == 0xFF44) {
-            val =  this.registers.ly;
+            val = this.registers.ly;
         } else if (addr == 0xFF45) {
-            val =  this.registers.lyc;
+            val = this.registers.lyc;
         } else if (addr == 0xFF4A) {
-            val =  this.registers.wy;
+            val = this.registers.wy;
         } else if (addr == 0xFF4B) {
-            val =  this.registers.wx;
+            val = this.registers.wx;
         } else if (addr == 0xFF68) {
-            val =  this.registers.bcps;
+            val = this.registers.bcps;
         } else if (addr == 0xFF69) {
-            val =  this.registers.bcpd;
+            val = this.registers.bcpd;
         } else if (addr == 0xFF6A) {
-            val =  this.registers.ocps;
+            val = this.registers.ocps;
         } else if (addr == 0xFF6B) {
-            val =  this.registers.ocpd;
+            val = this.registers.ocpd;
         }
 
         return val;
@@ -256,7 +255,7 @@ export class Ppu {
     public requestWrite(addr: number, val: number): void {
 
         //Vram
-        if (addr < 0xA000){
+        if (addr < 0xA000) {
             if (this.registers.stat.modeFlag.vramlock.get()) {
                 //console.log("ERROR: VRAM locked");
                 return;
@@ -265,7 +264,7 @@ export class Ppu {
             this.memory.vram[addr - 0x8000] = val;
 
             //If it is in tile range
-            if (addr < 0x9800){
+            if (addr < 0x9800) {
                 this.updateVramTile(addr);
             }
         }
@@ -292,8 +291,9 @@ export class Ppu {
         } else if (addr == 0xFF45) {
             this.registers.lyc = val;
 
-        } else if (addr == 0xFF46) {
-            //DMA
+        }
+        //DMA
+        else if (addr == 0xFF46) {
             //Transfers 40 x 32 bits of data
             //val is the starting address of transfer
             //val is always the upper 8 bits, so need to be shifted
@@ -301,6 +301,19 @@ export class Ppu {
                 let data = this.memory.readByte((val << 8) + i);
                 this.memory.oam[i] = data;
             }
+        }
+        //BGP
+        //Bit 7-6 - Shade for Color Number 3
+        //Bit 5-4 - Shade for Color Number 2
+        //Bit 3-2 - Shade for Color Number 1
+        //Bit 1-0 - Shade for Color Number 0
+        else if (addr == 0xFF47) {
+
+        } else if (addr == 0xFF48) {
+
+
+        } else if (addr == 0xFF49) {
+
 
         } else if (addr == 0xFF4A) {
             this.registers.wy = val;

@@ -45,12 +45,17 @@ export class Cartridge {
         this.type.romSize = this.romSizes[rom[0x148]];
         this.type.ramSize = this.ramSizes[rom[0x149]];
 
-        if (this.type.id == 0) {
-            this.controller = new None(rom);
-        } else if (this.type.id == 1){
-            this.controller = new MBC1(rom);
-        } else {
-            throw "Unable to create cartridge for " + url;
+        switch (this.type){
+            case 0:
+                this.controller = new None(rom);
+                break;
+            case 1:
+            case 2:
+            case 3:
+                this.controller = new MBC1(rom);
+                break;
+            default:
+                throw "Unable to create cartridge for " + url;
         }
 
         console.info("-------------------------------------------------" + "\n"

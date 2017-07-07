@@ -23,6 +23,7 @@ export class Stack {
             addr = 0xFF80;
         }
 
+
         //Read
         if (addr < 0xA000) {
             throw "Stack pop error on addr 0x" + addr.toString(16);
@@ -46,7 +47,7 @@ export class Stack {
         let high = this.readByte(sp);
         let low = this.readByte(sp - 1);
         this.register.setSP(sp + 2);
-        return high << 8 | low;;
+        return high << 8 | low;
     }
 
     public writeByte(val: number, addr: number): void {
