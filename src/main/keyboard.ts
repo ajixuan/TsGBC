@@ -27,7 +27,7 @@ export class Keyboard {
             let key = Keyboard.mapping;
 
 
-            console.log("Pressing");
+            console.log("Pressing " + code);
             if (code == key.up) {
                 this.joypad.releaseUp();
             } else if (code == key.down) {
