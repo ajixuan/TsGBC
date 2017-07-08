@@ -3,6 +3,8 @@ import {Ppu} from "./ppu/ppu";
 import {Memory} from "./memory/memory";
 import {Cartridge} from "./cartridge/cartridge";
 import {Registers} from "./cpu/registers"
+import {Keyboard} from "./keyboard";
+import {Joypad} from "./io/joypad";
 
 export class GameBoy {
 
@@ -15,6 +17,9 @@ export class GameBoy {
     public interval: number = 1000;
     private runConditions : Array<Function> = new Array<Function>();
     private counts: number = 0;
+    public joypad: Joypad;
+    public keyboard: Keyboard;
+
 
     //Ticks per frame
     public tpf: number = 1;
@@ -24,6 +29,10 @@ export class GameBoy {
         this.memory = new Memory();
         this.cpu = new Cpu(this.memory);
         this.ppu = new Ppu(this.memory);
+        this.joypad = this.memory.joypad;
+
+        this.keyboard = new Keyboard(this.memory.joypad);
+        this.keyboard.init();
     }
 
     public load(url: string): void {
