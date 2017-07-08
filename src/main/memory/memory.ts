@@ -2,6 +2,8 @@ import {Cartridge} from "../cartridge/cartridge";
 import {Interrupts} from "../io/interrupts";
 import {Ppu} from '../ppu/ppu'
 import {Io} from './io'
+import {Joypad} from "../io/joypad";
+
 /**
  * Created by hkamran on 12/5/2016.
  */
@@ -10,6 +12,7 @@ import {Io} from './io'
 export class Memory {
 
     public cartridge: Cartridge;
+    public joypad: Joypad = new Joypad();
     public io: Io = new Io();
     public vram: Array<number> = Array.apply(null, Array(0x2000)).map(Number.prototype.valueOf, 0);
     public oam: Array<number>  = Array.apply(null, Array(0xA0)).map(Number.prototype.valueOf, 0);
@@ -45,7 +48,7 @@ export class Memory {
             } else if (addr < 0xFF08) {
                 switch (addr & 0xFF) {
                     case 0:
-                        this.io.setP1(val);
+                        this.joypad.writeByte(val);
                         break;
                     case 1:
                         //SB
@@ -106,7 +109,7 @@ export class Memory {
             } else if (addr < 0xFF08) {
                 switch (addr & 0xFF) {
                     case 0:
-                        val = this.io.getP1();
+                        val = this.joypad.readByte();
                         break;
                     case 1:
                         //SB

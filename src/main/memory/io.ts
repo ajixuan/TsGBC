@@ -13,7 +13,7 @@ export class Io {
 
 
     constructor(){
-        this.p1 = 0xCF;
+        this.p1 = 0xF;
         this.div = 0xAB;
         this.tma = 0;
         this.tima = 0;
@@ -26,8 +26,8 @@ export class Io {
      */
     public setP1(num:number): void {
         this.isValid(num, 0xFF, "Register argument too large for p1: " + num);
-        num &= 0x3F;
-        this.p1 &= 0xCF;
+        num &= 0xFF;
+        this.p1 &= 0xFF;
         this.p1 |= num;
     }
 
