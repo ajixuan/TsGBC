@@ -8,6 +8,7 @@ export class Debugger {
     private static gameboy: GameBoy;
     private static logLines: number = 500;
     private static logBuffer: Array<String> = new Array<String>();
+
     private static bgmap: Array<Number> = Array.apply(null, Array(0x800)).map(Number.prototype.valueOf, 0);
     private static COLORS: string[] = [
         "#000000",
@@ -16,7 +17,7 @@ export class Debugger {
         "#dee0e2",
         "#a00000"
     ];
-    private static ZOOM : number = 2;
+    private static ZOOM : number = 1.5;
 
 
     public static pushLog(): void {
@@ -131,7 +132,7 @@ export class Debugger {
 
     public static renderBGmap() {
         let gameboy = Debugger.gameboy;
-        let bgmap: any = document.getElementById("map");
+        let bgmap: any = document.getElementById("bgmap");
         let zoom = Debugger.ZOOM;
 
         bgmap.width = 32 * 9 * zoom;
@@ -166,7 +167,7 @@ export class Debugger {
 
     public static renderTilemap() {
         let gameboy = Debugger.gameboy;
-        let bgmap: any = document.getElementById("map");
+        let bgmap: any = document.getElementById("tilemap");
         let zoom = Debugger.ZOOM;
 
         bgmap.width = 16 * 9 * zoom;

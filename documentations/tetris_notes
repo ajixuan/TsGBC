@@ -1,0 +1,141 @@
+Pg212 gb-programming
+
+0x0147 : Catridge type
+
+MBC1 Notes:
+ 	2 types = 
+ 		16Mbit Rom/8Kbyte Ram
+ 		4Mbit Rom/32Kbyte Ram
+- Defaults to 16Mbit on powerup
+
+Ram bank killswitch: 0x0000-0x1FFF
+	Enable: 	XXXX1010
+
+Memory models select:
+0x6000-0x7FFF writing bits: XXXXXXXS
+where 
+S = 0 : 16/8
+S = 1 : 4/32
+
+4/32
+
+
+Bank select:
+0x2000-0x3FFF writing bits: XXXBBBBB
+where
+B = bank select bits
+Bank at 0x4000-0x7FFF
+
+Bank 0: 0x0000 - 0x3FFF
+
+
+-----------------------------------------------------------------
+
+Tetris Binary:
+Runs in order unless is call
+
+0 out SIO
+22B = SIO write to SB
+22D = SIO write to SC
+
+233-237 = Wait for vblank
+
+*23B = Turn off lcdc
+
+27A-27C = Zero out all vram memory
+286-288 = Zero out all oam
+28F-291 = 0 out stack working ram(0xFF80+)
+2A0 = Call: Render bgmap
+	279B-27A1 = load 2F into bgmap1
+2A3 = Sound stuff
+	69A5-69DC = Sound stuff
+
+2A8 = Interrupt enable
+	- 2803 = tiles finish loading
+
+388 = Screen render begin. LCDC restored
+
+2BB: First interrupt occurs
+
+Vblank interrupt=============
+40 = vblank
+	?182-197 = If CE and CB are not 0, make serial write
+			   Otherwise jump to next step  
+	199-1CF = executes a series of checks on 0xFFE3
+	1D5 =
+		FFB6 = Initiate DMA transfer, wait 28 cpu cycles
+	1D8 = 
+		18CA = Check if FFE8 at OAM is zero 
+
+	1DB-1DF = If C0CE and FF98 is both 0
+		TODO: 243B
+	1FB-20B = increase a and set scx and scy to zero
+					return with interrupt enabled
+Vblank complete==============
+
+2BC = reset interrupt flag
+2BD-2BE = reset winx and winy
+
+2C4: joypad
+	29A6-29B0 = load 20 into joypad and read output 4 times
+	29B8-29CE = load 10 into joypad and read output 10 times 
+	29D5-29DE = load various values into cpu stack
+
+2C7: Jmp Sequence
+	2FA = push stack and jump to 28
+		28-33: jmp to HL
+			369: Enable Vblank interrupt and wait for LY to set IF, then trigger IF
+				*2820,282 = Temporarily store IE into FFA1 to be set later 
+				2828-282A = Wait until LY completes and sets vblank flag on IF 
+				282E-2832 = Reset LCD controller
+				*2834-2836 = Restore IE and initiate interrupt
+			36C: Tilemap Rendering==============================
+				27D7: 
+					27CC-27D4 = Load up tiles in tile map
+				27DA,27DD: Continue rendering for DA0 lines of pixels
+					27A4-27AA = Load tile from HL(4200~) areas into tile map
+			Tilemap rendering complete==========================
+			36F,372: DE <- 4A07
+				27F0-27F7 = Render tilemap1(9800) from 4A07
+			375:
+				178A-1792 = Zeroing out working ram C000-C0A0
+			378-384: Load 6450-6550 to ram C300-C400
+			388: Turn on LCDC
+2CA: Descend into madness
+	7FF0:
+		64D3-64E0:
+			64FA = Beginning of the following calls:
+
+			64D3 = Checking DF7F is 01, 02
+				 = Checking if DF7E is not 0
+				 = Checking if FFE4 at OAM is zero
+			69F0 = 
+			69FD
+			6A10
+
+			683C = Checking if DFF0/DFF1 is 01, 02
+
+			6A26 = If DFE8 is 0 then return
+			6C44
+			6A65
+2CD-2D3: If FF80 is 0F, jump to 21B
+2D6-2E2: dec FFA6 and FFA7
+2E4-2EB: IF FFC5 is not 0, load it as interrupt flag
+2ED-2F0: If FF85 is 0, loop until it is not 0
+2F2-2F3: Make FF85 0
+2F5: Run 2C4
+	2C4: See above
+2F8-2FA: Load FFE1 to A and jmp to 28
+	28: See above
+
+
+
+
+
+----------------------------------------------------------------------
+
+0xFF00 - 0xFF80: Various registers
+
+CPU Stack
+0xFF80-0xFFFE: DMA
+0xFF44: LY

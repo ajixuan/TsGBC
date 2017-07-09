@@ -2862,7 +2862,6 @@ export class Operations {
 
                 //reset all flags
                 registers.setF(0);
-                registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
 
                 if (result == 0) {
@@ -3132,6 +3131,7 @@ export class Operations {
                 let upper = (val & 0xF0) >> 4;
                 let result = lower << 4 + upper;
 
+                registers.setF(0);
                 if (result === 0) {
                     registers.setZeroFlag(1);
                 }
@@ -3151,6 +3151,7 @@ export class Operations {
                 let upper = (val & 0xF0) >> 4;
                 let result = lower << 4 + upper;
 
+                registers.setF(0);
                 if (result === 0) {
                     registers.setZeroFlag(1);
                 }
@@ -3190,6 +3191,7 @@ export class Operations {
                 let upper = (val & 0xF0) >> 4;
                 let result = lower << 4 + upper;
 
+                registers.setF(0);
                 if (result === 0) {
                     registers.setZeroFlag(1);
                 }
@@ -3209,6 +3211,7 @@ export class Operations {
                 let upper = (val & 0xF0) >> 4;
                 let result = lower << 4 + upper;
 
+                registers.setF(0);
                 if (result === 0) {
                     registers.setZeroFlag(1);
                 }
@@ -3228,6 +3231,7 @@ export class Operations {
                 let upper = (val & 0xF0) >> 4;
                 let result = lower << 4 + upper;
 
+                registers.setF(0);
                 if (result === 0) {
                     registers.setZeroFlag(1);
                 }
@@ -3247,6 +3251,7 @@ export class Operations {
                 let upper = (val & 0xFF00) >> 8;
                 let result = lower << 8 + upper;
 
+                registers.setF(0);
                 if (result === 0) {
                     registers.setZeroFlag(1);
                 }
