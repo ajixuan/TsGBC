@@ -178,7 +178,7 @@ export class Ppu {
                 if (this.registers.ly == 144) {
                     stat.interrupts.vblank.set();
                     this.screen.printBuffer();
-                    console.log("vblank");
+                    //console.log("vblank");
                     return;
                 }
 
