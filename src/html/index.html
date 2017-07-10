@@ -247,11 +247,14 @@
     <!--VRAM viewer-->
 
     <div class="debugger">
-        <div>
-            <canvas id="map"></canvas>
+        <div style="display: flex; flex-direction: row">
+            <canvas id="bgmap"></canvas>
+        </div>
+        <button onclick="renderBGmap()">RenderBGmap</button>
+        <div style="display: flex; flex-direction: row">
+            <canvas id="tilemap"></canvas>
         </div>
         <button onclick="renderTilemap()">RenderTilemap</button>
-        <button onclick="renderBGmap()">RenderBGmap</button>
     </div>
 
 

@@ -45,7 +45,7 @@ export class Cartridge {
         this.type.romSize = this.romSizes[rom[0x148]];
         this.type.ramSize = this.ramSizes[rom[0x149]];
 
-        switch (this.type){
+        switch (this.type.id){
             case 0:
                 this.controller = new None(rom);
                 break;
