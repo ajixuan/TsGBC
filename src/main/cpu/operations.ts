@@ -3327,6 +3327,41 @@ export class Operations {
             }
         };
 
+        this.operations[0xCB6F] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let a = registers.getA();
+
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if(a & 5){
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
+
+        this.operations[0xCB77] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let a = registers.getA();
+
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if(a & 6){
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
 
         this.operations[0xCB7F] = {
             name: "BIT",

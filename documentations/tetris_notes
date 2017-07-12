@@ -84,49 +84,75 @@ Vblank complete==============
 2C7: Jmp Sequence
 	2FA = push stack and jump to 28
 		28-33: jmp to HL
+
+			========================================================
 			369: Enable Vblank interrupt and wait for LY to set IF, then trigger IF
 				*2820,282 = Temporarily store IE into FFA1 to be set later 
 				2828-282A = Wait until LY completes and sets vblank flag on IF 
 				282E-2832 = Reset LCD controller
 				*2834-2836 = Restore IE and initiate interrupt
-			36C: Tilemap Rendering==============================
+			##Tilemap rendering
+			36C: Tilemap Rendering
 				27D7: 
 					27CC-27D4 = Load up tiles in tile map
 				27DA,27DD: Continue rendering for DA0 lines of pixels
 					27A4-27AA = Load tile from HL(4200~) areas into tile map
-			Tilemap rendering complete==========================
+			Tilemap rendering complete
 			36F,372: DE <- 4A07
 				27F0-27F7 = Render tilemap1(9800) from 4A07
 			375:
 				178A-1792 = Zeroing out working ram C000-C0A0
 			378-384: Load 6450-6550 to ram C300-C400
 			388: Turn on LCDC
+
+			=====================================================
+			393: If FFA6 is 0
+				397: 
+
+
 2CA: Descend into madness
 	7FF0:
-		64D3-64E0:
-			64FA = Beginning of the following calls:
-
-			64D3 = Checking DF7F is 01, 02
-				 = Checking if DF7E is not 0
-				 = Checking if FFE4 at OAM is zero
-			69F0 = 
+		64D3-64D6: Push all registers onto stack
+		64D7-64DC: If DF7F is 01 then Jmp to 6524
+		64DE-64E0: If DF7F is 02 then Jmp to 655D 
+		64E2-64E6: If DF7E is 0 then Jmp to 6563
+		64E8-64EB: If FFE4 is 0 then Jmp to 64FA
+		64FA: Retarded
+		64FD: Jmp
+			69DD-69E2:If DFE0 is 0 jmp to 69F0
+			69E4-69EF: not yet called
+			69F0-69F3: If DFE1~ is 0 then Return
 			69FD
-			6A10
-
 			683C = Checking if DFF0/DFF1 is 01, 02
 
 			6A26 = If DFE8 is 0 then return
 			6C44
 			6A65
+		6500: Jmp 
+			69FD-6A02: if DFF8 is 0 Jmp to 6A10
+			6A10-6A13: if DFF9 is 0 Jmp to 6A1C
+		6503:
+			683C-6841: If DEF0 is 1 Jmp to 686B
+			6844-6846: If DEF0 is 2 Jmp to 6800
+			6849-684E: If DEF1 is 1 Jmp to 68B6
+			6851-6853: If DEF1 is 2 Jmp to 6817
+		6506:
+			6A21
+		6509:
+		650C:
+
+
+
+##The Intro screen loop=====================
 2CD-2D3: If FF80 is 0F, jump to 21B
 2D6-2E2: dec FFA6 and FFA7
 2E4-2EB: IF FFC5 is not 0, load it as interrupt flag
 2ED-2F0: If FF85 is 0, loop until it is not 0
 2F2-2F3: Make FF85 0
 2F5: Run 2C4
-	2C4: See above
+	2C4: Joypad See above
 2F8-2FA: Load FFE1 to A and jmp to 28
-	28: See above
+	28: Jmp to HL See above
 
 
 
@@ -138,4 +164,8 @@ Vblank complete==============
 
 CPU Stack
 0xFF80-0xFFFE: DMA
+0xFF40: LCDC
+0xFF41: STAT
 0xFF44: LY
+
+

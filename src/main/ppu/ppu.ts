@@ -76,14 +76,14 @@ export class Ppu {
         //8 bits
         for (let x = 0; x < 8; x++) {
             pindex = 0x80 >> x;
+            let pixel = this.vramTileset[tile][y][x];
 
             if (line % 2) {
-                this.vramTileset[tile][y][x] +=
-                    ((this.memory.vram[line + 1] & pindex) ? 2 : 0);
+                ((this.memory.vram[line] & pindex) ? pixel |= 2 : pixel &= ~2);
             } else {
-                this.vramTileset[tile][y][x] +=
-                    ((this.memory.vram[line] & pindex) ? 1 : 0);
+                ((this.memory.vram[line] & pindex) ? pixel |= 1 : pixel &= ~1);
             }
+            this.vramTileset[tile][y][x] = pixel;
         }
     }
 
