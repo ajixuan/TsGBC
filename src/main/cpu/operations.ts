@@ -782,7 +782,6 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let result = calcSubtractFlags(memory.readByte(registers.getHL()), 1);
-                console.log(result);
                 memory.writeByte(registers.getHL(), result);
             }
         };
