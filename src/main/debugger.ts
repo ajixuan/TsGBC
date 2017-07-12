@@ -22,6 +22,7 @@ export class Debugger {
 
     public static pushLog(): void {
         //Add to log
+        if (!this.status) return;
 
         let eventStr =
             "PC:" + Debugger.gameboy.cpu.registers.getPC().toString(16).toUpperCase()
@@ -49,6 +50,8 @@ export class Debugger {
         if (Debugger.gameboy == null) {
             return console.error("Error: Debugger doesn't have GameBoy set!");
         }
+
+        if (!this.status) return;
 
         let gameboy = Debugger.gameboy;
 
