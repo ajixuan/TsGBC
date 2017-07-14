@@ -20,29 +20,18 @@ export class Debugger {
     private static ZOOM : number = 1.5;
 
 
-    public static pushLog(): void {
+    public static pushLog(eventStr : String): void {
         //Add to log
+        if(this.logBuffer){
+            this.logBuffer.length = 0;
 
-        let eventStr =
-            "PC:" + Debugger.gameboy.cpu.registers.getPC().toString(16).toUpperCase()
-//            + " Op:" + Debugger.gameboy.cpu.last.opcode.toString(16).toUpperCase()
-            + " SP:" + Debugger.gameboy.cpu.registers.getSP().toString(16).toUpperCase() + "|"
-            + " AF:" + Debugger.gameboy.cpu.registers.getAF().toString(16).toUpperCase() + "|"
-            + " BC:" + Debugger.gameboy.cpu.registers.getBC().toString(16).toUpperCase() + "|"
-            + " DE:" + Debugger.gameboy.cpu.registers.getDE().toString(16).toUpperCase() + "|"
-            + " HL:" + Debugger.gameboy.cpu.registers.getHL().toString(16).toUpperCase() + "|"
-            + " LCDC:" + Debugger.gameboy.ppu.registers.lcdc.getAll().toString(16).toUpperCase() + "|"
-            + " STAT:" + Debugger.gameboy.ppu.registers.stat.getAll().toString(16).toUpperCase() + "|"
-            + " ie:" + Debugger.gameboy.cpu.interrupts.ie.toString(16).toUpperCase() + "|"
-            + " if:" + Debugger.gameboy.cpu.interrupts.if.toString(16).toUpperCase();
-
+        }
         this.logBuffer.push(eventStr);
     }
 
     public static clearLog(): void {
         $(".log ul").empty();
     }
-
 
     public static display(): void {
 
@@ -60,11 +49,6 @@ export class Debugger {
         if (this.logBuffer.length > Debugger.logLines) {
             this.logBuffer.length = 0;
         }
-
-        if (!Debugger.status) {
-            return
-        }
-        ;
 
         let html = "";
         while (this.logBuffer.length > 0) {
@@ -215,7 +199,6 @@ export class Debugger {
                 upper = gameboy.memory.cartridge.readByte(i) ; lower = gameboy.memory.cartridge.readByte(i - 1);
             } else if (i < 0xE000) {
                 upper = gameboy.memory.cpu.ram[i - 0xC000] ; lower = gameboy.memory.cpu.ram[i - 1 - 0xC000];
-                console.log()
             } else if (i <= 0xFFFE) {
                 upper = gameboy.memory.cpu.stack[i - 0xFF80]  ; lower = gameboy.memory.cpu.stack[i - 1 - 0xFF80];
 

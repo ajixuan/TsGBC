@@ -55,18 +55,11 @@ export class GameBoy {
         return false;
     }
 
-    public tick(): boolean {
-        for (let i = 0; i < this.tpf; i++) {
-            if (this.checkRunConditions()) {
-                return true;
-            }
-
+    public tick(): void {
             let cycles = this.cpu.tick();
-            this.ppu.renderscan(cycles);
-            this.ticks++;
             this.counts--;
-        }
-        return false;
+            this.ticks++;
+            this.ppu.renderscan(cycles);
     }
 
     /**
@@ -74,10 +67,18 @@ export class GameBoy {
      * @param pc
      */
     private tickAnimation(): void {
-        //Continue if tick is not finished
-        if(!this.tick()){
+        if (this.checkRunConditions()) {return}
+        let tick = function(){
+
+            for(let i = 0; i <= this.tpf; i++){
+                this.tick();
+            }
+
+            //update one frame
             requestAnimationFrame(this.tickAnimation.bind(this));
-        }
+        }.bind(this);
+
+        setInterval(tick, 2);
     }
 
     public setPCBreak(pc : number):void {
@@ -92,7 +93,6 @@ export class GameBoy {
         this.runConditions.push(cb);
     }
 
-
     public tickUntil(counts : number) : void {
         //Push the basic run condition in
         let run = function(){ return (this.counts == 0)}.bind(this);
@@ -100,13 +100,4 @@ export class GameBoy {
         this.counts = counts;
         this.tickAnimation();
     }
-
-    public run(): void {
-        this.tickUntil(-1);
-    }
-
-    public stop(): void {
-        this.counts = 0;
-    }
-
 }
