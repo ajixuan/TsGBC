@@ -16,7 +16,7 @@ export class GameBoy {
     public timeout: any;
     public interval: number = 1000;
     private runConditions : Array<Function> = new Array<Function>();
-    private counts: number = 0;
+    public counts: number = 0;
     public joypad: Joypad;
     public keyboard: Keyboard;
 
@@ -55,11 +55,11 @@ export class GameBoy {
         return false;
     }
 
-    public tick(): void {
-            let cycles = this.cpu.tick();
-            this.counts--;
-            this.ticks++;
-            this.ppu.renderscan(cycles);
+    public tick(): void{
+        let cycles = this.cpu.tick();
+        this.counts--;
+        this.ticks++;
+        this.ppu.renderscan(cycles);
     }
 
     /**
@@ -67,18 +67,15 @@ export class GameBoy {
      * @param pc
      */
     private tickAnimation(): void {
-        if (this.checkRunConditions()) {return}
         let tick = function(){
-
+            if(this.checkRunConditions()){return;}
             for(let i = 0; i <= this.tpf; i++){
                 this.tick();
             }
-
-            //update one frame
-            requestAnimationFrame(this.tickAnimation.bind(this));
+            this.tickAnimation();
         }.bind(this);
 
-        setInterval(tick, 2);
+        requestAnimationFrame(tick);
     }
 
     public setPCBreak(pc : number):void {

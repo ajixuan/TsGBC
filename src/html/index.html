@@ -31,7 +31,7 @@
 
                 <div>
                     Ticks per frame:
-                    <input size="2" id="tpf" value="1000">
+                    <input size="2" id="tpf" value="20000">
                 </div>
                 <div>
                     Break at pc:
@@ -313,11 +313,11 @@
     }
 
     var run = function () {
-        gameboy.run();
+        gameboy.tickUntil(-1);
     }
 
     var stop = function () {
-        gameboy.stop();
+        gameboy.counts = 0;
     }
 
     var grow = function () {
@@ -331,6 +331,7 @@
     var toggleDebug = function () {
         var _tpf = $('#tpf').val();
         return function () {
+            _tpf = $('#tpf').val();
             debug.status = !debug.status;
             if (debug.status) {
                 debug.clearLog();

@@ -155,7 +155,6 @@ export class Ppu {
             this.clock = 0;
 
         } else if (stat.modeFlag.vblank.get() && this.clock >= 456) {
-
             if (this.registers.ly > 153 || this.registers.ly == 0) {
                 this.registers.ly = 0;
                 stat.modeFlag.vramlock.set();
@@ -178,7 +177,6 @@ export class Ppu {
                 if (this.registers.ly == 144) {
                     stat.interrupts.vblank.set();
                     this.screen.printBuffer();
-                    //console.log("vblank");
                     return;
                 }
 
