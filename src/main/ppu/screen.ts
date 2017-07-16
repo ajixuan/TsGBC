@@ -12,24 +12,34 @@ export class Screen {
     private ZOOM : number = 3;
     private SPACING : number = 0;
 
-    private COLORS : string[] = [
-        "#000000",
-        "#515151",
-        "#9e9e9e",
-        "#dee0e2"
+    private COLORS : number[] = [
+        0x000000,
+        0x515151,
+        0x9e9e9e,
+        0xdee0e2
     ];
 
-    public FRAME : number[];
+    public FRAME : ImageData;
 
     constructor() {
         this.canvas = document.getElementById("screen");
+        this.context = this.canvas.getContext('2d');
 
         if (this.canvas == null) {
             console.error("Unable to locate canvas: screen");
         }
         console.info("Screen is ready!");
+        this.reset();
+    }
 
-        this.FRAME = [this.HEIGHT * this.WIDTH];
+    public reset() : void {
+        this.canvas.width  = this.WIDTH * (this.ZOOM + this.SPACING);
+        this.canvas.height = this.HEIGHT * (this.ZOOM + this.SPACING);
+
+        this.FRAME = this.context.createImageData(
+            this.WIDTH * (this.ZOOM + this.SPACING),
+            this.HEIGHT * (this.ZOOM + this.SPACING)
+        );
 
         //Print static
         for (let y = 0; y < this.HEIGHT; y++) {
@@ -38,14 +48,6 @@ export class Screen {
                 this.setBufferPixel(x, y, random);
             }
         }
-
-        this.reset();
-    }
-
-    public reset() : void {
-        this.canvas.width  = this.WIDTH * (this.ZOOM + this.SPACING);
-        this.canvas.height = this.HEIGHT * (this.ZOOM + this.SPACING);
-        this.context = this.canvas.getContext('2d');
 
         this.printBuffer();
     }
@@ -68,20 +70,7 @@ export class Screen {
      * Prints the entire screen
      */
     public printBuffer() : void {
-        for (let y = 0; y < this.HEIGHT; y++) {
-            for (let x = 0; x < this.WIDTH; x++) {
-                let index = this.FRAME[(y * this.WIDTH) + x];
-                let hex = this.COLORS[index];
-
-                this.context.fillStyle = hex;
-                this.context.fillRect(
-                    x * (this.ZOOM + this.SPACING),
-                    y * (this.ZOOM + this.SPACING),
-                    (this.ZOOM),
-                    (this.ZOOM)
-                );
-            }
-        }
+        this.context.putImageData(this.FRAME, 0 ,0);
     }
 
     /**
@@ -111,7 +100,21 @@ export class Screen {
      * @param index the color scheme
      */
     public setBufferPixel(x : number, y : number, index : number) : void {
-        this.FRAME[(y * this.WIDTH) + x] = index;
+        let color = this.COLORS[index];
+        let py, px, coordinates;
+        let zoomVal = (this.ZOOM  + this.SPACING);
+        x = x * zoomVal;
+        y = y * Math.pow(zoomVal, 2) * this.WIDTH;
+        for (let zoomy = 0; zoomy < zoomVal; zoomy++){
+            py = y + (zoomy * this.WIDTH * zoomVal);
+            for (let zoomx = 0 ; zoomx < zoomVal; zoomx++){
+                px = (x + zoomx);
+                coordinates = (py + px) * 4;
+                this.FRAME.data[coordinates + 0] = color >> 16 & 0xFF;
+                this.FRAME.data[coordinates + 1] = color >> 8 & 0xFF;
+                this.FRAME.data[coordinates + 2] = color & 0xFF;
+                this.FRAME.data[coordinates + 3] = 0xFF;
+            }
+        }
     }
-
 }

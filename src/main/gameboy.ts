@@ -20,7 +20,6 @@ export class GameBoy {
     public joypad: Joypad;
     public keyboard: Keyboard;
 
-
     //Ticks per frame
     public tpf: number = 1;
 
@@ -68,11 +67,11 @@ export class GameBoy {
      */
     private tickAnimation(): void {
         let tick = function(){
-            if(this.checkRunConditions()){return;}
+            if(this.checkRunConditions()){return}
             for(let i = 0; i <= this.tpf; i++){
                 this.tick();
             }
-            this.tickAnimation();
+            setTimeout(this.tickAnimation.bind(this), 1);
         }.bind(this);
 
         requestAnimationFrame(tick);
