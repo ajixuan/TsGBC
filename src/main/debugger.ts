@@ -36,6 +36,15 @@ export class Debugger {
             + " ie:" + cpu.interrupts.ie.toString(16).toUpperCase() + "|"
             + " if:" + cpu.interrupts.if.toString(16).toUpperCase();
 
+        if (Debugger.gameboy.cpu.last == null) {
+            let eventStr = "ERROR";
+            let eventElement = $(".log ul");
+            eventElement.append("<li class='error'>" + eventStr + "</li>");
+            $(".log").scrollTop($(".log").prop("scrollHeight"));
+            return;
+        }
+
+
         if ($(".log li").length > Debugger.logLimit) {
             $(".log ul").empty();
         }
@@ -45,13 +54,6 @@ export class Debugger {
         $(".log ul").append(html);
         $(".log").scrollTop($(".log").prop("scrollHeight"));
 
-        if (Debugger.gameboy.cpu.last == null) {
-            let eventStr = "ERROR";
-            let eventElement = $(".log ul");
-            eventElement.append("<li class='error'>" + eventStr + "</li>");
-            $(".log").scrollTop($(".log").prop("scrollHeight"));
-            return;
-        }
     }
 
     public static display(): void {

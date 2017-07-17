@@ -3261,16 +3261,48 @@ export class Operations {
             }
         };
 
+        this.operations[0xCB40] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getB();
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if(val & 0){
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
+        this.operations[0xCB48] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getB();
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if(val & 1){
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
         this.operations[0xCB50] = {
             name: "BIT",
             cycle: 8,
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                let a = registers.getB();
+                let val = registers.getB();
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
-                if(a & 2){
+                if(val & 2){
                     return;
                 }
                 registers.setZeroFlag(1);
@@ -3284,10 +3316,26 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                let a = registers.getB();
+                let val = registers.getB();
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
-                if (a & 3) {
+                if (val & 3) {
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
+        this.operations[0xCB5F] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if (val & 3) {
                     return;
                 }
                 registers.setZeroFlag(1);
@@ -3301,10 +3349,29 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                let a = registers.getB();
+                let val = registers.getB();
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
-                if (a & 4) {
+                if (val & 4) {
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
+
+
+        this.operations[0xCB61] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getC();
+
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if(val & 4){
                     return;
                 }
                 registers.setZeroFlag(1);
@@ -3317,10 +3384,26 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                let a = registers.getB();
+                let val = registers.getB();
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
-                if (a & 5) {
+                if (val & 5) {
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
+        this.operations[0xCB69] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getC();
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if (val & 5) {
                     return;
                 }
                 registers.setZeroFlag(1);
@@ -3333,11 +3416,28 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                let a = registers.getA();
+                let val = registers.getA();
 
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
-                if(a & 5){
+                if(val & 5){
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
+        this.operations[0xCB6F] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if(val & 5){
                     return;
                 }
                 registers.setZeroFlag(1);
@@ -3351,11 +3451,11 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                let a = registers.getA();
+                let val = registers.getA();
 
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
-                if(a & 6){
+                if(val & 6){
                     return;
                 }
                 registers.setZeroFlag(1);
@@ -3369,11 +3469,11 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                let a = registers.getA();
+                let val = registers.getA();
 
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
-                if(a & 7){
+                if(val & 7){
                    return;
                 }
                 registers.setZeroFlag(1);
@@ -3386,8 +3486,8 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                let a = registers.getA();
-                registers.setA(a & ~(1 << pc));
+                let val = registers.getA();
+                registers.setA(val & ~(1 << pc));
             }
         };
     }
