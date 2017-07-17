@@ -54,11 +54,13 @@ export class GameBoy {
         return false;
     }
 
-    public tick(): void{
+    public tick(): boolean{
+        if(this.checkRunConditions()){return true}
         let cycles = this.cpu.tick();
         this.counts--;
         this.ticks++;
         this.ppu.renderscan(cycles);
+        return false;
     }
 
     /**
@@ -67,9 +69,8 @@ export class GameBoy {
      */
     private tickAnimation(): void {
         let tick = function(){
-            if(this.checkRunConditions()){return}
             for(let i = 0; i <= this.tpf; i++){
-                this.tick();
+                if(this.tick()) return;
             }
             setTimeout(this.tickAnimation.bind(this), 1);
         }.bind(this);
