@@ -158,20 +158,6 @@ export class Cpu {
         //this.clock.m = this.clock.t / 4;
 
         if(Debugger.status){
-            let eventStr =
-                "PC:" + this.registers.getPC().toString(16).toUpperCase()
-//            + " Op:" + this.last.opcode.toString(16).toUpperCase()
-                + " SP:" + this.registers.getSP().toString(16).toUpperCase() + "|"
-                + " AF:" + this.registers.getAF().toString(16).toUpperCase() + "|"
-                + " BC:" + this.registers.getBC().toString(16).toUpperCase() + "|"
-                + " DE:" + this.registers.getDE().toString(16).toUpperCase() + "|"
-                + " HL:" + this.registers.getHL().toString(16).toUpperCase() + "|"
-                + " LCDC:" + this.memory.ppu.registers.lcdc.getAll().toString(16).toUpperCase() + "|"
-                + " STAT:" + this.memory.ppu.registers.stat.getAll().toString(16).toUpperCase() + "|"
-                + " ie:" + this.interrupts.ie.toString(16).toUpperCase() + "|"
-                + " if:" + this.interrupts.if.toString(16).toUpperCase();
-
-            Debugger.pushLog(eventStr);
             Debugger.display();
         }
 

@@ -6,8 +6,7 @@ import {GameBoy} from './gameboy';
 export class Debugger {
     public static status: boolean = true;
     private static gameboy: GameBoy;
-    private static logLines: number = 500;
-    private static logBuffer: Array<String> = new Array<String>();
+    private static logLimit : 500;
 
     private static bgmap: Array<Number> = Array.apply(null, Array(0x800)).map(Number.prototype.valueOf, 0);
     private static COLORS: string[] = [
@@ -20,17 +19,39 @@ export class Debugger {
     private static ZOOM : number = 1.5;
 
 
-    public static pushLog(eventStr : String): void {
+    public static printLog(): void {
         //Add to log
-        if(this.logBuffer){
-            this.logBuffer.length = 0;
+        let cpu = Debugger.gameboy.cpu;
+        let memory = Debugger.gameboy.memory;
+        let eventStr =
+            "PC:" + cpu.registers.getPC().toString(16).toUpperCase()
+//            + " Op:" + this.last.opcode.toString(16).toUpperCase()
+            + " SP:" + cpu.registers.getSP().toString(16).toUpperCase() + "|"
+            + " AF:" + cpu.registers.getAF().toString(16).toUpperCase() + "|"
+            + " BC:" + cpu.registers.getBC().toString(16).toUpperCase() + "|"
+            + " DE:" + cpu.registers.getDE().toString(16).toUpperCase() + "|"
+            + " HL:" + cpu.registers.getHL().toString(16).toUpperCase() + "|"
+            + " LCDC:" + memory.ppu.registers.lcdc.getAll().toString(16).toUpperCase() + "|"
+            + " STAT:" + memory.ppu.registers.stat.getAll().toString(16).toUpperCase() + "|"
+            + " ie:" + cpu.interrupts.ie.toString(16).toUpperCase() + "|"
+            + " if:" + cpu.interrupts.if.toString(16).toUpperCase();
 
+        if ($(".log li").length > Debugger.logLimit) {
+            $(".log ul").empty();
         }
-        this.logBuffer.push(eventStr);
-    }
 
-    public static clearLog(): void {
-        $(".log ul").empty();
+        let html = "<li>" + eventStr + "</li>";
+
+        $(".log ul").append(html);
+        $(".log").scrollTop($(".log").prop("scrollHeight"));
+
+        if (Debugger.gameboy.cpu.last == null) {
+            let eventStr = "ERROR";
+            let eventElement = $(".log ul");
+            eventElement.append("<li class='error'>" + eventStr + "</li>");
+            $(".log").scrollTop($(".log").prop("scrollHeight"));
+            return;
+        }
     }
 
     public static display(): void {
@@ -41,30 +62,8 @@ export class Debugger {
 
         let gameboy = Debugger.gameboy;
 
-        //Clear log if overflowing
-        if ($(".log li").length > Debugger.logLines) {
-            Debugger.clearLog();
-        }
-
-        if (this.logBuffer.length > Debugger.logLines) {
-            this.logBuffer.length = 0;
-        }
-
-        let html = "";
-        while (this.logBuffer.length > 0) {
-            html += "<li>" + this.logBuffer.shift() + "</li>";
-        }
-
-        $(".log ul").append(html);
-        $(".log").scrollTop($(".log").prop("scrollHeight"));
-
-        if (gameboy.cpu.last == null) {
-            let eventStr = "ERROR";
-            let eventElement = $(".log ul");
-            eventElement.append("<li class='error'>" + eventStr + "</li>");
-            $(".log").scrollTop($(".log").prop("scrollHeight"));
-            return;
-        }
+        Debugger.printLog();
+        Debugger.printStack();
 
         //Print to screen
         $('#cpucycles').html(gameboy.cpu.clock.t.toString());
@@ -110,7 +109,6 @@ export class Debugger {
             $('#type').html(gameboy.cartridge.type.name);
         }
 
-        Debugger.printStack();
     }
 
 

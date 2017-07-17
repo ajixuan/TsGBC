@@ -334,7 +334,6 @@
             _tpf = $('#tpf').val();
             debug.status = !debug.status;
             if (debug.status) {
-                debug.clearLog();
                 debug.display();
                 _tpf = gameboy.tpf;
                 gameboy.tpf = 1;
@@ -368,16 +367,16 @@
     $(document).keypress(function (event) {
         //$(this.body).prepend("<span>" + event.keyCode + "</span>");
         switch (event.keyCode) {
-            case 13:
+            case 13: //Enter
                 toggleDebug();
                 break;
-            case 114:
+            case 114: //R
                 run();
                 break;
-            case 115:
+            case 115: //S
                 stop();
                 break;
-            case 116:
+            case 116: //T
                 tick();
                 break;
         }
