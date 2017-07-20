@@ -36,86 +36,62 @@ export class Joypad {
         }
     }
 
-    //Directions
+    public press = {
+        right : function () {
+          this.direction &= ~0x1;
+        },
 
-    public pressUp(): void {
-        let mask =  0xB;
-        this.direction &= mask;
+        left : function () {
+            this.direction &= ~0x2;
+        },
+        up : function () {
+            this.direction &= ~0x4;
+        },
+
+        down: function () {
+            this.direction &= ~0x8;
+        },
+        a : function () {
+            this.buttons &= ~0x1;
+        },
+        b : function () {
+            this.buttons &= ~0x2;
+        },
+        select: function () {
+            this.buttons &= ~0x4;
+        },
+        start: function () {
+            this.buttons &= ~0x8;
+        }
     }
 
-    public releaseUp(): void {
-        let mask = 0x4;
-        this.direction |= mask;
-    }
 
-    public pressDown(): void {
-        let mask = 0x7;
-        this.direction &= mask;
-    }
+    public release = {
+        right : function () {
+            this.direction |= 0x1;
+        },
 
-    public releaseDown(): void {
-        let mask = 0x8;
-        this.direction |= mask;
-    }
+        left : function () {
+            this.direction |= 0x2;
+        },
+        up : function () {
+            this.direction |= 0x4;
+        },
 
-    public pressLeft(): void {
-        let mask = 0xD;
-        this.direction &= mask;
-    }
-
-    public releaseLeft(): void {
-        let mask = 0x2;
-        this.direction |= mask;
-    }
-
-    public pressRight(): void {
-        let mask = 0xE;
-        this.direction &= mask;
-    }
-    public releaseRight(): void {
-        let mask = 0x1;
-        this.direction |= mask;
-    }
-
-    //Buttons
-
-    public pressA(): void {
-        let mask = 0xE;
-        this.buttons &= mask;
-    }
-
-    public releaseA(): void {
-        let mask = 0x1;
-        this.buttons &= mask;
-    }
-
-    public pressB(): void {
-        let mask = 0xD;
-        this.buttons &= mask;
-    }
-
-    public releaseB(): void {
-        let mask = 0x2;
-        this.buttons &= mask;
-    }
-
-    public pressStart(): void {
-        let mask = 0x7;
-        this.buttons &= mask;
-    }
-
-    public releaseStart(): void {
-        let mask = 0x8;
-        this.buttons &= mask;
-    }
-
-    public pressSelect(): void {
-        let mask = 0xB;
-        this.buttons &= mask;
-    }
-
-    public releaseSelect(): void {
-        let mask = 0x4;
-        this.buttons &= mask;
+        down: function () {
+            this.direction |= 0x8;
+        },
+        a : function () {
+            this.buttons |= 0x1;
+        },
+        b : function () {
+            this.buttons |= 0x2;
+        },
+        select: function () {
+            this.buttons |= 0x4;
+        },
+        start: function () {
+            this.buttons |= 0x8;
+        }
     }
 }
