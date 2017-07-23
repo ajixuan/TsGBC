@@ -364,19 +364,20 @@
         }
     });
 
+    //Chrome
     $(document).keypress(function (event) {
-        //$(this.body).prepend("<span>" + event.keyCode + "</span>");
-        switch (event.keyCode) {
-            case 13: //Enter
+        //$(this.body).prepend("<span>" + event.key + "</span>");
+        switch (event.key) {
+            case "Enter":
                 toggleDebug();
                 break;
-            case 114: //R
+            case "r":
                 run();
                 break;
-            case 115: //S
+            case "s": //S
                 stop();
                 break;
-            case 116: //T
+            case "t": //T
                 tick();
                 break;
         }
@@ -392,6 +393,9 @@
             }
         }
     });
+
+
+
 
 </script>
 </body>
