@@ -255,6 +255,10 @@
             <canvas id="tilemap"></canvas>
         </div>
         <button onclick="renderTilemap()">RenderTilemap</button>
+        <div style="display: flex; flex-direction: row">
+            <canvas id="oammap"></canvas>
+        </div>
+        <button onclick="renderOAM()">RenderOAM</button>
     </div>
 
 
@@ -356,6 +360,7 @@
     var renderTilemap = function(){
         debug.renderTilemap();
     }
+
 
     //Debugger hot keys
     $("#breakpoint").blur(function () {

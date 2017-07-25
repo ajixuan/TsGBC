@@ -2,11 +2,18 @@ import {Memory} from "../memory/memory";
 import {Screen} from "./screen";
 import {Registers} from "./registers";
 
+type Obj = {
+    x: number;
+    y: number;
+    tile: number;
+    attr: number;
+}
+
 export class Ppu {
     private screen: Screen;
     private memory: Memory;
     public vramTileset: Array<Array<Array<number>>>;
-    private oamTileset: Array<Array<Array<number>>>;
+    private oamTileset: Array<Obj>;
 
 
     public clock: number = 0;
@@ -26,6 +33,7 @@ export class Ppu {
      */
     public reset(): void {
         this.vramTileset = [];
+        this.oamTileset = [];
         this.registers.reset();
         this.clock = 0;
 
@@ -39,10 +47,40 @@ export class Ppu {
                 this.vramTileset[i][j] = [0, 0, 0, 0, 0, 0, 0, 0];
             }
         }
+
+
+        for (let i = 0; i < 40; i++) {
+            let obj: Obj = {
+                x: 0,
+                y: 0,
+                tile: 0,
+                attr: 0
+            }
+            this.oamTileset[i] = obj;
+        }
+
     }
 
-    public updateOamTile(addr: number): void {
-        addr &= 0xFF;
+    public updateOamSprite(addr: number, val: number): void {
+        let index = addr - 0xFE00;
+        let spritenum = Math.floor((index / 4));
+        let prop = index % 4;
+
+        switch (prop) {
+            case 0:
+                this.oamTileset[spritenum].x = val;
+                break;
+            case 1:
+                this.oamTileset[spritenum].y = val;
+                break;
+            case 2:
+                this.oamTileset[spritenum].tile = val;
+                break;
+            case 3:
+                this.oamTileset[spritenum].attr = val;
+                break;
+        }
+        return;
     }
 
     /**
@@ -119,12 +157,13 @@ export class Ppu {
             tile += 0x80;
         }
 
-        if (this.vramTileset[tile]) {
-            return this.vramTileset[tile];
+        if (!this.vramTileset[tile]) {
+            throw "ERROR: Tile number: " + tile + " does not exist";
         }
 
-        throw "ERROR: Tile number: " + tile + " does not exist";
+        return this.vramTileset[tile];
     }
+
 
     /**
      * Render scan on one tick
@@ -165,7 +204,43 @@ export class Ppu {
             }
 
         } else if (stat.modeFlag.oamlock.get() && this.clock >= 80) {
-            //lcdc.bgon.set();
+
+            //When sprites with the same x coordinate values overlap, they have priority according to table ordering. (i.e. $FE00 - highest, $FE04 - next highest, etc.)
+            // Only 10 sprites can be displayed on any one line. When this limit is exceeded, the lower priority sprites (priorities listed above) won't be displayed.
+            // To keep unused sprites from affecting onscreen sprites set their Y coordinate to Y=0 or Y=>144+16.
+            // Just setting the X coordinate to X=0 or X=>160+8 on a sprite will hide it but it will still affect other sprites sharing the same lines.
+
+            //8x16 Sprites
+            if (lcdc.objsize.get()) {
+
+
+            }
+
+            let x, y, chr, attr, tile;
+            let spriteCount = 0;
+
+            for (let i = 0; i < this.oamTileset.length; i++) {
+                if (spriteCount >= 10) {
+                    return;
+                }
+                x = this.oamTileset[i].x;
+                y = this.oamTileset[i].y;
+                chr = this.oamTileset[i].tile;
+                attr = this.oamTileset[i].attr;
+
+                //Check if the obj is within current scanline
+                if ((y > 0 && y < 160) && (x > 0 && x < 168)) {
+                    if (!(attr & 0x01)) {
+                        tile = this.vramTileset[chr];
+
+                        //Print one line
+                        for (let col = 0; col < 8; col++) {
+                            this.screen.setBufferPixel(x + col, y, tile[(x + col) % Screen.PIXELS][y % Screen.PIXELS]);
+                        }
+                    }
+                }
+            }
+
             stat.modeFlag.vramlock.set();
             this.clock = 0;
 
@@ -213,11 +288,11 @@ export class Ppu {
         }
         //OAM
         else if (addr < 0xFEA0) {
+            val = this.memory.oam[addr - 0xFE00];
+
             if (this.registers.stat.modeFlag.vramlock.get() || this.registers.stat.modeFlag.oamlock.get()) {
                 val = 0xFF;
             }
-
-            val = this.memory.oam[addr - 0xFE00];
         } else if (addr == 0xFF40) {
             val = this.registers.lcdc.getAll();
         } else if (addr == 0xFF42) {
@@ -260,8 +335,6 @@ export class Ppu {
             }
 
             this.memory.vram[addr - 0x8000] = val;
-
-            //If it is in tile range
             if (addr < 0x9800) {
                 this.updateVramTile(addr);
             }
@@ -274,15 +347,13 @@ export class Ppu {
             }
 
             this.memory.oam[addr - 0xFE00] = val;
-            this.updateOamTile(addr);
+            this.updateOamSprite(addr, val);
         } else if (addr == 0xFF40) {
             this.registers.lcdc.setAll(val);
         } else if (addr == 0xFF42) {
             this.registers.scy = val;
-
         } else if (addr == 0xFF43) {
             this.registers.scx = val;
-
         } else if (addr == 0xFF44) {
             this.registers.ly = val;
 
@@ -295,10 +366,15 @@ export class Ppu {
             //Transfers 40 x 32 bits of data
             //val is the starting address of transfer
             //val is always the upper 8 bits, so need to be shifted
+            let dest = val << 8;
             for (let i = 0; i < 0x9F; i++) {
-                let data = this.memory.readByte((val << 8) + i);
+                let data = this.memory.readByte(val + i);
                 this.memory.oam[i] = data;
+                this.updateOamSprite(0xFE00 + i, data);
             }
+
+            //160 ms to complete
+            //cpu can only access FF80-FFFE
         }
         //BGP
         //Bit 7-6 - Shade for Color Number 3
@@ -334,3 +410,4 @@ export class Ppu {
     }
 
 }
+
