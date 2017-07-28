@@ -72,7 +72,60 @@ export class Memory {
             } else if (addr == 0xFF0F) {
                 this.interrupts.if = (0xE0 | val) & 0xFF;
             } else if (addr < 0xFF6C) {
-                this.ppu.requestWrite(addr, val);
+
+                if (addr == 0xFF40) {
+                    this.ppu.registers.lcdc.setAll(val);
+                } else if (addr == 0xFF42) {
+                    this.ppu.registers.scy = val;
+                } else if (addr == 0xFF43) {
+                    this.ppu.registers.scx = val;
+                } else if (addr == 0xFF44) {
+                    this.ppu.registers.ly = val;
+
+                } else if (addr == 0xFF45) {
+                    this.ppu.registers.lyc = val;
+
+                }
+                //DMA
+                else if (addr == 0xFF46) {
+                    //Transfers 40 x 32 bits of data
+                    //val is the starting address of transfer
+                    //val is always the upper 8 bits, so need to be shifted
+                    //160 ms to complete
+                    //cpu can only access FF80-FFFE
+
+                    let target = val << 8;
+                    for (let i = 0; i <= 0x9F; i++) {
+                        let data = this.readByte(target + i);
+                        this.oam[i] = data;
+                        this.ppu.updateOamSprite(0xFE00 + i);
+                    }
+                } else if (addr == 0xFF47) {
+
+                } else if (addr == 0xFF48) {
+
+
+                } else if (addr == 0xFF49) {
+
+
+                } else if (addr == 0xFF4A) {
+                    this.ppu.registers.wy = val;
+
+                } else if (addr == 0xFF4B) {
+                    this.ppu.registers.wx = val;
+
+                } else if (addr == 0xFF68) {
+                    this.ppu.registers.bcps = val;
+
+                } else if (addr == 0xFF69) {
+                    this.ppu.registers.bcpd = val;
+
+                } else if (addr == 0xFF6A) {
+                    this.ppu.registers.ocps = val;
+
+                } else if (addr == 0xFF6B) {
+                    this.ppu.registers.ocpd = val;
+                }
             }
         } else if (addr < 0xFFFF) {
             this.cpu.stack[addr - 0xFF80] = val;
@@ -133,7 +186,31 @@ export class Memory {
             } else if (addr == 0xFF0F) {
                 return this.interrupts.if & 0xFF;
             } else if (addr < 0xFF6C) {
-                return this.ppu.requestRead(addr);
+                if (addr == 0xFF40) {
+                    val = this.ppu.registers.lcdc.getAll();
+                } else if (addr == 0xFF42) {
+                    val = this.ppu.registers.scy;
+                } else if (addr == 0xFF43) {
+                    val = this.ppu.registers.scx;
+                } else if (addr == 0xFF44) {
+                    val = this.ppu.registers.ly;
+                } else if (addr == 0xFF45) {
+                    val = this.ppu.registers.lyc;
+                } else if (addr == 0xFF46) {
+                    val = 0xFF;
+                } else if (addr == 0xFF4A) {
+                    val = this.ppu.registers.wy;
+                } else if (addr == 0xFF4B) {
+                    val = this.ppu.registers.wx;
+                } else if (addr == 0xFF68) {
+                    val = this.ppu.registers.bcps;
+                } else if (addr == 0xFF69) {
+                    val = this.ppu.registers.bcpd;
+                } else if (addr == 0xFF6A) {
+                    val = this.ppu.registers.ocps;
+                } else if (addr == 0xFF6B) {
+                    val = this.ppu.registers.ocpd;
+                }
             } else if (addr < 0xFF80) {
                 throw "Invalid read on unused i/o at 0x" + addr.toString(16);
             }

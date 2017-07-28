@@ -13,7 +13,7 @@ export class Ppu {
     private screen: Screen;
     private memory: Memory;
     public vramTileset: Array<Array<Array<number>>>;
-    private oamTileset: Array<Obj>;
+    public oamTileset: Array<Obj>;
 
 
     public clock: number = 0;
@@ -48,7 +48,6 @@ export class Ppu {
             }
         }
 
-
         for (let i = 0; i < 40; i++) {
             let obj: Obj = {
                 x: 0,
@@ -61,26 +60,25 @@ export class Ppu {
 
     }
 
-    public updateOamSprite(addr: number, val: number): void {
+    public updateOamSprite(addr: number): void {
         let index = addr - 0xFE00;
-        let spritenum = Math.floor((index / 4));
+        let block = Math.floor((index / 4));
         let prop = index % 4;
-
+        let val = this.memory.oam[index];
         switch (prop) {
             case 0:
-                this.oamTileset[spritenum].x = val;
+                this.oamTileset[block].y = val;
                 break;
             case 1:
-                this.oamTileset[spritenum].y = val;
+                this.oamTileset[block].x = val;
                 break;
             case 2:
-                this.oamTileset[spritenum].tile = val;
+                this.oamTileset[block].tile = val;
                 break;
             case 3:
-                this.oamTileset[spritenum].attr = val;
+                this.oamTileset[block].attr = val;
                 break;
         }
-        return;
     }
 
     /**
@@ -190,7 +188,6 @@ export class Ppu {
         //Cycle through stat
         if (stat.modeFlag.hblank.get() && this.clock >= 204) {
             stat.modeFlag.oamlock.set();
-            this.registers.ly++;
             this.clock = 0;
 
         } else if (stat.modeFlag.vblank.get() && this.clock >= 456) {
@@ -205,6 +202,9 @@ export class Ppu {
 
         } else if (stat.modeFlag.oamlock.get() && this.clock >= 80) {
 
+            let x, y, chr, attr, tile;
+            let spriteCount = 0;
+
             //When sprites with the same x coordinate values overlap, they have priority according to table ordering. (i.e. $FE00 - highest, $FE04 - next highest, etc.)
             // Only 10 sprites can be displayed on any one line. When this limit is exceeded, the lower priority sprites (priorities listed above) won't be displayed.
             // To keep unused sprites from affecting onscreen sprites set their Y coordinate to Y=0 or Y=>144+16.
@@ -216,35 +216,54 @@ export class Ppu {
 
             }
 
-            let x, y, chr, attr, tile;
-            let spriteCount = 0;
-
+            //for each tile in oam
             for (let i = 0; i < this.oamTileset.length; i++) {
                 if (spriteCount >= 10) {
                     return;
                 }
-                x = this.oamTileset[i].x;
-                y = this.oamTileset[i].y;
+
+                x = this.oamTileset[i].x - 8;
+                y = this.oamTileset[i].y - 16;
                 chr = this.oamTileset[i].tile;
                 attr = this.oamTileset[i].attr;
 
                 //Check if the obj is within current scanline
-                if ((y > 0 && y < 160) && (x > 0 && x < 168)) {
-                    if (!(attr & 0x01)) {
+                if ((y >= 16 && y < 160) && (x >= 8 && x < 168)) {
+                    if (this.registers.ly >= y && this.registers.ly < y + 8) {
+
                         tile = this.vramTileset[chr];
+
 
                         //Print one line
                         for (let col = 0; col < 8; col++) {
-                            this.screen.setBufferPixel(x + col, y, tile[(x + col) % Screen.PIXELS][y % Screen.PIXELS]);
+                            if ((x + col) > this.screen.WIDTH) {
+                                return;
+                            }
+
+                            let offset = col * 4;
+                            let bg =
+                                this.screen.FRAME.data[y][x + offset] |
+                                this.screen.FRAME.data[y][x + offset + 1] |
+                                this.screen.FRAME.data[y][x + offset + 2];
+
+                            if ((attr & 0x01) && bg > 0) {
+                                continue;
+                            }
+
+                            this.screen.setBufferPixel(x + col, this.registers.ly, tile[this.registers.ly - y][col]);
                         }
                     }
                 }
             }
 
             stat.modeFlag.vramlock.set();
+            this.registers.ly++;
             this.clock = 0;
 
         } else if (stat.modeFlag.vramlock.get() && this.clock >= 172) {
+            let mapy, mapx, tile;
+            let row = this.registers.ly;
+
             if (lcdc.lcdon.get()) {
                 this.clock = 0;
 
@@ -255,9 +274,6 @@ export class Ppu {
                     return;
                 }
 
-                //Get the tiles of our current ly
-                let mapy, mapx, tile;
-                let row = this.registers.ly;
                 //Y coordinate does not change during line render
                 mapy = (this.registers.ly + this.registers.scy);
                 //ycoor = Screen.TILES * Math.floor(y / Screen.PIXELS);
@@ -271,7 +287,6 @@ export class Ppu {
                     tile = this.getVramTile(tilenum);
                     this.screen.setBufferPixel(cell, row, tile[row % Screen.PIXELS][cell % Screen.PIXELS]);
                 }
-                //this.screen.printBufferRow(row);
                 stat.modeFlag.hblank.set();
             }
         }
@@ -293,28 +308,6 @@ export class Ppu {
             if (this.registers.stat.modeFlag.vramlock.get() || this.registers.stat.modeFlag.oamlock.get()) {
                 val = 0xFF;
             }
-        } else if (addr == 0xFF40) {
-            val = this.registers.lcdc.getAll();
-        } else if (addr == 0xFF42) {
-            val = this.registers.scy;
-        } else if (addr == 0xFF43) {
-            val = this.registers.scx;
-        } else if (addr == 0xFF44) {
-            val = this.registers.ly;
-        } else if (addr == 0xFF45) {
-            val = this.registers.lyc;
-        } else if (addr == 0xFF4A) {
-            val = this.registers.wy;
-        } else if (addr == 0xFF4B) {
-            val = this.registers.wx;
-        } else if (addr == 0xFF68) {
-            val = this.registers.bcps;
-        } else if (addr == 0xFF69) {
-            val = this.registers.bcpd;
-        } else if (addr == 0xFF6A) {
-            val = this.registers.ocps;
-        } else if (addr == 0xFF6B) {
-            val = this.registers.ocpd;
         }
 
         return val;
@@ -347,66 +340,13 @@ export class Ppu {
             }
 
             this.memory.oam[addr - 0xFE00] = val;
-            this.updateOamSprite(addr, val);
-        } else if (addr == 0xFF40) {
-            this.registers.lcdc.setAll(val);
-        } else if (addr == 0xFF42) {
-            this.registers.scy = val;
-        } else if (addr == 0xFF43) {
-            this.registers.scx = val;
-        } else if (addr == 0xFF44) {
-            this.registers.ly = val;
-
-        } else if (addr == 0xFF45) {
-            this.registers.lyc = val;
-
-        }
-        //DMA
-        else if (addr == 0xFF46) {
-            //Transfers 40 x 32 bits of data
-            //val is the starting address of transfer
-            //val is always the upper 8 bits, so need to be shifted
-            let dest = val << 8;
-            for (let i = 0; i < 0x9F; i++) {
-                let data = this.memory.readByte(val + i);
-                this.memory.oam[i] = data;
-                this.updateOamSprite(0xFE00 + i, data);
-            }
-
-            //160 ms to complete
-            //cpu can only access FF80-FFFE
+            this.updateOamSprite(addr);
         }
         //BGP
         //Bit 7-6 - Shade for Color Number 3
         //Bit 5-4 - Shade for Color Number 2
         //Bit 3-2 - Shade for Color Number 1
         //Bit 1-0 - Shade for Color Number 0
-        else if (addr == 0xFF47) {
-
-        } else if (addr == 0xFF48) {
-
-
-        } else if (addr == 0xFF49) {
-
-
-        } else if (addr == 0xFF4A) {
-            this.registers.wy = val;
-
-        } else if (addr == 0xFF4B) {
-            this.registers.wx = val;
-
-        } else if (addr == 0xFF68) {
-            this.registers.bcps = val;
-
-        } else if (addr == 0xFF69) {
-            this.registers.bcpd = val;
-
-        } else if (addr == 0xFF6A) {
-            this.registers.ocps = val;
-
-        } else if (addr == 0xFF6B) {
-            this.registers.ocpd = val;
-        }
     }
 
 }

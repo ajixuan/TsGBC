@@ -181,6 +181,28 @@ export class Debugger {
         }
     }
 
+/*
+    public static renderOams(){
+        let ppu = Debugger.gameboy.ppu;
+        let oammap: any = document.getElementById("oammap");
+        oammap.width = 16 * 9 * zoom;
+        oammap.height = 21 * 9 * zoom;
+        let context : any = bgmap.getContext("2d");
+
+
+
+        for(let i = 0 ; i <= 0x9F ; i++){
+            let tile = ppu.oamTileset[i].tile;
+            for(let y = 0; y < 8; y++){
+                for(let x = 0; x < 8; x++){
+
+
+                }
+            }
+        }
+
+    }
+*/
     public static printStack(){
         let gameboy = Debugger.gameboy;
         let sp = gameboy.cpu.registers.getSP();
@@ -194,7 +216,7 @@ export class Debugger {
             let lower: number = 0;
 
             if(i > 0xFFFE){
-                continue
+                continue;
             } else if (i < 0xC000) {
                 upper = gameboy.memory.cartridge.readByte(i) ; lower = gameboy.memory.cartridge.readByte(i - 1);
             } else if (i < 0xE000) {

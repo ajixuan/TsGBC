@@ -107,9 +107,11 @@ export class Screen {
         y = y * Math.pow(zoomVal, 2) * this.WIDTH;
         for (let zoomy = 0; zoomy < zoomVal; zoomy++){
             py = y + (zoomy * this.WIDTH * zoomVal);
-            for (let zoomx = 0 ; zoomx < zoomVal; zoomx++){
-                px = (x + zoomx);
+                for (let zoomx = 0 ; zoomx < zoomVal; zoomx++){
+                    px = (x + zoomx);
                 coordinates = (py + px) * 4;
+
+                //RGB + transparency
                 this.FRAME.data[coordinates + 0] = color >> 16 & 0xFF;
                 this.FRAME.data[coordinates + 1] = color >> 8 & 0xFF;
                 this.FRAME.data[coordinates + 2] = color & 0xFF;

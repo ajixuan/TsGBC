@@ -12,14 +12,12 @@ export class Registers {
     public wx: number = 0;
     public wy: number = 0;
 
-
     //OAM
     public bcps: number = 0;
     public bcpd: number = 0;
     public ocps: number = 0;
     public ocpd: number = 0;
 
-    public dma: number = 0;
     public bgp: number = 0;
     public obp0: number = 0;
     public obp1: number = 0;
