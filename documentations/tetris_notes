@@ -19,7 +19,6 @@ S = 1 : 4/32
 
 4/32
 
-
 Bank select:
 0x2000-0x3FFF writing bits: XXXBBBBB
 where
@@ -76,16 +75,19 @@ Vblank complete==============
 2BC = reset interrupt flag
 2BD-2BE = reset winx and winy
 
+Joypad =====================
 2C4: joypad
 	29A6-29B0 = load 20 into joypad and read output 4 times
 	29B8-29CE = load 10 into joypad and read output 10 times 
 	29D5-29DE = load various values into cpu stack
+=============================
+Joypad complete
 
 2C7: Jmp Sequence
 	2FA = push stack and jump to 28
 		28-33: jmp to HL
 
-			========================================================
+			##369 HL ============================================
 			369: Enable Vblank interrupt and wait for LY to set IF, then trigger IF
 				*2820,282 = Temporarily store IE into FFA1 to be set later 
 				2828-282A = Wait until LY completes and sets vblank flag on IF 
@@ -109,6 +111,8 @@ Vblank complete==============
 			393: If FFA6 is 0
 				397: 
 
+			##479 HL ============================================
+			479 See below
 
 2CA: Descend into madness
 	7FF0:
@@ -130,7 +134,7 @@ Vblank complete==============
 			6A65
 		6500: Jmp 
 			69FD-6A02: if DFF8 is 0 Jmp to 6A10
-			6A10-6A13: if DFF9 is 0 Jmp to 6A1C
+			6A10-6A13: if DFF9 is 0 Jmp to 6A1C (ret)
 		6503:
 			683C-6841: If DEF0 is 1 Jmp to 686B
 			6844-6846: If DEF0 is 2 Jmp to 6800
@@ -141,8 +145,6 @@ Vblank complete==============
 		6509:
 		650C:
 
-
-
 ##The Intro screen loop=====================
 2CD-2D3: If FF80 is 0F, jump to 21B
 2D6-2E2: dec FFA6 and FFA7
@@ -151,12 +153,36 @@ Vblank complete==============
 2F2-2F3: Make FF85 0
 2F5: Run 2C4
 	2C4: Joypad See above
-2F8-2FA: Load FFE1 to A and jmp to 28
-	28: Jmp to HL See above
+	2C7: 
+		2F8-2FA: Load FFE1 to A and jmp to 28
+	28: Jmp to HL: (for 369 See above)
+		479: Jmp to player select loop
+==============================================
 
+##The player select loop========================
+479 - 47C : nz; 488
+482: z;
+	41F: Jmp to auto play (see below)
+488:
+	A98 - A9B: Loop until B is 0
+48B - 496: Serial data and serial control write
+	
+##Check for button press=====
+4A2-4A5: FF81 and FFC5
+4A9: nz; 
+	4F3:
+4AD: nz; On right button press, if 4th bit of FF81 is not 0
+	502:
+4B1: nz; On left button press, if 5th bit of FF81 is not 0
+	507-508: if a is 0 return
+4B5: ret to 2CA (see above)
+=============================
+================================================
 
+##Auto play begins==============================
+41F: 
 
-
+================================================
 
 ----------------------------------------------------------------------
 
