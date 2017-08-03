@@ -128,6 +128,9 @@ export class Memory {
                 }
             }
         } else if (addr < 0xFFFF) {
+            if(addr == 0xFF81){
+                console.log(val);
+            }
             this.cpu.stack[addr - 0xFF80] = val;
         } else if (addr == 0xFFFF) {
             this.interrupts.ie = val & 0xFF;
@@ -144,7 +147,7 @@ export class Memory {
             addr &= 0xFFFF;
         }
 
-        var val = null;
+        let val = null;
         if (addr < 0x8000) {
             return this.cartridge.readByte(addr);
         } else if (addr < 0xA000) {
@@ -202,6 +205,8 @@ export class Memory {
                     val = this.ppu.registers.wy;
                 } else if (addr == 0xFF4B) {
                     val = this.ppu.registers.wx;
+                } else if (addr < 0xFF68) {
+                    val = 0xFF;
                 } else if (addr == 0xFF68) {
                     val = this.ppu.registers.bcps;
                 } else if (addr == 0xFF69) {

@@ -6,9 +6,9 @@
  */
 export class Joypad {
 
-    buttons: number = 0x0F;
-    direction: number = 0x0F;
-    type: number = 0x0;
+    buttons: number = 0xF;
+    direction: number = 0xF;
+    type: number = 0xC0;
 
     //   XX001111
     //   (garbage bit 7-6)(read type bit 5-4)(inputs bit 3-0)
@@ -18,17 +18,16 @@ export class Joypad {
 
     public writeByte(data: number): void {
         if (data == null) throw "Invalid data for joypad";
-        this.type = data & 0x30;
+        this.type = (data | 0xC0);
     }
 
     public readByte(): number {
-        if (this.type == 0x10) {
+        if(this.type == 0xC0){
+            return 0xFF;
+        } else if (this.type == 0xD0) {
             return (this.buttons | this.type) & 0xFF;
-        } else if (this.type == 0x20) {
-            console.log();
+        } else if (this.type == 0xE0) {
             return (this.direction | this.type) & 0xFF;
-        } else if (this.type == 0x30) {
-            return 0x3F;
         } else {
             throw "Error unknown read type for joypad " + this.type.toString();
         }
