@@ -26,23 +26,23 @@ export class Keyboard {
             let code = e.keyCode;
             let key = Keyboard.mapping;
 
-            console.log("Pressing " + code);
+            console.log("Releasing" + code);
             if (code == key.up) {
-                this.joypad.release.up();
+                this.joypad.releaseUp();
             } else if (code == key.down) {
-                this.joypad.release.down();
+                this.joypad.releaseDown();
             } else if (code == key.left) {
-                this.joypad.release.left();
+                this.joypad.releaseLeft();
             } else if (code == key.right) {
-                this.joypad.release.right();
+                this.joypad.releaseRight();
             } else if (code == key.a) {
-                this.joypad.release.a();
+                this.joypad.releaseA();
             } else if (code == key.b) {
-                this.joypad.release.b();
+                this.joypad.releaseB();
             } else if (code == key.start) {
-                this.joypad.release.start();
+                this.joypad.releaseStart();
             } else if (code == key.select) {
-                this.joypad.release.select();
+                this.joypad.releaseSelect();
             }
 
         }.bind(this);
@@ -51,22 +51,23 @@ export class Keyboard {
             let code = e.keyCode;
             let key = Keyboard.mapping;
 
+            console.log("Pressing " + code);
             if (code == key.up) {
-                this.joypad.press.up();
+                this.joypad.pressUp();
             } else if (code == key.down) {
-                this.joypad.press.down();
+                this.joypad.pressDown();
             } else if (code == key.left) {
-                this.joypad.press.left();
+                this.joypad.pressLeft();
             } else if (code == key.right) {
-                this.joypad.press.right();
+                this.joypad.pressRight();
             } else if (code == key.a) {
-                this.joypad.press.a();
+                this.joypad.pressA();
             } else if (code == key.b) {
-                this.joypad.press.b();
+                this.joypad.pressB();
             } else if (code == key.start) {
-                this.joypad.press.start();
+                this.joypad.pressStart();
             } else if (code == key.select) {
-                this.joypad.press.select();
+                this.joypad.pressSelect();
             }
 
         }.bind(this);

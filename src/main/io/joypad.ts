@@ -1,4 +1,3 @@
-import {Memory} from "../memory/memory";
 /**
  * Created by hkamran on 12/6/2016.
  *
@@ -7,7 +6,7 @@ import {Memory} from "../memory/memory";
  */
 export class Joypad {
 
-    buttons : number = 0x0F;
+    buttons: number = 0x0F;
     direction: number = 0x0F;
     type: number = 0x0;
 
@@ -24,74 +23,40 @@ export class Joypad {
 
     public readByte(): number {
         if (this.type == 0x10) {
-            return this.buttons & 0xFF;
+            return (this.buttons | this.type) & 0xFF;
         } else if (this.type == 0x20) {
-            return this.direction & 0xFF;
+            console.log();
+            return (this.direction | this.type) & 0xFF;
         } else if (this.type == 0x30) {
             return 0x3F;
-        } else if (this.type == 0x00) {
-            return this.direction & 0xFF;
         } else {
             throw "Error unknown read type for joypad " + this.type.toString();
         }
     }
 
-    public press = {
-        right : function () {
-          this.direction &= ~0x1;
-        },
+    //@formatter:off
+    public pressRight = function () { console.log("Bp " + this.direction); this.direction &= 0xE };
+    public releaseRight = function () {console.log("Br " + this.direction); this.direction |= 0x1};
 
-        left : function () {
-            this.direction &= ~0x2;
-        },
-        up : function () {
-            this.direction &= ~0x4;
-        },
+    public pressLeft = function () {this.direction &= 0xD };
+    public releaseLeft = function () {this.direction |= 0x2};
 
-        down: function () {
-            this.direction &= ~0x8;
-        },
-        a : function () {
-            this.buttons &= ~0x1;
-        },
-        b : function () {
-            this.buttons &= ~0x2;
-        },
-        select: function () {
-            this.buttons &= ~0x4;
-        },
-        start: function () {
-            this.buttons &= ~0x8;
-        }
-    }
+    public pressUp = function () { this.direction &= 0xB  };
+    public releaseUp = function () {this.direction |= 0x4};
 
+    public pressDown = function () { this.direction &= 0x7 };
+    public releaseDown = function () {this.direction |= 0x8};
 
-    public release = {
-        right : function () {
-            this.direction |= 0x1;
-        },
+    public pressA = function () { this.buttons &= 0xE };
+    public releaseA = function () {this.buttons |= 0x1};
 
-        left : function () {
-            this.direction |= 0x2;
-        },
-        up : function () {
-            this.direction |= 0x4;
-        },
+    public pressB = function () { this.buttons &= 0xD };
+    public releaseB = function () {this.buttons |= 0x2};
 
-        down: function () {
-            this.direction |= 0x8;
-        },
-        a : function () {
-            this.buttons |= 0x1;
-        },
-        b : function () {
-            this.buttons |= 0x2;
-        },
-        select: function () {
-            this.buttons |= 0x4;
-        },
-        start: function () {
-            this.buttons |= 0x8;
-        }
-    }
+    public pressStart = function () {this.buttons &= 0x7};
+    public releaseStart = function () {this.buttons |= 0x8};
+
+    public pressSelect = function () {this.buttons &= 0xB};
+    public releaseSelect = function () {this.buttons |= 0x4};
+    //@formatter:on
 }
