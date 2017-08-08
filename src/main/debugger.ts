@@ -77,18 +77,20 @@ export class Debugger {
         $('#zero').html("z: " + Number(gameboy.cpu.registers.getZeroFlag()).toString(2));
         $('#subtract').html("s: " + Number(gameboy.cpu.registers.getSubtractFlag()).toString(2));
         $('#halfcarry').html("h: " + Number(gameboy.cpu.registers.getHalfFlag()).toString(2));
-        $('#fullcarry').html("f: " + Number(gameboy.cpu.registers.getCarryFlag()).toString(2));
+        $('#fullcarry').html("c: " + Number(gameboy.cpu.registers.getCarryFlag()).toString(2));
 
         $('#af').html("0x" + gameboy.cpu.registers.getAF().toString(16).toUpperCase());
         $('#bc').html("0x" + gameboy.cpu.registers.getBC().toString(16).toUpperCase());
         $('#de').html("0x" + gameboy.cpu.registers.getDE().toString(16).toUpperCase());
         $('#hl').html("0x" + gameboy.cpu.registers.getHL().toString(16).toUpperCase());
 
-        $('#opcode').html("0x" + gameboy.cpu.last.opcode.toString(16).toUpperCase());
-        $('#opname').html(gameboy.cpu.last.operation.name.toUpperCase());
-        $('#opmode').html(gameboy.cpu.last.operation.mode.name.toUpperCase());
-        $('#opaddr').html("0x" + gameboy.cpu.last.opaddr.toString(16).toUpperCase());
-        $('#operand').html(gameboy.cpu.last.opaddr.toString(16).toUpperCase());
+        if(gameboy.cpu.last){
+            $('#opcode').html("0x" + gameboy.cpu.last.opcode.toString(16).toUpperCase());
+            $('#opname').html(gameboy.cpu.last.operation.name.toUpperCase());
+            $('#opmode').html(gameboy.cpu.last.operation.mode.name.toUpperCase());
+            $('#opaddr').html("0x" + gameboy.cpu.last.opaddr.toString(16).toUpperCase());
+            $('#operand').html(gameboy.cpu.last.opaddr.toString(16).toUpperCase());
+        }
 
         //PPU Register
         $('#lcdc').html("0x" + gameboy.ppu.registers.lcdc.getAll().toString(16));
@@ -211,35 +213,48 @@ export class Debugger {
         $("#stack ul").html('');
 
         //Print up and down 10 addresses in stack
-        for(let i = sp + 10; i > sp - 10; i-=2){
-            let upper: number = 0;
-            let lower: number = 0;
+        for(let cur = sp + 10;  cur > sp - 10; cur-=2){
 
-            if(i > 0xFFFE){
-                continue;
-            } else if (i < 0xC000) {
-                upper = gameboy.memory.cartridge.readByte(i) ; lower = gameboy.memory.cartridge.readByte(i - 1);
-            } else if (i < 0xE000) {
-                upper = gameboy.memory.cpu.ram[i - 0xC000] ; lower = gameboy.memory.cpu.ram[i - 1 - 0xC000];
-            } else if (i <= 0xFFFE) {
-                upper = gameboy.memory.cpu.stack[i - 0xFF80]  ; lower = gameboy.memory.cpu.stack[i - 1 - 0xFF80];
+            //Upper and lower bits
+            let upper = 0;
+            let lower = 0;
 
+            //Handle stack jumps
+            if (cur < 0xC000) {
+                upper = gameboy.memory.cartridge.readByte(cur) ; lower = gameboy.memory.cartridge.readByte(cur- 1);
+            } else if (cur < 0xE000) {
+                upper = gameboy.memory.cpu.ram[cur- 0xC000] ; lower = gameboy.memory.cpu.ram[cur- 1 - 0xC000];
+            } else if (cur >= 0xFF80 && cur <= 0xFFFE) {
+                upper = gameboy.memory.cpu.stack[cur- 0xFF80]  ; lower = gameboy.memory.cpu.stack[cur- 1 - 0xFF80];
             } else {
-                continue
+                continue;
             }
 
-            if(i == sp){
+            if(cur== sp){
                 //Create cursor
                 $("#stack ul").append("<li style='background-color:#3394FF'>"
-                    + "<div style='float:left;margin-left: 20px'>" + i.toString(16) + ":" + upper.toString(16)
-                    + "</div><div style='float:left;margin-left: 20px'>" + (i-1).toString(16) + ":" + lower.toString(16)
+                    + "<div style='float:left;margin-left: 20px'>" + cur.toString(16) + ":" + upper.toString(16)
+                    + "</div><div style='float:left;margin-left: 20px'>" + (cur-1).toString(16) + ":" + lower.toString(16)
                     + "</div><div style='clear:both'></div></li>");
             } else {
                 $("#stack ul").append("<li>" +
                     "<div style='float:left;margin-left: 20px'>"
-                    + i.toString(16) + ":" + upper.toString(16) + "</div><div style='float:left;margin-left:20px'> "
-                    + (i-1).toString(16) + ":" + lower.toString(16) + "</div><div style='clear:both'></div></li>");
+                    + cur.toString(16) + ":" + upper.toString(16) + "</div><div style='float:left;margin-left:20px'> "
+                    + (cur-1).toString(16) + ":" + lower.toString(16) + "</div><div style='clear:both'></div></li>");
             }
+        }
+    }
+
+    public static initMemmap(){
+        let memory = Debugger.gameboy.memory;
+        let row;
+        for(let i=0;i<=0xFFF0;i+=0x10){
+            row = "<tr>" + "<th>0x" + i.toString(16) + "</th>";
+            for(let j=0;j<=0xF;j++){
+                row += "<td>" + memory.readByte(i+j) + "</td>";
+            }
+            row += "</tr>";
+            $("#memmap").append(row);
         }
     }
 
@@ -247,6 +262,7 @@ export class Debugger {
     public static init(gameboy: GameBoy) {
         Debugger.gameboy = gameboy;
         console.info("Debugger is ready!");
+        Debugger.initMemmap();
         Debugger.display();
     }
 

@@ -261,6 +261,34 @@
         <button onclick="renderOAM()">RenderOAM</button>
     </div>
 
+    <!--Memory Map-->
+    <div class="debugger">
+        <div id="memory">
+            <table id="memmap">
+                <!--Header-->
+                <tr>
+                    <th>xxxx</th>
+                    <th>0x00</th>
+                    <th>0x01</th>
+                    <th>0x02</th>
+                    <th>0x03</th>
+                    <th>0x04</th>
+                    <th>0x05</th>
+                    <th>0x06</th>
+                    <th>0x07</th>
+                    <th>0x08</th>
+                    <th>0x09</th>
+                    <th>0x0A</th>
+                    <th>0x0B</th>
+                    <th>0x0C</th>
+                    <th>0x0D</th>
+                    <th>0x0E</th>
+                    <th>0x0F</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
 
 </div>
 
@@ -279,8 +307,9 @@
                 return;
             }
 
+            gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");
             //gameboy.load("./roms/cpu_instrs/individual/01-special.gb");
-            gameboy.load("./roms/Tetris.gb");
+            //gameboy.load("./roms/Tetris.gb");
             gameboy.reset();
             loadDebugger();
             console.info("Gameboy is ready!");
@@ -353,11 +382,11 @@
         gameboy.setPCBreak(val);
     }
 
-    var renderBGmap = function(){
+    var renderBGmap = function () {
         debug.renderBGmap();
     }
 
-    var renderTilemap = function(){
+    var renderTilemap = function () {
         debug.renderTilemap();
     }
 
@@ -400,7 +429,6 @@
         }
     });
 */
-
 
 
 </script>
