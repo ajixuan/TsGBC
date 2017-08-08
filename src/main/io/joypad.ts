@@ -8,7 +8,7 @@ export class Joypad {
 
     buttons: number = 0xF;
     direction: number = 0xF;
-    type: number = 0x0;
+    type: number = 0xC0;
 
     //   XX001111
     //   (garbage bit 7-6)(read type bit 5-4)(inputs bit 3-0)
@@ -27,7 +27,7 @@ export class Joypad {
         } else if (this.type == 0xD0) {
             return (this.buttons | this.type) & 0xFF;
         } else if (this.type == 0xE0) {
-            console.log((this.direction | this.type) & 0xFF);
+            //console.log((this.direction | this.type) & 0xFF);
             return (this.direction | this.type) & 0xFF;
         } else {
             throw "Error unknown read type for joypad " + this.type.toString();
@@ -35,8 +35,8 @@ export class Joypad {
     }
 
     //@formatter:off
-    public pressRight = function () { console.log("Bp " + this.direction); this.direction &= 0xE };
-    public releaseRight = function () {console.log("Br " + this.direction); this.direction |= 0x1};
+    public pressRight = function () { this.direction &= 0xE };
+    public releaseRight = function () {this.direction |= 0x1};
 
     public pressLeft = function () {this.direction &= 0xD };
     public releaseLeft = function () {this.direction |= 0x2};
@@ -44,7 +44,7 @@ export class Joypad {
     public pressUp = function () { this.direction &= 0xB  };
     public releaseUp = function () {this.direction |= 0x4};
 
-    public pressDown = function () { this.direction &= 0x7 };
+    public pressDown = function () { this.direction &= 0x7};
     public releaseDown = function () {this.direction |= 0x8};
 
     public pressA = function () { this.buttons &= 0xE };

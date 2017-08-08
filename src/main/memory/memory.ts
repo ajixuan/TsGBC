@@ -26,7 +26,7 @@ export class Memory {
 
     public writeByte(addr: number, val: number): void {
         if (val == null || val > 0xFF || addr == null || addr > 0xFFFF) {
-            throw "Invalid write at 0x" + addr.toString(16) + " with " + val;
+            throw new Error("Invalid write at 0x" + addr.toString(16) + " with " + val);
         } else if (addr < 0) {
             addr &= 0xFFFF;
         }
@@ -44,7 +44,7 @@ export class Memory {
         } else if (addr < 0xFF80) {
             if (addr < 0xFF00) {
                 //Empty but usable for io
-                //throw "Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
+                //throw new Error("Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16));
             } else if (addr < 0xFF08) {
                 switch (addr & 0xFF) {
                     case 0:
@@ -129,7 +129,9 @@ export class Memory {
             }
         } else if (addr < 0xFFFF) {
             if(addr == 0xFF81){
-                console.log(val);
+                //console.log("0xFF81: " + val);
+            } else if(addr == 0xFF80){
+                //console.log("0xFF80: " + val);
             }
             this.cpu.stack[addr - 0xFF80] = val;
         } else if (addr == 0xFFFF) {
@@ -161,7 +163,7 @@ export class Memory {
         } else if (addr < 0xFF80) {
             if (addr < 0xFF00) {
                 //Empty but usable for io
-                throw "Invalid read on unused i/o at 0x" + addr.toString(16);
+                return 0x00;
             } else if (addr < 0xFF08) {
                 switch (addr & 0xFF) {
                     case 0:
@@ -169,9 +171,10 @@ export class Memory {
                         break;
                     case 1:
                         //SB
-                        break;
                     case 2:
                         //SC
+                    case 3:
+                        val = 0xFF;
                         break;
                     case 4:
                         val = this.io.getDiv();
@@ -217,7 +220,8 @@ export class Memory {
                     val = this.ppu.registers.ocpd;
                 }
             } else if (addr < 0xFF80) {
-                throw "Invalid read on unused i/o at 0x" + addr.toString(16);
+                val = 0xFF;
+                //throw "Invalid read on unused i/o at 0x" + addr.toString(16);
             }
         } else if (addr < 0xFFFF) {
             val = this.cpu.stack[addr - 0xFF80];

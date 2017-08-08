@@ -32,7 +32,9 @@ export class Cpu {
      * Reset the CPU.
      */
     public reset(): void {
-        this.registers.setAF(0x01B0);
+
+        this.registers.setAF(0x1180);
+        // this.registers.setAF(0x01B0);
         this.registers.setBC(0x0013);
         this.registers.setDE(0x00D8);
         this.registers.setHL(0x014D);
