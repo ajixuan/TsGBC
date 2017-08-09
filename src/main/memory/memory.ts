@@ -14,12 +14,12 @@ export class Memory {
     public cartridge: Cartridge;
     public joypad: Joypad = new Joypad();
     public io: Io = new Io();
-    public vram: Array<number> = Array.apply(null, Array(0x2000)).map(Number.prototype.valueOf, 0);
-    public oam: Array<number>  = Array.apply(null, Array(0xA0)).map(Number.prototype.valueOf, 0);
+    public vram: Array<number> = Array(0x2000).fill(0);
+    public oam: Array<number>  = Array(0xA0).fill(0);
 
     public cpu: any = new class {
-        public ram: Array<number> = Array.apply(null, Array(0x2000)).map(Number.prototype.valueOf, 0);
-        public stack: Array<number> = Array.apply(null, Array(0x7F)).map(Number.prototype.valueOf, 0);
+        public ram: Array<number> = Array(0x2000).fill(0);
+        public stack: Array<number> = Array(0x7F).fill(0);
     };
     public ppu: Ppu;
     public interrupts : Interrupts = new Interrupts();

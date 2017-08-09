@@ -6,9 +6,8 @@ import {GameBoy} from './gameboy';
 export class Debugger {
     public static status: boolean = true;
     private static gameboy: GameBoy;
-    private static logLimit : 500;
-
-    private static bgmap: Array<Number> = Array.apply(null, Array(0x800)).map(Number.prototype.valueOf, 0);
+    private static logLimit: 500;
+    private static bgmap: Array<Number> = Array(0x800).map(Number.prototype.valueOf, 0);
     private static COLORS: string[] = [
         "#000000",
         "#515151",
@@ -16,7 +15,7 @@ export class Debugger {
         "#dee0e2",
         "#a00000"
     ];
-    private static ZOOM : number = 1.5;
+    private static ZOOM: number = 1.5;
 
 
     public static printLog(): void {
@@ -25,7 +24,7 @@ export class Debugger {
         let memory = Debugger.gameboy.memory;
         let eventStr =
             "PC:" + cpu.registers.getPC().toString(16).toUpperCase()
-//            + " Op:" + this.last.opcode.toString(16).toUpperCase()
+            //            + " Op:" + this.last.opcode.toString(16).toUpperCase()
             + " SP:" + cpu.registers.getSP().toString(16).toUpperCase() + "|"
             + " AF:" + cpu.registers.getAF().toString(16).toUpperCase() + "|"
             + " BC:" + cpu.registers.getBC().toString(16).toUpperCase() + "|"
@@ -84,7 +83,7 @@ export class Debugger {
         $('#de').html("0x" + gameboy.cpu.registers.getDE().toString(16).toUpperCase());
         $('#hl').html("0x" + gameboy.cpu.registers.getHL().toString(16).toUpperCase());
 
-        if(gameboy.cpu.last){
+        if (gameboy.cpu.last) {
             $('#opcode').html("0x" + gameboy.cpu.last.opcode.toString(16).toUpperCase());
             $('#opname').html(gameboy.cpu.last.operation.name.toUpperCase());
             $('#opmode').html(gameboy.cpu.last.operation.mode.name.toUpperCase());
@@ -123,7 +122,7 @@ export class Debugger {
 
         bgmap.width = 32 * 9 * zoom;
         bgmap.height = 32 * 9 * zoom;
-        let context : any = bgmap.getContext("2d");
+        let context: any = bgmap.getContext("2d");
 
         let block = 0;
         for (let i = 0; i < 0x800; i++) {
@@ -133,18 +132,18 @@ export class Debugger {
             for (let y = 0; y < 8; y++) {
                 for (let x = 0; x < 8; x++) {
                     context.fillStyle = Debugger.COLORS[tile[y][x]];
-                    context.fillRect(((block % 32) * 9 + x) * zoom , (Math.floor(block / 32) * 9 + y) * zoom , zoom, zoom);
+                    context.fillRect(((block % 32) * 9 + x) * zoom, (Math.floor(block / 32) * 9 + y) * zoom, zoom, zoom);
                 }
 
                 //Print last red dot
                 context.fillStyle = Debugger.COLORS[4];
-                context.fillRect(((block % 32) * 9 + 8) * zoom, (Math.floor(block / 32) * 9  + y) * zoom, zoom, zoom);
+                context.fillRect(((block % 32) * 9 + 8) * zoom, (Math.floor(block / 32) * 9 + y) * zoom, zoom, zoom);
             }
 
             //Print bottom border
             for (let x = 0; x < 9; x++) {
                 context.fillStyle = Debugger.COLORS[4];
-                context.fillRect(((block % 32) * 9 + x) * zoom , (Math.floor(block / 32) * 9 + 8) * zoom , zoom, zoom);
+                context.fillRect(((block % 32) * 9 + x) * zoom, (Math.floor(block / 32) * 9 + 8) * zoom, zoom, zoom);
             }
 
             block++;
@@ -158,9 +157,9 @@ export class Debugger {
 
         bgmap.width = 16 * 9 * zoom;
         bgmap.height = 21 * 9 * zoom;
-        let context : any = bgmap.getContext("2d");
+        let context: any = bgmap.getContext("2d");
 
-        for(let block = 0; block < 384; block++){
+        for (let block = 0; block < 384; block++) {
             let tile = gameboy.ppu.vramTileset[block];
 
             //Print 1 block
@@ -178,34 +177,12 @@ export class Debugger {
             //Print bottom border
             for (let x = 0; x < 9; x++) {
                 context.fillStyle = Debugger.COLORS[4];
-                context.fillRect(((block % 16) * 9 + x )* zoom, (Math.floor(block / 16) * 9 + 8) * zoom, zoom, zoom);
+                context.fillRect(((block % 16) * 9 + x ) * zoom, (Math.floor(block / 16) * 9 + 8) * zoom, zoom, zoom);
             }
         }
     }
 
-/*
-    public static renderOams(){
-        let ppu = Debugger.gameboy.ppu;
-        let oammap: any = document.getElementById("oammap");
-        oammap.width = 16 * 9 * zoom;
-        oammap.height = 21 * 9 * zoom;
-        let context : any = bgmap.getContext("2d");
-
-
-
-        for(let i = 0 ; i <= 0x9F ; i++){
-            let tile = ppu.oamTileset[i].tile;
-            for(let y = 0; y < 8; y++){
-                for(let x = 0; x < 8; x++){
-
-
-                }
-            }
-        }
-
-    }
-*/
-    public static printStack(){
+    public static printStack() {
         let gameboy = Debugger.gameboy;
         let sp = gameboy.cpu.registers.getSP();
 
@@ -213,7 +190,7 @@ export class Debugger {
         $("#stack ul").html('');
 
         //Print up and down 10 addresses in stack
-        for(let cur = sp + 10;  cur > sp - 10; cur-=2){
+        for (let cur = sp + 10; cur > sp - 10; cur -= 2) {
 
             //Upper and lower bits
             let upper = 0;
@@ -221,40 +198,61 @@ export class Debugger {
 
             //Handle stack jumps
             if (cur < 0xC000) {
-                upper = gameboy.memory.cartridge.readByte(cur) ; lower = gameboy.memory.cartridge.readByte(cur- 1);
+                upper = gameboy.memory.cartridge.readByte(cur);
+                lower = gameboy.memory.cartridge.readByte(cur - 1);
             } else if (cur < 0xE000) {
-                upper = gameboy.memory.cpu.ram[cur- 0xC000] ; lower = gameboy.memory.cpu.ram[cur- 1 - 0xC000];
+                upper = gameboy.memory.cpu.ram[cur - 0xC000];
+                lower = gameboy.memory.cpu.ram[cur - 1 - 0xC000];
             } else if (cur >= 0xFF80 && cur <= 0xFFFE) {
-                upper = gameboy.memory.cpu.stack[cur- 0xFF80]  ; lower = gameboy.memory.cpu.stack[cur- 1 - 0xFF80];
+                upper = gameboy.memory.cpu.stack[cur - 0xFF80];
+                lower = gameboy.memory.cpu.stack[cur - 1 - 0xFF80];
             } else {
                 continue;
             }
 
-            if(cur== sp){
+            if (cur == sp) {
                 //Create cursor
                 $("#stack ul").append("<li style='background-color:#3394FF'>"
                     + "<div style='float:left;margin-left: 20px'>" + cur.toString(16) + ":" + upper.toString(16)
-                    + "</div><div style='float:left;margin-left: 20px'>" + (cur-1).toString(16) + ":" + lower.toString(16)
+                    + "</div><div style='float:left;margin-left: 20px'>" + (cur - 1).toString(16) + ":" + lower.toString(16)
                     + "</div><div style='clear:both'></div></li>");
             } else {
                 $("#stack ul").append("<li>" +
                     "<div style='float:left;margin-left: 20px'>"
                     + cur.toString(16) + ":" + upper.toString(16) + "</div><div style='float:left;margin-left:20px'> "
-                    + (cur-1).toString(16) + ":" + lower.toString(16) + "</div><div style='clear:both'></div></li>");
+                    + (cur - 1).toString(16) + ":" + lower.toString(16) + "</div><div style='clear:both'></div></li>");
             }
         }
     }
 
-    public static initMemmap(){
-        let memory = Debugger.gameboy.memory;
+    public static initMemmap() {
+        var row:any = [],
+            memory = Debugger.gameboy.memory;
+        for (let i = 0; i <= 0xFFF0; i += 0x10) {
+            (function (addr, row) {
+                setTimeout(function () {
+                    row[addr/0x10] = "<tr>" + "<th>0x" + addr.toString(16) + "</th>";
+                    for(let i =0; i<=0xF; i++){
+                        row[addr/0x10] += "<td>" + memory.readByte(addr+i) + "</td>"
+                    }
+                    row[addr/0x10] += "</tr>";
+                    if((i+addr) % 0x2220 == 0){
+                        row.map(function(curr){$("#memmap").append(curr)});
+                    }
+                }, 2);
+            })(i, row);
+        }
+    }
+
+
+    public static printmap() {
         let row;
-        for(let i=0;i<=0xFFF0;i+=0x10){
-            row = "<tr>" + "<th>0x" + i.toString(16) + "</th>";
-            for(let j=0;j<=0xF;j++){
-                row += "<td>" + memory.readByte(i+j) + "</td>";
-            }
-            row += "</tr>";
-            $("#memmap").append(row);
+        for (let i = 0; i <= 0xFFF0; i += 0x10) {
+
+            // for (let j = 0; j <= 0xF; j++) {
+            //     row += "<td>" + memory.readByte(addr + j) + "</td>";
+            // }
+            // row += "</tr>";
         }
     }
 
