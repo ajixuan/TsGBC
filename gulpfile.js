@@ -36,12 +36,11 @@ gulp.task('test', function () {
 gulp.task('src', function () {
     return gulp.src(dir.src)
         .pipe(ts({
-            typescript: require('typescript'), // In my package.json I have "typescript": "~1.8.0-dev.20151128"
             module: 'system',
             experimentalDecorators: true,
             emitDecoratorMetadata: true,
             outFile: 'app.js',
-            target: "es5"
+            target: "es6"
         }))
         .pipe(gulp.dest('target'));
 });
