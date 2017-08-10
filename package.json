@@ -12,7 +12,7 @@
     "watch": "gulp watch"
   },
   "devDependencies": {
-    "@types/jquery": "^2.0.34",
+    "@types/jquery": "^3.0.34",
     "@types/mocha": "^2.2.36",
     "del": "^2.2.1",
     "gulp": "^3.9.1",

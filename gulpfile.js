@@ -8,6 +8,8 @@ var mocha = require('gulp-mocha');
 var Builder = require('systemjs-builder');
 
 var dir = {
+    modules: './node_modules/',
+    assets: './src/html/assets/',
     src: './src/main/**/*.ts',
     test: './src/test/**/*.ts',
     html: './src/html/**/*',
@@ -33,8 +35,13 @@ gulp.task('test', function () {
         .pipe(mocha());
 });
 
+gulp.task('import', function(){
+   gulp.src([dir.modules + 'jquery/dist/jquery.js', dir.modules + 'jquery/dist/jquery.min.js'])
+       .pipe(gulp.dest(dir.assets));
+});
+
 gulp.task('src', function () {
-    return gulp.src(dir.src)
+    gulp.src(dir.src)
         .pipe(ts({
             module: 'system',
             experimentalDecorators: true,
@@ -46,7 +53,7 @@ gulp.task('src', function () {
 });
 
 gulp.task('html', function () {
-    return gulp.src(dir.html)
+    gulp.src(dir.html)
         .pipe(gulp.dest('target/'));
 });
 
@@ -58,7 +65,7 @@ gulp.task('package', function () {
 });
 
 gulp.task('build', function (callback) {
-    runSequence('clean', 'src', 'html', callback);
+    runSequence('clean', 'import', 'src', 'html', callback);
 });
 
 gulp.task('watch', function () {
