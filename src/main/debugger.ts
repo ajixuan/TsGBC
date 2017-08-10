@@ -5,9 +5,10 @@ import {GameBoy} from './gameboy';
 
 export class Debugger {
     public static status: boolean = true;
+    private static memqueue: number[] = [];
     private static gameboy: GameBoy;
     private static logLimit: 500;
-    private static bgmap: Array<Number> = Array(0x800).map(Number.prototype.valueOf, 0);
+    private static bgmap: Array<Number> = Array(0x800).fill(0);
     private static COLORS: string[] = [
         "#000000",
         "#515151",
@@ -17,51 +18,12 @@ export class Debugger {
     ];
     private static ZOOM: number = 1.5;
 
-
-    public static printLog(): void {
-        //Add to log
-        let cpu = Debugger.gameboy.cpu;
-        let memory = Debugger.gameboy.memory;
-        let eventStr =
-            "PC:" + cpu.registers.getPC().toString(16).toUpperCase()
-            //            + " Op:" + this.last.opcode.toString(16).toUpperCase()
-            + " SP:" + cpu.registers.getSP().toString(16).toUpperCase() + "|"
-            + " AF:" + cpu.registers.getAF().toString(16).toUpperCase() + "|"
-            + " BC:" + cpu.registers.getBC().toString(16).toUpperCase() + "|"
-            + " DE:" + cpu.registers.getDE().toString(16).toUpperCase() + "|"
-            + " HL:" + cpu.registers.getHL().toString(16).toUpperCase() + "|"
-            + " LCDC:" + memory.ppu.registers.lcdc.getAll().toString(16).toUpperCase() + "|"
-            + " STAT:" + memory.ppu.registers.stat.getAll().toString(16).toUpperCase() + "|"
-            + " ie:" + cpu.interrupts.ie.toString(16).toUpperCase() + "|"
-            + " if:" + cpu.interrupts.if.toString(16).toUpperCase();
-
-        if (Debugger.gameboy.cpu.last == null) {
-            let eventStr = "ERROR";
-            let eventElement = $(".log ul");
-            eventElement.append("<li class='error'>" + eventStr + "</li>");
-            $(".log").scrollTop($(".log").prop("scrollHeight"));
-            return;
-        }
-
-
-        if ($(".log li").length > Debugger.logLimit) {
-            $(".log ul").empty();
-        }
-
-        let html = "<li>" + eventStr + "</li>";
-
-        $(".log ul").append(html);
-        $(".log").scrollTop($(".log").prop("scrollHeight"));
-
-    }
-
     public static display(): void {
+        let gameboy = Debugger.gameboy;
 
-        if (Debugger.gameboy == null) {
+        if (gameboy == null) {
             return console.error("Error: Debugger doesn't have GameBoy set!");
         }
-
-        let gameboy = Debugger.gameboy;
 
         Debugger.printLog();
         Debugger.printStack();
@@ -111,6 +73,42 @@ export class Debugger {
             $('#url').html(gameboy.cartridge.url);
             $('#type').html(gameboy.cartridge.type.name);
         }
+    }
+
+    public static printLog(): void {
+        //Add to log
+        let cpu = Debugger.gameboy.cpu;
+        let memory = Debugger.gameboy.memory;
+        let eventStr =
+            "PC:" + cpu.registers.getPC().toString(16).toUpperCase()
+            //            + " Op:" + this.last.opcode.toString(16).toUpperCase()
+            + " SP:" + cpu.registers.getSP().toString(16).toUpperCase() + "|"
+            + " AF:" + cpu.registers.getAF().toString(16).toUpperCase() + "|"
+            + " BC:" + cpu.registers.getBC().toString(16).toUpperCase() + "|"
+            + " DE:" + cpu.registers.getDE().toString(16).toUpperCase() + "|"
+            + " HL:" + cpu.registers.getHL().toString(16).toUpperCase() + "|"
+            + " LCDC:" + memory.ppu.registers.lcdc.getAll().toString(16).toUpperCase() + "|"
+            + " STAT:" + memory.ppu.registers.stat.getAll().toString(16).toUpperCase() + "|"
+            + " ie:" + cpu.interrupts.ie.toString(16).toUpperCase() + "|"
+            + " if:" + cpu.interrupts.if.toString(16).toUpperCase();
+
+        if (Debugger.gameboy.cpu.last == null) {
+            let eventStr = "ERROR";
+            let eventElement = $(".log ul");
+            eventElement.append("<li class='error'>" + eventStr + "</li>");
+            $(".log").scrollTop($(".log").prop("scrollHeight"));
+            return;
+        }
+
+
+        if ($(".log li").length > Debugger.logLimit) {
+            $(".log ul").empty();
+        }
+
+        let html = "<li>" + eventStr + "</li>";
+
+        $(".log ul").append(html);
+        $(".log").scrollTop($(".log").prop("scrollHeight"));
 
     }
 
@@ -225,34 +223,55 @@ export class Debugger {
         }
     }
 
-    public static initMemmap() {
-        var row:any = [],
-            memory = Debugger.gameboy.memory;
+    public static resetMemmap() {
+        let queue = [];
+        let memory = Debugger.gameboy.memory;
+        $("tbody tr").remove();
+
         for (let i = 0; i <= 0xFFF0; i += 0x10) {
-            (function (addr, row) {
+            (function (addr) {
                 setTimeout(function () {
-                    row[addr/0x10] = "<tr>" + "<th>0x" + addr.toString(16) + "</th>";
-                    for(let i =0; i<=0xF; i++){
-                        row[addr/0x10] += "<td>" + memory.readByte(addr+i) + "</td>"
+                    queue[addr / 0x10] = "<tr>" + "<th>0x" + addr.toString(16) + "</th>";
+                    for (let j = 0; j <= 0xF; j++) {
+                        queue[addr / 0x10] += "<td>" + memory.readByte(addr + j).toString(16) + "</td>"
                     }
-                    row[addr/0x10] += "</tr>";
-                    if((i+addr) % 0x2220 == 0){
-                        row.map(function(curr){$("#memmap").append(curr)});
+                    queue[addr / 0x10] += "</tr>";
+
+                    if (queue.length % 0xF == 0) {
+                        setTimeout(function () {
+                            console.log(queue);
+                            queue.forEach(function (iter) {
+                                $("tbody").append(iter);
+                            });
+                            queue.length = 0;
+                        }, 100);
                     }
-                }, 2);
-            })(i, row);
+                }, 1);
+            })(i);
+
         }
+
     }
 
 
-    public static printmap() {
-        let row;
-        for (let i = 0; i <= 0xFFF0; i += 0x10) {
+    public static updatemap(addr: number, val: number): void {
 
-            // for (let j = 0; j <= 0xF; j++) {
-            //     row += "<td>" + memory.readByte(addr + j) + "</td>";
-            // }
-            // row += "</tr>";
+        if (Debugger.status) {
+            console.log("addr: " + addr + " val: " + val);
+            $("#memmap:nth-child(" + (addr & 0xFFF0) + "):nth-child(" + (addr & 0xF) + ")").val(val);
+            return;
+        }
+
+        Debugger.memqueue.push(addr);
+
+        if (Debugger.memqueue.length > 0xFF) {
+            Debugger.memqueue.forEach(function (addr) {
+                let val = Debugger.gameboy.memory.readByte(addr);
+                console.log("deq addr: " + addr + "val: " + val);
+                $("#memmap:nth-child(" + (addr & 0xFFF0) + "):nth-child(" + (addr & 0xF) + ")").val(val);
+            });
+
+            Debugger.memqueue.length = 0;
         }
     }
 
@@ -260,7 +279,7 @@ export class Debugger {
     public static init(gameboy: GameBoy) {
         Debugger.gameboy = gameboy;
         console.info("Debugger is ready!");
-        Debugger.initMemmap();
+        Debugger.resetMemmap();
         Debugger.display();
     }
 

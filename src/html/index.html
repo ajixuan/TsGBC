@@ -230,6 +230,7 @@
             <div>
                 <legend>Run Conditions</legend>
                 <div style="color: #bebebe; display: inline-block">
+                    <button onclick="toggleDebug()">Debug</button>
                 </div>
             </div>
         </div>
@@ -241,196 +242,197 @@
                 <ul style="list-style:none"></ul>
             </fieldset>
         </div>
-        <button onclick="toggleDebug()">Debug</button>
-    </div>
 
-    <!--VRAM viewer-->
-
-    <div class="debugger">
+        <!--VRAM viewer-->
         <div style="display: flex; flex-direction: row">
             <canvas id="bgmap"></canvas>
         </div>
-        <button onclick="renderBGmap()">RenderBGmap</button>
         <div style="display: flex; flex-direction: row">
             <canvas id="tilemap"></canvas>
         </div>
-        <button onclick="renderTilemap()">RenderTilemap</button>
         <div style="display: flex; flex-direction: row">
             <canvas id="oammap"></canvas>
         </div>
-        <button onclick="renderOAM()">RenderOAM</button>
-    </div>
-
-    <!--Memory Map-->
-    <div class="debugger">
-        <div id="memory">
-            <table id="memmap">
-                <!--Header-->
-                <tr>
-                    <th>xxxx</th>
-                    <th>0x00</th>
-                    <th>0x01</th>
-                    <th>0x02</th>
-                    <th>0x03</th>
-                    <th>0x04</th>
-                    <th>0x05</th>
-                    <th>0x06</th>
-                    <th>0x07</th>
-                    <th>0x08</th>
-                    <th>0x09</th>
-                    <th>0x0A</th>
-                    <th>0x0B</th>
-                    <th>0x0C</th>
-                    <th>0x0D</th>
-                    <th>0x0E</th>
-                    <th>0x0F</th>
-                </tr>
-            </table>
+        <div style="display: flex; flex-direction: row">
+            <button onclick="renderBGmap()">RenderBGmap</button>
+            <button onclick="renderTilemap()">RenderTilemap</button>
         </div>
     </div>
 
+    <!--Memory Map-->
+    <div style="display: flex; flex-direction: column;">
+        <fieldset>
+            <legend>Memory Map</legend>
+            <div id="memmap">
+                <table>
+                    <!--Header-->
+                    <thead>
+                    <tr>
+                        <th>xxxx</th>
+                        <th>0x00</th>
+                        <th>0x01</th>
+                        <th>0x02</th>
+                        <th>0x03</th>
+                        <th>0x04</th>
+                        <th>0x05</th>
+                        <th>0x06</th>
+                        <th>0x07</th>
+                        <th>0x08</th>
+                        <th>0x09</th>
+                        <th>0x0A</th>
+                        <th>0x0B</th>
+                        <th>0x0C</th>
+                        <th>0x0D</th>
+                        <th>0x0E</th>
+                        <th>0x0F</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </fieldset>
+    </div>
 
-</div>
 
-<script>
-    var gameboy = null;
-    var debug = null;
-    var breakpoint = false;
+    <script>
+        var gameboy = null;
+        var debug = null;
+        var breakpoint = false;
 
-    var loadGameBoy = function () {
-        System.import('gameboy').then(function (e) {
-            try {
-                gameboy = new e.GameBoy();
-            } catch (e) {
-                console.error("Unable to load GameBoy");
-                console.error(e);
-                return;
-            }
+        var loadGameBoy = function () {
+            System.import('gameboy').then(function (e) {
+                try {
+                    gameboy = new e.GameBoy();
+                } catch (e) {
+                    console.error("Unable to load GameBoy");
+                    console.error(e);
+                    return;
+                }
 
-            gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");
-            //gameboy.load("./roms/cpu_instrs/individual/01-special.gb");
-            //gameboy.load("./roms/Tetris.gb");
-            gameboy.reset();
-            loadDebugger();
-            console.info("Gameboy is ready!");
-        }).catch(
-            function (err) {
-                console.error("Unable to load GameBoy");
-                console.error(err);
-            }
-        );
-    }
-
-    var loadDebugger = function () {
-        System.import('debugger').then(function (e) {
-            try {
-                debug = e.Debugger;
-            } catch (e) {
-                console.error("Unable to load Debugger");
-                console.error(e);
-                return;
-            }
-            debug.init(gameboy);
-        }).catch(
-            function (err) {
-                console.error("Unable to load Debugger");
-                console.error(err);
-            }
-        );
-    }
-
-    loadGameBoy();
-
-    var tick = function () {
-        gameboy.tickUntil($('#tickfor').val());
-    }
-
-    var run = function () {
-        gameboy.tickUntil(-1);
-    }
-
-    var stop = function () {
-        gameboy.counts = 0;
-    }
-
-    var grow = function () {
-        gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() + 1);
-    }
-
-    var shrink = function () {
-        gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() - 1);
-    }
-
-    var toggleDebug = function () {
-        var _tpf = 100000;
-        return function () {
-            _tpf = $('#tpf').val();
-            debug.status = !debug.status;
-            if (debug.status) {
-                debug.display();
-                _tpf = gameboy.tpf;
-                gameboy.tpf = 1;
-            } else {
-                console.log(_tpf);
-                gameboy.tpf = _tpf;
-            }
+                gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");
+                //gameboy.load("./roms/cpu_instrs/individual/01-special.gb");
+                //gameboy.load("./roms/Tetris.gb");
+                gameboy.reset();
+                loadDebugger();
+                console.info("Gameboy is ready!");
+            }).catch(
+                function (err) {
+                    console.error("Unable to load GameBoy");
+                    console.error(err);
+                }
+            );
         }
-    }();
 
-    var setBreakPoint = function () {
-        var val = parseInt($("#breakpoint").val(), 16);
-        gameboy.setPCBreak(val);
-    }
-
-    var renderBGmap = function () {
-        debug.renderBGmap();
-    }
-
-    var renderTilemap = function () {
-        debug.renderTilemap();
-    }
-
-
-    //Debugger hot keys
-    $("#breakpoint").blur(function () {
-        if ($("#breakpoint").val() != 0) {
-            $("#setbreak").click();
+        var loadDebugger = function () {
+            System.import('debugger').then(function (e) {
+                try {
+                    debug = e.Debugger;
+                } catch (e) {
+                    console.error("Unable to load Debugger");
+                    console.error(e);
+                    return;
+                }
+                debug.init(gameboy);
+            }).catch(
+                function (err) {
+                    console.error("Unable to load Debugger");
+                    console.error(err);
+                }
+            );
         }
-    });
 
-    //Chrome
-    /*
-    $(document).keypress(function (event) {
-        //$(this.body).prepend("<span>" + event.key + "</span>");
-        switch (event.key) {
-            case "Enter":
-                toggleDebug();
-                break;
-            case "r":
-                run();
-                break;
-            case "s": //S
-                stop();
-                break;
-            case "t": //T
-                tick();
-                break;
+        loadGameBoy();
+
+        var tick = function () {
+            gameboy.tickUntil($('#tickfor').val());
         }
-    });
 
-    $(document).keydown(function (event) {
-        if (event.keyCode == 16) {
-            var input = $("#breakpoint");
-            if (input.is(":focus")) {
-                input.blur();
-            } else {
-                input.focus();
+        var run = function () {
+            gameboy.tickUntil(-1);
+        }
+
+        var stop = function () {
+            gameboy.counts = 0;
+        }
+
+        var grow = function () {
+            gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() + 1);
+        }
+
+        var shrink = function () {
+            gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() - 1);
+        }
+
+        var toggleDebug = function () {
+            var _tpf = 100000;
+            return function () {
+                _tpf = $('#tpf').val();
+                debug.status = !debug.status;
+                if (debug.status) {
+                    debug.display();
+                    _tpf = gameboy.tpf;
+                    gameboy.tpf = 1;
+                } else {
+                    console.log(_tpf);
+                    gameboy.tpf = _tpf;
+                }
             }
+        }();
+
+        var setBreakPoint = function () {
+            var val = parseInt($("#breakpoint").val(), 16);
+            gameboy.setPCBreak(val);
         }
-    });
-*/
+
+        var renderBGmap = function () {
+            debug.renderBGmap();
+        }
+
+        var renderTilemap = function () {
+            debug.renderTilemap();
+        }
 
 
-</script>
+        //Debugger hot keys
+        $("#breakpoint").blur(function () {
+            if ($("#breakpoint").val() != 0) {
+                $("#setbreak").click();
+            }
+        });
+
+        //Chrome
+        /*
+        $(document).keypress(function (event) {
+            //$(this.body).prepend("<span>" + event.key + "</span>");
+            switch (event.key) {
+                case "Enter":
+                    toggleDebug();
+                    break;
+                case "r":
+                    run();
+                    break;
+                case "s": //S
+                    stop();
+                    break;
+                case "t": //T
+                    tick();
+                    break;
+            }
+        });
+
+        $(document).keydown(function (event) {
+            if (event.keyCode == 16) {
+                var input = $("#breakpoint");
+                if (input.is(":focus")) {
+                    input.blur();
+                } else {
+                    input.focus();
+                }
+            }
+        });
+    */
+
+
+    </script>
 </body>
 </html>

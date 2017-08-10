@@ -3,6 +3,7 @@ import {Interrupts} from "../io/interrupts";
 import {Ppu} from '../ppu/ppu'
 import {Io} from './io'
 import {Joypad} from "../io/joypad";
+import {Debugger} from "../debugger";
 
 /**
  * Created by hkamran on 12/5/2016.
@@ -139,6 +140,8 @@ export class Memory {
         } else {
             throw "Invalid write led to unknown address at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
         }
+
+        Debugger.updatemap(addr, val);
     }
 
     public readByte(addr: number): number {
