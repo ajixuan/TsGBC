@@ -1,0 +1,21 @@
+06-ld r,r
+------------
+213 - 20D: Loading rom data to internal ram
+C000:
+C220:
+    ignoring
+C24C: #Load all tiles
+    CC29: call C7FB
+        C7FB: call C89E
+            C89E: push
+            C89F: call C7EA
+                C7EA: push
+                -----------------Loop   #wait for vblank
+                C7EE:
+                C7EF-C7F1: #if b and c are 0 jmp to C7F9
+                C7F3-C7F7: #Until vblank, loop to 27EE
+                -----------------End
+
+
+
+

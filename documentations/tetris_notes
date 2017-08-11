@@ -161,7 +161,7 @@ Joypad complete
 
 ##The player select loop========================
 479 - 47C : nz; 488
-482: z;
+482: z; If FFC6 is 0
 	41F: Jmp to auto play (see below)
 488:
 	A98 - A9B: Loop until B is 0
