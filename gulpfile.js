@@ -12,7 +12,7 @@ var dir = {
     assets: './src/html/assets/',
     src: './src/main/**/*.ts',
     test: './src/test/**/*.ts',
-    html: './src/html/**/*',
+    html: '(./src/html/*|./src/html/css/*)',
     target: './target/**/*'
 };
 
