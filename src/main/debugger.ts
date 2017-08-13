@@ -5,7 +5,8 @@ import {GameBoy} from './gameboy';
 
 export class Debugger {
     public static status: boolean = false;
-    private static memqueue: any[] = [];
+    private static memqueue = {};
+    private static memmap : Element = document.getElementsByTagName("tbody")[0];
     private static gameboy: GameBoy;
     private static logLimit: 500;
     private static bgmap: Array<Number> = Array(0x800).fill(0);
@@ -225,28 +226,36 @@ export class Debugger {
     }
 
     public static resetMemmap() {
-        let queue = [];
+        let queue : Element[] = [];
         let memory = Debugger.gameboy.memory;
         $("tbody tr").remove();
 
         for (let i = 0x8000; i <= 0xFFF0; i += 0x10) {
             (function (addr) {
                 setTimeout(function () {
-                    let index = (addr - 0x8000)/0x10;
-                    queue[index] = "<tr>" + "<th>0x" + addr.toString(16) + "</th>";
+                    let index = (addr - 0x8000) / 0x10;
+
+                    //Header
+                    let th : Element = document.createElement("th");
+                    th.innerHTML = "0x" + addr.toString(16);
+
+                    //Row
+                    queue[index] = document.createElement("tr");
+                    queue[index].appendChild(th);
                     for (let j = 0; j <= 0xF; j++) {
-                        queue[index] += "<td>" + memory.readByte(addr + j).toString(16) + "</td>"
+
+                        //Column
+                        let td : Element = document.createElement("td");
+                        td.innerHTML = memory.readByte(addr + j).toString(16);
+                        queue[index].appendChild(td);
                     }
-                    queue[index] += "</tr>";
 
+                    //Process by batch
                     if (queue.length % 0xA0 == 0) {
-                            let result="";
-                            for(let i=0; i < queue.length;i++){
-                                result+=queue[i];
-                            }
-
-                            $("tbody").append(result);
-                            queue.length = 0;
+                        queue.map(function(curr){
+                            Debugger.memmap.appendChild(curr);
+                        })
+                        queue.length = 0;
                     }
                 }, 100);
             })(i);
@@ -256,28 +265,37 @@ export class Debugger {
     public static updatemap(addr: number): void {
         let val = Debugger.gameboy.memory.readByte(addr);
 
-        if(!val) {return}
+        if (!val) {return}
 
         if (Debugger.status) {
-            Debugger.writeMem(addr, val);
-            return;
+
         }
 
-        Debugger.memqueue.push({addr : addr,  val : val});
-        if (Debugger.memqueue.length > 0xFF) {
-            Debugger.memqueue.forEach(function (event) {
-                Debugger.writeMem(event.addr, event.val);
-            });
-            Debugger.memqueue.length = 0;
-        }
+        Debugger.memqueue[addr] = val;
+    }
+
+    public static clearMemqueue() {
+        Object.keys(Debugger.memqueue).map(function (addr) {
+                Debugger.writeMem(Number.parseInt(addr), Debugger.memqueue[addr]);
+        });
+
+        Debugger.memqueue = {};
     }
 
 
-    private static writeMem(addr: number, val : number){
-        let tr = Math.floor((addr - 0x8000) /0x10) + 1;
-        let td = (addr & 0xF) + 2;
-        $("tbody tr:nth-child(" + tr + ") td:nth-child(" + td + ")")
-            .html(val.toString(16));
+    private static writeMem(addr: number, val: number) {
+        let tr = Math.floor((addr - 0x8000) / 0x10);
+        let td = (addr & 0xF) + 1;
+
+        try{
+            Debugger.memmap
+                .children[tr]
+                .children[td]
+                .innerHTML = val.toString(16);
+        } catch(e){
+            console.log(e.toString());
+            console.log(tr + " " + td);
+        }
     }
 
 

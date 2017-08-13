@@ -51,7 +51,6 @@
             </div>
         </div>
 
-
         <!-- Log Console -->
         <div class="debugger">
             <div style="display: flex; flex-direction: row; margin-left: 10px; flex-grow: 1; width:520px">
@@ -69,7 +68,7 @@
     <!-- Debugger -->
     <div class="debugger">
         <div style="display: flex; flex-direction: row;">
-            <fieldset style="flex-grow: 1">
+            <fieldset style="flex-grow: 1" >
                 <legend>CARTIDGE</legend>
                 <div style="color: #bebebe; display: inline-block">
                     <ul style="list-style: none;">
@@ -228,17 +227,13 @@
                         </li>
                     </ul>
                 </div>
-
             </fieldset>
-
             <fieldset>
                 <legend>VRAM View</legend>
                 <!--VRAM viewer-->
                 <canvas id="vrammap"></canvas>
-                <div style="display: flex; flex-direction: row">
-                    <button onclick="renderBGmap()">RenderBGmap</button>
-                    <button onclick="renderTilemap()">RenderTilemap</button>
-                </div>
+                <button onclick="renderBGmap()">RenderBGmap</button>
+                <button onclick="renderTilemap()">RenderTilemap</button>
             </fieldset>
         </div>
 
@@ -284,7 +279,6 @@
             </div>
         </fieldset>
     </div>
-</div>
 </body>
 
 <script>
@@ -364,6 +358,7 @@
             debug.status = !debug.status;
             if (debug.status) {
                 debug.display();
+                debug.clearMemqueue();
                 _tpf = gameboy.tpf;
                 gameboy.tpf = 1;
             } else {
