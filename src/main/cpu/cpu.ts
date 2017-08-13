@@ -42,22 +42,22 @@ export class Cpu {
         this.registers.setSP(0xFFFE);
         this.registers.setPC(0x100);
 
-        this.memory.writeByte(0xFF10, 0x80); //NR10
-        this.memory.writeByte(0xFF11, 0xBF); //NR11
-        this.memory.writeByte(0xFF12, 0xF3); //NR12
-        this.memory.writeByte(0xFF14, 0xBF); //NR14
-        this.memory.writeByte(0xFF16, 0x3F); //NR21
-        this.memory.writeByte(0xFF17, 0x00); //NR22
-        this.memory.writeByte(0xFF19, 0xBF); //NR24
-        this.memory.writeByte(0xFF1A, 0x7F); //NR30
-        this.memory.writeByte(0xFF1B, 0xFF); //NR31
-        this.memory.writeByte(0xFF1C, 0x9F); //NR32
-        this.memory.writeByte(0xFF1E, 0xBF); //NR33
-        this.memory.writeByte(0xFF20, 0xFF); //NR41
-        this.memory.writeByte(0xFF23, 0xBF); //NR30
-        this.memory.writeByte(0xFF24, 0x77); //NR50
-        this.memory.writeByte(0xFF25, 0xF3); //NR51
-        this.memory.writeByte(0xFF26, 0xF1); //NR52
+        this.memory.nr[0xFF10 - 0xFF10] = 0x80; //NR10
+        this.memory.nr[0xFF11 - 0xFF10] =  0xBF; //NR11
+        this.memory.nr[0xFF12 - 0xFF10] =  0xF3; //NR12
+        this.memory.nr[0xFF14 - 0xFF10] =  0xBF; //NR14
+        this.memory.nr[0xFF16 - 0xFF10] =  0x3F; //NR21
+        this.memory.nr[0xFF17 - 0xFF10] =  0x00; //NR22
+        this.memory.nr[0xFF19 - 0xFF10] =  0xBF; //NR24
+        this.memory.nr[0xFF1A - 0xFF10] =  0x7F; //NR30
+        this.memory.nr[0xFF1B - 0xFF10] =  0xFF; //NR31
+        this.memory.nr[0xFF1C - 0xFF10] =  0x9F; //NR32
+        this.memory.nr[0xFF1E - 0xFF10] =  0xBF; //NR33
+        this.memory.nr[0xFF20 - 0xFF10] =  0xFF; //NR41
+        this.memory.nr[0xFF23 - 0xFF10] =  0xBF; //NR30
+        this.memory.nr[0xFF24 - 0xFF10] =  0x77; //NR50
+        this.memory.nr[0xFF25 - 0xFF10] =  0xF3; //NR51
+        this.memory.nr[0xFF26 - 0xFF10] =  0xF1; //NR52
 
         this.clock = {m: 0, t: 0};
 

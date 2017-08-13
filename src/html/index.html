@@ -207,6 +207,21 @@
         </div>
 
         <div style="display: flex; flex-direction: row;">
+            <fieldset id="stack">
+                <legend>STACK</legend>
+                <ul style="list-style:none"></ul>
+            </fieldset>
+            <fieldset>
+                <legend>VRAM View</legend>
+                <!--VRAM viewer-->
+                <canvas id="vrammap"></canvas>
+                <button onclick="renderBGmap()">RenderBGmap</button>
+                <button onclick="renderTilemap()">RenderTilemap</button>
+            </fieldset>
+        </div>
+
+        <!--Stack-->
+        <div style="display: flex; flex-direction: row;">
             <fieldset>
                 <legend>Interrupts</legend>
                 <div style="color: #bebebe; display: inline-block">
@@ -228,21 +243,7 @@
                     </ul>
                 </div>
             </fieldset>
-            <fieldset>
-                <legend>VRAM View</legend>
-                <!--VRAM viewer-->
-                <canvas id="vrammap"></canvas>
-                <button onclick="renderBGmap()">RenderBGmap</button>
-                <button onclick="renderTilemap()">RenderTilemap</button>
-            </fieldset>
-        </div>
 
-        <!--Stack-->
-        <div id="stack" style="display: flex; flex-direction: row;">
-            <fieldset>
-                <legend>STACK</legend>
-                <ul style="list-style:none"></ul>
-            </fieldset>
         </div>
     </div>
 
