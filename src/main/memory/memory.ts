@@ -24,6 +24,8 @@ export class Memory {
     };
     public ppu: Ppu;
     public interrupts : Interrupts = new Interrupts();
+    public nr : Array<number> = Array(0x7F).fill(0);
+
 
     public writeByte(addr: number, val: number): void {
         if (val == null || val > 0xFF || addr == null || addr > 0xFFFF) {
@@ -46,7 +48,7 @@ export class Memory {
             if (addr < 0xFF00) {
                 //Empty but usable for io
                 //throw new Error("Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16));
-            } else if (addr < 0xFF08) {
+            } else if (addr < 0xFF0F) {
                 switch (addr & 0xFF) {
                     case 0:
                         this.joypad.writeByte(val);
@@ -74,7 +76,9 @@ export class Memory {
                 this.interrupts.if = (0xE0 | val) & 0xFF;
             } else if (addr < 0xFF6C) {
 
-                if (addr == 0xFF40) {
+                if(addr <0xFF26){
+                    this.nr[addr - 0xFF10] = val;
+                } else if (addr == 0xFF40) {
                     this.ppu.registers.lcdc.setAll(val);
                 } else if (addr == 0xFF42) {
                     this.ppu.registers.scy = val;
@@ -141,7 +145,9 @@ export class Memory {
             throw "Invalid write led to unknown address at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
         }
 
-        Debugger.updatemap(addr, val);
+        if(Debugger.status){
+            Debugger.updatemap(addr);
+        }
     }
 
     public readByte(addr: number): number {
@@ -167,7 +173,7 @@ export class Memory {
             if (addr < 0xFF00) {
                 //Empty but usable for io
                 return 0x00;
-            } else if (addr < 0xFF08) {
+            } else if (addr < 0xFF0F) {
                 switch (addr & 0xFF) {
                     case 0:
                         val = this.joypad.readByte();
@@ -191,11 +197,16 @@ export class Memory {
                     case 7:
                         val = this.io.getTac();
                         break;
+                    default:
+                        val = 0xFF;
                 }
             } else if (addr == 0xFF0F) {
                 return this.interrupts.if & 0xFF;
             } else if (addr < 0xFF6C) {
-                if (addr == 0xFF40) {
+
+                if(addr <0xFF26){
+                    val = this.nr[addr - 0xFF10];
+                } else if (addr == 0xFF40) {
                     val = this.ppu.registers.lcdc.getAll();
                 } else if (addr == 0xFF42) {
                     val = this.ppu.registers.scy;

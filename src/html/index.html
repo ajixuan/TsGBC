@@ -1,13 +1,14 @@
 <html>
 <head>
     <script src="./assets/SystemJS.js" type="application/javascript"></script>
-    <script src="./assets/jquery-3.1.1.min.js" type="application/javascript"></script>
+    <script src="./assets/jquery.min.js" type="application/javascript"></script>
     <script src="app.js" type="application/javascript"></script>
     <link rel="stylesheet" type="text/css" href="./css/debugger.css">
     <link rel="stylesheet" type="text/css" href="./css/main.css">
 </head>
-<body>
 
+
+<body>
 <div style="display: flex; flex-direction: row;">
     <div style="display: flex; flex-direction: column; ">
         <div id="screenContainer">
@@ -44,6 +45,9 @@
             <div style="display:flex;margin-left:auto;margin-bottom:auto">
                 <button onclick="grow()">+</button>
                 <button onclick="shrink()">-</button>
+                <div style="color: #bebebe; display: inline-block">
+                    <button onclick="toggleDebug()">Debug</button>
+                </div>
             </div>
         </div>
 
@@ -227,12 +231,15 @@
 
             </fieldset>
 
-            <div>
-                <legend>Run Conditions</legend>
-                <div style="color: #bebebe; display: inline-block">
-                    <button onclick="toggleDebug()">Debug</button>
+            <fieldset>
+                <legend>VRAM View</legend>
+                <!--VRAM viewer-->
+                <canvas id="vrammap"></canvas>
+                <div style="display: flex; flex-direction: row">
+                    <button onclick="renderBGmap()">RenderBGmap</button>
+                    <button onclick="renderTilemap()">RenderTilemap</button>
                 </div>
-            </div>
+            </fieldset>
         </div>
 
         <!--Stack-->
@@ -241,21 +248,6 @@
                 <legend>STACK</legend>
                 <ul style="list-style:none"></ul>
             </fieldset>
-        </div>
-
-        <!--VRAM viewer-->
-        <div style="display: flex; flex-direction: row">
-            <canvas id="bgmap"></canvas>
-        </div>
-        <div style="display: flex; flex-direction: row">
-            <canvas id="tilemap"></canvas>
-        </div>
-        <div style="display: flex; flex-direction: row">
-            <canvas id="oammap"></canvas>
-        </div>
-        <div style="display: flex; flex-direction: row">
-            <button onclick="renderBGmap()">RenderBGmap</button>
-            <button onclick="renderTilemap()">RenderTilemap</button>
         </div>
     </div>
 
@@ -292,147 +284,148 @@
             </div>
         </fieldset>
     </div>
-
-
-    <script>
-        var gameboy = null;
-        var debug = null;
-        var breakpoint = false;
-
-        var loadGameBoy = function () {
-            System.import('gameboy').then(function (e) {
-                try {
-                    gameboy = new e.GameBoy();
-                } catch (e) {
-                    console.error("Unable to load GameBoy");
-                    console.error(e);
-                    return;
-                }
-
-                gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");
-                //gameboy.load("./roms/cpu_instrs/individual/01-special.gb");
-                //gameboy.load("./roms/Tetris.gb");
-                gameboy.reset();
-                loadDebugger();
-                console.info("Gameboy is ready!");
-            }).catch(
-                function (err) {
-                    console.error("Unable to load GameBoy");
-                    console.error(err);
-                }
-            );
-        }
-
-        var loadDebugger = function () {
-            System.import('debugger').then(function (e) {
-                try {
-                    debug = e.Debugger;
-                } catch (e) {
-                    console.error("Unable to load Debugger");
-                    console.error(e);
-                    return;
-                }
-                debug.init(gameboy);
-            }).catch(
-                function (err) {
-                    console.error("Unable to load Debugger");
-                    console.error(err);
-                }
-            );
-        }
-
-        loadGameBoy();
-
-        var tick = function () {
-            gameboy.tickUntil($('#tickfor').val());
-        }
-
-        var run = function () {
-            gameboy.tickUntil(-1);
-        }
-
-        var stop = function () {
-            gameboy.counts = 0;
-        }
-
-        var grow = function () {
-            gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() + 1);
-        }
-
-        var shrink = function () {
-            gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() - 1);
-        }
-
-        var toggleDebug = function () {
-            var _tpf = 100000;
-            return function () {
-                _tpf = $('#tpf').val();
-                debug.status = !debug.status;
-                if (debug.status) {
-                    debug.display();
-                    _tpf = gameboy.tpf;
-                    gameboy.tpf = 1;
-                } else {
-                    console.log(_tpf);
-                    gameboy.tpf = _tpf;
-                }
-            }
-        }();
-
-        var setBreakPoint = function () {
-            var val = parseInt($("#breakpoint").val(), 16);
-            gameboy.setPCBreak(val);
-        }
-
-        var renderBGmap = function () {
-            debug.renderBGmap();
-        }
-
-        var renderTilemap = function () {
-            debug.renderTilemap();
-        }
-
-
-        //Debugger hot keys
-        $("#breakpoint").blur(function () {
-            if ($("#breakpoint").val() != 0) {
-                $("#setbreak").click();
-            }
-        });
-
-        //Chrome
-        /*
-        $(document).keypress(function (event) {
-            //$(this.body).prepend("<span>" + event.key + "</span>");
-            switch (event.key) {
-                case "Enter":
-                    toggleDebug();
-                    break;
-                case "r":
-                    run();
-                    break;
-                case "s": //S
-                    stop();
-                    break;
-                case "t": //T
-                    tick();
-                    break;
-            }
-        });
-
-        $(document).keydown(function (event) {
-            if (event.keyCode == 16) {
-                var input = $("#breakpoint");
-                if (input.is(":focus")) {
-                    input.blur();
-                } else {
-                    input.focus();
-                }
-            }
-        });
-    */
-
-
-    </script>
+</div>
 </body>
+
+<script>
+    var gameboy = null;
+    var debug = null;
+    var breakpoint = false;
+
+    var loadGameBoy = function () {
+        System.import('gameboy').then(function (e) {
+            try {
+                gameboy = new e.GameBoy();
+            } catch (e) {
+                console.error("Unable to load GameBoy");
+                console.error(e);
+                return;
+            }
+
+            gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");
+            //gameboy.load("./roms/cpu_instrs/individual/01-special.gb");
+            //gameboy.load("./roms/Tetris.gb");
+            gameboy.reset();
+            loadDebugger();
+            console.info("Gameboy is ready!");
+        }).catch(
+            function (err) {
+                console.error("Unable to load GameBoy");
+                console.error(err);
+            }
+        );
+    }
+
+    var loadDebugger = function () {
+        System.import('debugger').then(function (e) {
+            try {
+                debug = e.Debugger;
+            } catch (e) {
+                console.error("Unable to load Debugger");
+                console.error(e);
+                return;
+            }
+            debug.init(gameboy);
+        }).catch(
+            function (err) {
+                console.error("Unable to load Debugger");
+                console.error(err);
+            }
+        );
+        console.log("debugger ready!");
+    }
+
+    loadGameBoy();
+
+    var tick = function () {
+        gameboy.tickUntil($('#tickfor').val());
+    }
+
+    var run = function () {
+        gameboy.tickUntil(-1);
+    }
+
+    var stop = function () {
+        gameboy.counts = 0;
+    }
+
+    var grow = function () {
+        gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() + 1);
+    }
+
+    var shrink = function () {
+        gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() - 1);
+    }
+
+    var toggleDebug = function () {
+        var _tpf = 100000;
+        return function () {
+            _tpf = $('#tpf').val();
+            debug.status = !debug.status;
+            if (debug.status) {
+                debug.display();
+                _tpf = gameboy.tpf;
+                gameboy.tpf = 1;
+            } else {
+                console.log(_tpf);
+                gameboy.tpf = _tpf;
+            }
+        }
+    }();
+
+    var setBreakPoint = function () {
+        var val = parseInt($("#breakpoint").val(), 16);
+        gameboy.setPCBreak(val);
+    }
+
+    var renderBGmap = function () {
+        debug.renderBGmap();
+    }
+
+    var renderTilemap = function () {
+        debug.renderTilemap();
+    }
+
+
+    //Debugger hot keys
+    $("#breakpoint").blur(function () {
+        if ($("#breakpoint").val() != 0) {
+            $("#setbreak").click();
+        }
+    });
+
+    //Chrome
+    /*
+    $(document).keypress(function (event) {
+        //$(this.body).prepend("<span>" + event.key + "</span>");
+        switch (event.key) {
+            case "Enter":
+                toggleDebug();
+                break;
+            case "r":
+                run();
+                break;
+            case "s": //S
+                stop();
+                break;
+            case "t": //T
+                tick();
+                break;
+        }
+    });
+
+    $(document).keydown(function (event) {
+        if (event.keyCode == 16) {
+            var input = $("#breakpoint");
+            if (input.is(":focus")) {
+                input.blur();
+            } else {
+                input.focus();
+            }
+        }
+    });
+*/
+
+
+</script>
 </html>
