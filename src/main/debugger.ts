@@ -30,39 +30,39 @@ export class Debugger {
         Debugger.printStack();
 
         //Print to screen
-        $('#cpucycles').html(gameboy.cpu.clock.t.toString());
-        $('#ppucycles').html(gameboy.ppu.clock.toString());
-        $('#ticks').html(gameboy.ticks.toString());
-        $('#pc').html("0x" + gameboy.cpu.registers.getPC().toString(16).toUpperCase());
-        $('#sp').html("0x" + gameboy.cpu.registers.getSP().toString(16).toUpperCase());
+        document.getElementById('cpucycles').innerHTML = gameboy.cpu.clock.t.toString();
+        document.getElementById('ppucycles').innerHTML = gameboy.ppu.clock.toString();
+        document.getElementById('ticks').innerHTML = gameboy.ticks.toString();
+        document.getElementById('pc').innerHTML = "0x" + gameboy.cpu.registers.getPC().toString(16).toUpperCase();
+        document.getElementById('sp').innerHTML = "0x" + gameboy.cpu.registers.getSP().toString(16).toUpperCase();
 
-        $('#zero').html("z: " + Number(gameboy.cpu.registers.getZeroFlag()).toString(2));
-        $('#subtract').html("s: " + Number(gameboy.cpu.registers.getSubtractFlag()).toString(2));
-        $('#halfcarry').html("h: " + Number(gameboy.cpu.registers.getHalfFlag()).toString(2));
-        $('#fullcarry').html("c: " + Number(gameboy.cpu.registers.getCarryFlag()).toString(2));
+        document.getElementById('zero').innerHTML = "z: " + Number(gameboy.cpu.registers.getZeroFlag()).toString(2);
+        document.getElementById('subtract').innerHTML = "s: " + Number(gameboy.cpu.registers.getSubtractFlag()).toString(2);
+        document.getElementById('halfcarry').innerHTML = "h: " + Number(gameboy.cpu.registers.getHalfFlag()).toString(2);
+        document.getElementById('fullcarry').innerHTML = "c: " + Number(gameboy.cpu.registers.getCarryFlag()).toString(2);
 
-        $('#af').html("0x" + gameboy.cpu.registers.getAF().toString(16).toUpperCase());
-        $('#bc').html("0x" + gameboy.cpu.registers.getBC().toString(16).toUpperCase());
-        $('#de').html("0x" + gameboy.cpu.registers.getDE().toString(16).toUpperCase());
-        $('#hl').html("0x" + gameboy.cpu.registers.getHL().toString(16).toUpperCase());
+        document.getElementById('af').innerHTML = "0x" + gameboy.cpu.registers.getAF().toString(16).toUpperCase();
+        document.getElementById('bc').innerHTML = "0x" + gameboy.cpu.registers.getBC().toString(16).toUpperCase();
+        document.getElementById('de').innerHTML = "0x" + gameboy.cpu.registers.getDE().toString(16).toUpperCase();
+        document.getElementById('hl').innerHTML = "0x" + gameboy.cpu.registers.getHL().toString(16).toUpperCase();
 
         if (gameboy.cpu.last) {
-            $('#opcode').html("0x" + gameboy.cpu.last.opcode.toString(16).toUpperCase());
-            $('#opname').html(gameboy.cpu.last.operation.name.toUpperCase());
-            $('#opmode').html(gameboy.cpu.last.operation.mode.name.toUpperCase());
-            $('#opaddr').html("0x" + gameboy.cpu.last.opaddr.toString(16).toUpperCase());
-            $('#operand').html(gameboy.cpu.last.opaddr.toString(16).toUpperCase());
+            document.getElementById('opcode').innerHTML = "0x" + gameboy.cpu.last.opcode.toString(16).toUpperCase();
+            document.getElementById('opname').innerHTML = gameboy.cpu.last.operation.name.toUpperCase();
+            document.getElementById('opmode').innerHTML = gameboy.cpu.last.operation.mode.name.toUpperCase();
+            document.getElementById('opaddr').innerHTML = "0x" + gameboy.cpu.last.opaddr.toString(16).toUpperCase();
+            document.getElementById('operand').innerHTML = gameboy.cpu.last.opaddr.toString(16).toUpperCase();
         }
 
         //PPU Register
-        $('#lcdc').html("0x" + gameboy.ppu.registers.lcdc.getAll().toString(16));
-        $('#stat').html("0x" + gameboy.ppu.registers.stat.getAll().toString(16));
-        $('#ly').html(gameboy.ppu.registers.ly.toString());
+        document.getElementById('lcdc').innerHTML = "0x" + gameboy.ppu.registers.lcdc.getAll().toString(16);
+        document.getElementById('stat').innerHTML = "0x" + gameboy.ppu.registers.stat.getAll().toString(16);
+        document.getElementById('ly').innerHTML = gameboy.ppu.registers.ly.toString();
 
         //Interrupts
-        $('#ime').html("0x" + gameboy.memory.interrupts.ime.toString(16));
-        $('#if').html("0x" + gameboy.memory.interrupts.if.toString(16));
-        $('#ie').html("0x" + gameboy.memory.interrupts.ie.toString(16));
+        document.getElementById('ime').innerHTML = "0x" + gameboy.memory.interrupts.ime.toString(16);
+        document.getElementById('if').innerHTML = "0x" + gameboy.memory.interrupts.if.toString(16);
+        document.getElementById('ie').innerHTML = "0x" + gameboy.memory.interrupts.ie.toString(16);
 
         $('#tpf').change(function () {
             if ($(this).val()) {
@@ -72,8 +72,8 @@ export class Debugger {
         });
 
         if (gameboy.cartridge.type) {
-            $('#url').html(gameboy.cartridge.url);
-            $('#type').html(gameboy.cartridge.type.name);
+            document.getElementById('url').innerHTML = gameboy.cartridge.url;
+            document.getElementById('type').innerHTML = gameboy.cartridge.type.name;
         }
     }
 
@@ -81,7 +81,11 @@ export class Debugger {
         //Add to log
         let cpu = Debugger.gameboy.cpu;
         let memory = Debugger.gameboy.memory;
-        let eventStr =
+        let log :Element= document.getElementsByClassName("log")[0];
+        let li = log.getElementsByTagName("li");
+        let ul = log.getElementsByTagName("ul")[0];
+        let html = document.createElement("li");
+        html.innerHTML =
             "PC:" + cpu.registers.getPC().toString(16).toUpperCase()
             //            + " Op:" + this.last.opcode.toString(16).toUpperCase()
             + " SP:" + cpu.registers.getSP().toString(16).toUpperCase() + "|"
@@ -95,23 +99,21 @@ export class Debugger {
             + " if:" + cpu.interrupts.if.toString(16).toUpperCase();
 
         if (Debugger.gameboy.cpu.last == null) {
-            let eventStr = "ERROR";
-            let eventElement = $(".log ul");
-            eventElement.append("<li class='error'>" + eventStr + "</li>");
-            $(".log").scrollTop($(".log").prop("scrollHeight"));
+            let eventElement = document.createElement("li");
+            eventElement.setAttribute("class","error");
+            eventElement.innerHTML = "ERROR";
+            log.getElementsByTagName("ul")[0].appendChild(eventElement);
             return;
         }
 
-
-        if ($(".log li").length > Debugger.logLimit) {
-            $(".log ul").empty();
+        if (li.length > Debugger.logLimit) {
+            ul.remove();
+            log.appendChild(document.createElement("ul"));
+            log.scrollTo(0, log.scrollHeight);
         }
 
-        let html = "<li>" + eventStr + "</li>";
-
-        $(".log ul").append(html);
-        $(".log").scrollTop($(".log").prop("scrollHeight"));
-
+        ul.appendChild(html);
+        log.scrollTo(0, log.scrollHeight);
     }
 
 

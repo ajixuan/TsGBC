@@ -43,21 +43,21 @@ export class Cpu {
         this.registers.setPC(0x100);
 
         this.memory.nr[0xFF10 - 0xFF10] = 0x80; //NR10
-        this.memory.nr[0xFF11 - 0xFF10] =  0xBF; //NR11
-        this.memory.nr[0xFF12 - 0xFF10] =  0xF3; //NR12
-        this.memory.nr[0xFF14 - 0xFF10] =  0xBF; //NR14
-        this.memory.nr[0xFF16 - 0xFF10] =  0x3F; //NR21
-        this.memory.nr[0xFF17 - 0xFF10] =  0x00; //NR22
-        this.memory.nr[0xFF19 - 0xFF10] =  0xBF; //NR24
-        this.memory.nr[0xFF1A - 0xFF10] =  0x7F; //NR30
-        this.memory.nr[0xFF1B - 0xFF10] =  0xFF; //NR31
-        this.memory.nr[0xFF1C - 0xFF10] =  0x9F; //NR32
-        this.memory.nr[0xFF1E - 0xFF10] =  0xBF; //NR33
-        this.memory.nr[0xFF20 - 0xFF10] =  0xFF; //NR41
-        this.memory.nr[0xFF23 - 0xFF10] =  0xBF; //NR30
-        this.memory.nr[0xFF24 - 0xFF10] =  0x77; //NR50
-        this.memory.nr[0xFF25 - 0xFF10] =  0xF3; //NR51
-        this.memory.nr[0xFF26 - 0xFF10] =  0xF1; //NR52
+        this.memory.nr[0xFF11 - 0xFF10] = 0xBF; //NR11
+        this.memory.nr[0xFF12 - 0xFF10] = 0xF3; //NR12
+        this.memory.nr[0xFF14 - 0xFF10] = 0xBF; //NR14
+        this.memory.nr[0xFF16 - 0xFF10] = 0x3F; //NR21
+        this.memory.nr[0xFF17 - 0xFF10] = 0x00; //NR22
+        this.memory.nr[0xFF19 - 0xFF10] = 0xBF; //NR24
+        this.memory.nr[0xFF1A - 0xFF10] = 0x7F; //NR30
+        this.memory.nr[0xFF1B - 0xFF10] = 0xFF; //NR31
+        this.memory.nr[0xFF1C - 0xFF10] = 0x9F; //NR32
+        this.memory.nr[0xFF1E - 0xFF10] = 0xBF; //NR33
+        this.memory.nr[0xFF20 - 0xFF10] = 0xFF; //NR41
+        this.memory.nr[0xFF23 - 0xFF10] = 0xBF; //NR30
+        this.memory.nr[0xFF24 - 0xFF10] = 0x77; //NR50
+        this.memory.nr[0xFF25 - 0xFF10] = 0xF3; //NR51
+        this.memory.nr[0xFF26 - 0xFF10] = 0xF1; //NR52
 
         this.clock = {m: 0, t: 0};
 
@@ -102,26 +102,20 @@ export class Cpu {
      * Performs a single CPU cycle.
      */
     public tick(): number {
-        let cycles = 0;
-
-        //Check ime  here
-        let hardwareInterrupt;
-        if(this.interrupts.ime){hardwareInterrupt = true}
-
-        let pc = this.registers.getPC();
-
-        //Get opcode
-        let opcode = this.memory.readByte(pc++);
+        let cycles, hardwareInterrupt, oldPC, operation, args,
+            pc = this.registers.getPC(), opcode = this.memory.readByte(pc++);
 
         if (this.halt) {
-            opcode = 0x00; //NOP
-        }
-
-        if (opcode == 0xCB) {
+            opcode = 0x00
+        } else if(opcode == 0xCB){
             opcode = (opcode << 8) | this.memory.readByte(pc++);
         }
-        //Get Operation
-        let operation = this.operations.get(opcode);
+
+
+        operation = this.operations.get(opcode);
+        args = operation.mode.getValue(pc, operation.size - 1);
+        oldPC = this.registers.getPC();
+
 
         if (operation == null) {
             this.last = null;
@@ -129,14 +123,12 @@ export class Cpu {
             throw "Unknown opcode execution 0x" + opcode.toString(16).toUpperCase();
         }
 
-        //Execute Operation
-        let oldPC = this.registers.getPC();
-        let opaddr = operation.mode.getValue(pc, operation.size - 1);
+        if (this.interrupts.ime) { hardwareInterrupt = true }
 
-        operation.execute(opaddr);
+        operation.execute(args);
 
         //If pc did not change during op execution, increment pc
-        if (oldPC === this.registers.getPC()) {
+        if (oldPC == this.registers.getPC()) {
             this.registers.setPC(this.registers.getPC() + operation.size & 0xFFFF);
         }
 
@@ -144,7 +136,7 @@ export class Cpu {
         this.last = {
             operation: operation,
             opcode: opcode,
-            opaddr: opaddr
+            opaddr: args
         };
 
         //Update Infromation
@@ -159,7 +151,7 @@ export class Cpu {
         //this.clock.t += cycles;
         //this.clock.m = this.clock.t / 4;
 
-        if(Debugger.status){
+        if (Debugger.status) {
             Debugger.display();
         }
 
