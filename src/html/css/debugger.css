@@ -5,8 +5,8 @@
     font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-fieldset {
-    width: 170px;
+fieldset, #vrammap {
+    width: 200px;
 }
 
 .header {
