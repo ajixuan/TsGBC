@@ -268,7 +268,7 @@ export class Debugger {
         if (!val) {return}
 
         if (Debugger.status) {
-
+            Debugger.writeMem(addr, val);
         }
 
         Debugger.memqueue[addr] = val;
