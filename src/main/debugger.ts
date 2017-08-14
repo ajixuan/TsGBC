@@ -8,7 +8,7 @@ export class Debugger {
     private static memqueue = {};
     private static memmap : Element = document.getElementsByTagName("tbody")[0];
     private static gameboy: GameBoy;
-    private static logLimit: 500;
+    private static logLimit = 500;
     private static bgmap: Array<Number> = Array(0x800).fill(0);
     private static COLORS: string[] = [
         "#000000",
@@ -102,14 +102,16 @@ export class Debugger {
             let eventElement = document.createElement("li");
             eventElement.setAttribute("class","error");
             eventElement.innerHTML = "ERROR";
-            log.getElementsByTagName("ul")[0].appendChild(eventElement);
+            ul.appendChild(eventElement);
+            log.scrollTo(0, log.scrollHeight);
             return;
         }
 
         if (li.length > Debugger.logLimit) {
-            ul.remove();
-            log.appendChild(document.createElement("ul"));
-            log.scrollTo(0, log.scrollHeight);
+            log.removeChild(ul);
+            ul = document.createElement("ul");
+            log.appendChild(ul);
+            console.log("ye");
         }
 
         ul.appendChild(html);
