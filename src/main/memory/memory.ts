@@ -24,7 +24,7 @@ export class Memory {
     };
     public ppu: Ppu;
     public interrupts : Interrupts = new Interrupts();
-    public nr : Array<number> = Array(0x7F).fill(0);
+    public nr : Array<number> = Array(0x16).fill(0);
 
 
     public writeByte(addr: number, val: number): void {
@@ -76,7 +76,7 @@ export class Memory {
                 this.interrupts.if = (0xE0 | val) & 0xFF;
             } else if (addr < 0xFF6C) {
 
-                if(addr <0xFF26){
+                if(addr <=0xFF26){
                     this.nr[addr - 0xFF10] = val;
                 } else if (addr == 0xFF40) {
                     this.ppu.registers.lcdc.setAll(val);
@@ -202,7 +202,7 @@ export class Memory {
                 return this.interrupts.if & 0xFF;
             } else if (addr < 0xFF6C) {
 
-                if(addr <0xFF26){
+                if(addr <=0xFF26){
                     val = this.nr[addr - 0xFF10];
                 } else if (addr == 0xFF40) {
                     val = this.ppu.registers.lcdc.getAll();
