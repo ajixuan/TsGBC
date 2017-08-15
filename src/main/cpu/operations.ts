@@ -209,8 +209,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                let result = calcAddFlags(registers.getBC(), 1, false);
-                registers.setBC(result);
+                registers.setBC((registers.getBC() + 1) & 0xFFFF);
             }
         };
 
@@ -319,7 +318,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                registers.setBC(registers.getBC() - 1);
+                registers.setBC((registers.getBC() - 1)&0xFFFF);
             }
         };
 
@@ -412,7 +411,7 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 //No flags affected
-                registers.setDE(registers.getDE() + 1);
+                registers.setDE((registers.getDE() + 1) & 0xFFFF);
             }
         };
 
@@ -500,7 +499,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                registers.setDE(registers.getDE() - 1);
+                registers.setDE((registers.getDE() - 1)&0xFFFF);
             }
         };
 
@@ -605,8 +604,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                let result = calcAddFlags(registers.getHL(), 1, false);
-                registers.setHL(result);
+                registers.setHL((registers.getHL() + 1) &0xFFFF);
             }
         };
 
@@ -696,7 +694,7 @@ export class Operations {
         };
 
         this.operations[0x2A] = {
-            name: "LD",
+            name: "LDi",
             cycle: 8,
             mode: immediate,
             size: 1,
@@ -714,7 +712,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                registers.setHL(registers.getHL() - 1);
+                registers.setHL((registers.getHL() - 1) & 0xFFFF);
             }
         };
 
@@ -813,8 +811,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                let result = calcAddFlags(registers.getSP(), 1, false);
-                registers.setSP(result);
+                registers.setSP((registers.getSP() + 1)&0xFFFF);
             }
         };
 
@@ -892,7 +889,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                registers.setSP(registers.getSP());
+                registers.setSP((registers.getSP() - 1 ) & 0xFFFF);
             }
         };
 
@@ -2682,7 +2679,6 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 if (registers.getZeroFlag() == 0) {
-                    //Pop from stack pointer to pc
                     let result = stack.popWord();
                     registers.setPC(result);
                     this.cycle = 20;
@@ -2719,8 +2715,7 @@ export class Operations {
             size: 3,
             execute(pc: number) {
                 if (registers.getZeroFlag() == 0) {
-                    registers.setSP(registers.getSP() - 2);
-                    stack.pushWord(pc + 3);
+                    stack.pushWord(registers.getPC() + this.size);
                     registers.setPC(pc);
                     this.cycle = 24;
                 }
@@ -2796,8 +2791,7 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 if (registers.getZeroFlag() == 1) {
-                    registers.setSP(registers.getSP() - 2);
-                    stack.pushWord(pc + 3);
+                    stack.pushWord(registers.getPC() + this.size);
                     registers.setPC(pc);
                     this.cycle = 24;
                 }
@@ -2810,7 +2804,7 @@ export class Operations {
             size: 3,
             mode: immediate,
             execute(pc: number) {
-                stack.pushWord(registers.getPC() + 3);
+                stack.pushWord(registers.getPC() + this.size);
                 registers.setPC(pc);
             }
         };
@@ -2980,12 +2974,8 @@ export class Operations {
             mode: immediate,
             size: 3,
             execute(pc: number) {
-                //TODO this might be wrong (reverse?)
-                let high = memory.readByte(pc + 1 & 0xFFFF);
-                let low = memory.readByte(pc & 0xFFFF);
-                let addr = high << 8 | low;
                 let val = registers.getA();
-                memory.writeByte(addr, val);
+                memory.writeByte(pc, val);
             }
         };
 
