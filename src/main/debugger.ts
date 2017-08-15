@@ -230,14 +230,15 @@ export class Debugger {
     }
 
     public static resetMemmap() {
-        let queue : Element[] = [];
+        let queue = {};
         let memory = Debugger.gameboy.memory;
         $("tbody tr").remove();
 
         for (let i = 0x8000; i <= 0xFFF0; i += 0x10) {
             (function (addr) {
                 setTimeout(function () {
-                    let index = (addr - 0x8000) / 0x10;
+                    let keys;
+                    let index = Math.floor((addr - 0x8000) / 0x10);
 
                     //Header
                     let th : Element = document.createElement("th");
@@ -247,19 +248,18 @@ export class Debugger {
                     queue[index] = document.createElement("tr");
                     queue[index].appendChild(th);
                     for (let j = 0; j <= 0xF; j++) {
-
                         //Column
                         let td : Element = document.createElement("td");
                         td.innerHTML = memory.readByte(addr + j).toString(16);
                         queue[index].appendChild(td);
                     }
 
-                    //Process by batch
-                    if (queue.length % 0xA0 == 0) {
-                        queue.map(function(curr){
-                            Debugger.memmap.appendChild(curr);
-                        })
-                        queue.length = 0;
+                    if (addr == 0xFFF0) {
+                        keys = Object.keys(queue);
+                        for(let k = 0; k<keys.length; k++){
+                            Debugger.memmap.appendChild(queue[keys[k]]);
+                        }
+                        queue = {};
                     }
                 }, 100);
             })(i);
