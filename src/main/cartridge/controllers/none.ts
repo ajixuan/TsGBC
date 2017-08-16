@@ -24,7 +24,9 @@ export class None implements Controller {
     }
     public writeByte(addr: number, val : number) : void {
         if (addr < 0x8000) {
-            this.rom[addr] = val;
+
+            //Cartridge data is read only
+            // this.rom[addr] = val;
         } else if (addr < 0xC000 && addr >= 0xA000) {
             this.eRam[addr - 0xA000] = val;
         } else {
