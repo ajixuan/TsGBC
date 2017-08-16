@@ -2697,6 +2697,19 @@ export class Operations {
             }
         };
 
+        this.operations[0xC2] = {
+            name: "JP",
+            cycle: 12,
+            mode: immediate,
+            size: 3,
+            execute(pc: number) {
+                if(registers.getZeroFlag() == 0){
+                    registers.setPC(pc);
+                    this.cycle = 16;
+                }
+            }
+        };
+
 
         this.operations[0xC3] = {
             name: "JP",
@@ -3174,7 +3187,7 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getC();
-                let bit = val >> 7;
+                let bit = val & 1;
                 let result = val >> 1;
 
                     registers.setF(0);
@@ -3194,8 +3207,28 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getD();
-                let bit = val >> 7;
+                let bit = val & 1;
                 let result = val >> 1;
+
+                registers.setF(0);
+                if (result === 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setCarryFlag(bit);
+                registers.setD(result);
+            }
+        };
+
+        this.operations[0xCB27] = {
+            name: "SLA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let bit = val >> 7;
+                let result = (val << 1) & 0xFFFF;
 
                 registers.setF(0);
                 if (result === 0) {
