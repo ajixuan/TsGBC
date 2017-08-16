@@ -2,8 +2,8 @@
 ------------
 213 - 20D: Loading rom data to internal ram
 C000:
-C220:
-    ignoring
+C200-C210:
+    Loading the test rom into cpu memory C000
 C24C: #Load all tiles
     CC29: call C7FB
         C7FB: call C89E
@@ -13,8 +13,17 @@ C24C: #Load all tiles
                 -----------------Loop   #wait for vblank
                 C7EE:
                 C7EF-C7F1: #if b and c are 0 jmp to C7F9
-                C7F3-C7F7: #Until vblank, loop to 27EE
+                C7F3-C7F9: #Until vblank, loop to 27EE
                 -----------------End
+                C7FA: ret
+            C8A2 - C8A7: set LCDC to 11 (FF40); pop stack
+        C7FE:
+            C83D:
+            --------------------Loop   #Wait for b to 0
+            C843: Manipulate palette data
+            C864: Loop back to C843
+            --------------------End
+
 
 
 
