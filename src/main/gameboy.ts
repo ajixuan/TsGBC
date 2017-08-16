@@ -16,7 +16,7 @@ export class GameBoy {
     public timeout: any;
     public interval: number = 1000;
     private runConditions : Array<Function> = new Array<Function>();
-    public counts: number = 0;
+    public switch: boolean = false;
     public joypad: Joypad;
     public keyboard: Keyboard;
 
@@ -44,33 +44,31 @@ export class GameBoy {
         this.ticks = 0;
     }
 
-    public checkRunConditions(): boolean {
+    public checkRunConditions(): void {
         for(let i = 0 ; i < this.runConditions.length; i++){
             if(this.runConditions[i]()){
                 this.runConditions.splice(i, 1);
-                return true;
+                this.switch = false;
             }
         }
-        return false;
     }
 
-    public tick(): boolean{
-        if(this.checkRunConditions()){return true}
+    public tick(): void{
+        this.checkRunConditions();
         let cycles = this.cpu.tick();
-        this.counts--;
         this.ticks++;
         this.ppu.renderscan(cycles);
-        return false;
     }
 
     /**
      * Tick until
      * @param pc
      */
-    private tickAnimation(): void {
+    public  tickAnimation(): void {
         let tick = function(){
             for(let i = 0; i <= this.tpf; i++){
-                if(this.tick()) return;
+                this.tick();
+                if(!this.switch){return}
             }
             setTimeout(this.tickAnimation.bind(this), 1);
         }.bind(this);
@@ -80,7 +78,6 @@ export class GameBoy {
 
     public setPCBreak(pc : number):void {
         let cb = (function(pc : number, registers : Registers){
-            console.log(pc);
             let _pc = pc;
             let _registers = registers;
             return () => {
@@ -88,13 +85,5 @@ export class GameBoy {
             };
         })(pc, this.cpu.registers);
         this.runConditions.push(cb);
-    }
-
-    public tickUntil(counts : number) : void {
-        //Push the basic run condition in
-        let run = function(){ return (this.counts == 0)}.bind(this);
-        this.runConditions.push(run);
-        this.counts = counts;
-        this.tickAnimation();
     }
 }

@@ -17,9 +17,7 @@
 
         <div class="controllerRow">
             <div class="controllerCol">
-
                 <div>
-                    <input size="2" id="tickfor" value="1">
                     <button onclick="tick()">Tick</button>
                 </div>
                 <div>
@@ -297,9 +295,9 @@
                 return;
             }
 
-            gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");
+            //gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");
             //gameboy.load("./roms/cpu_instrs/individual/01-special.gb");
-            //gameboy.load("./roms/Tetris.gb");
+            gameboy.load("./roms/Tetris.gb");
             gameboy.reset();
             loadDebugger();
             console.info("Gameboy is ready!");
@@ -333,15 +331,16 @@
     loadGameBoy();
 
     var tick = function () {
-        gameboy.tickUntil($('#tickfor').val());
+        gameboy.tickAnimation();
     }
 
     var run = function () {
-        gameboy.tickUntil(-1);
+        gameboy.switch = true;
+        gameboy.tickAnimation();
     }
 
     var stop = function () {
-        gameboy.counts = 0;
+        gameboy.switch = false;
     }
 
     var grow = function () {
@@ -382,13 +381,6 @@
         debug.renderTilemap();
     }
 
-
-    //Debugger hot keys
-    $("#breakpoint").blur(function () {
-        if ($("#breakpoint").val() != 0) {
-            $("#setbreak").click();
-        }
-    });
 
     //Chrome
     /*
