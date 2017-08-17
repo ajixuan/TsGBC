@@ -2753,7 +2753,7 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                let result = calcAddFlags(registers.getA(), registers.getB());
+                let result = calcAddFlags(registers.getA(), pc);
                 registers.setA(result);
             }
         };
@@ -2765,7 +2765,7 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                if (registers.getZeroFlag() == 1) {
+                if (registers.getZeroFlag()) {
                     //Pop from stack pointer to pc
                     registers.setPC(stack.popWord());
                     this.cycle = 20;
@@ -3236,7 +3236,7 @@ export class Operations {
                 }
 
                 registers.setCarryFlag(bit);
-                registers.setD(result);
+                registers.setA(result);
             }
         };
 
