@@ -11,6 +11,7 @@
 <body>
 <div style="display: flex; flex-direction: row;">
     <div style="display: flex; flex-direction: column; ">
+        <div id="switch">off</div>
         <div id="screenContainer">
             <canvas id="screen"></canvas>
         </div>
@@ -335,12 +336,12 @@
     }
 
     var run = function () {
-        gameboy.switch = true;
+        gameboy.switch.on();;
         gameboy.tickAnimation();
     }
 
     var stop = function () {
-        gameboy.switch = false;
+        gameboy.switch.off();
     }
 
     var grow = function () {

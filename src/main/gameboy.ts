@@ -16,7 +16,15 @@ export class GameBoy {
     public timeout: any;
     public interval: number = 1000;
     private runConditions : Array<Function> = new Array<Function>();
-    public switch: boolean = false;
+    public switch :any = function(element:Element){
+        let _val = false;
+        let _ele = element;
+        return {
+            on: function(){_val = true; _ele.innerHTML = "Running"},
+            off: function () {_val = false; _ele.innerHTML = "Stopped"},
+            stat: function () {return _val}
+        }
+    }(document.getElementById("switch"));
     public joypad: Joypad;
     public keyboard: Keyboard;
 
@@ -29,7 +37,6 @@ export class GameBoy {
         this.cpu = new Cpu(this.memory);
         this.ppu = new Ppu(this.memory);
         this.joypad = this.memory.joypad;
-
         this.keyboard = new Keyboard(this.memory.joypad);
         this.keyboard.init();
     }
@@ -48,27 +55,27 @@ export class GameBoy {
         for(let i = 0 ; i < this.runConditions.length; i++){
             if(this.runConditions[i]()){
                 this.runConditions.splice(i, 1);
-                this.switch = false;
+                this.switch.off();
             }
         }
     }
 
     public tick(): void{
-        this.checkRunConditions();
         let cycles = this.cpu.tick();
         this.ticks++;
         this.ppu.renderscan(cycles);
+        this.checkRunConditions();
     }
 
     /**
      * Tick until
      * @param pc
      */
-    public  tickAnimation(): void {
+    public tickAnimation(): void {
         let tick = function(){
             for(let i = 0; i <= this.tpf; i++){
                 this.tick();
-                if(!this.switch){return}
+                if(!this.switch.stat()){return}
             }
             setTimeout(this.tickAnimation.bind(this), 1);
         }.bind(this);
