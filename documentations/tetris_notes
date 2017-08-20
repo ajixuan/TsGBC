@@ -121,7 +121,7 @@ Joypad complete
 		64DE-64E0: If DF7F is 02 then Jmp to 655D 
 		64E2-64E6: If DF7E is 0 then Jmp to 6563
 		64E8-64EB: If FFE4 is 0 then Jmp to 64FA
-		64FA: Retarded
+		64FA: Return to top of stack (64FD)
 		64FD: Jmp
 			69DD-69E2:If DFE0 is 0 jmp to 69F0
 			69E4-69EF: not yet called
@@ -141,9 +141,10 @@ Joypad complete
 			6849-684E: If DEF1 is 1 Jmp to 68B6
 			6851-6853: If DEF1 is 2 Jmp to 6817
 		6506:
-			6A21
+			6A21 
 		6509:
 		650C:
+		6A27
 
 ##The Intro screen loop=====================
 2CD-2D3: If FF80 is 0F, jump to 21B

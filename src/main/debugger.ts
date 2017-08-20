@@ -269,7 +269,7 @@ export class Debugger {
     public static updatemap(addr: number): void {
         let val = Debugger.gameboy.memory.readByte(addr);
 
-        if (!val) {return}
+        if (val == null) {return}
 
         if (Debugger.status) {
             Debugger.writeMem(addr, val);
