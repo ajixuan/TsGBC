@@ -148,7 +148,11 @@ export class Operations {
 
         let immediate: Mode = new class {
             name: string = "Immediate";
-            memory: Memory = memory;
+            memory: Memory;
+
+            constructor(memory : Memory) {
+                this.memory = memory;
+            }
 
             getValue(addr: number, size: number): number {
                 if (size == 2) {
@@ -157,7 +161,7 @@ export class Operations {
 
                 return this.memory.readByte(addr);
             }
-        };
+        }(this.cpu.memory);
 
         //Helper functions
         let calcAddFlags = this.calcAddFlags.bind(this);
