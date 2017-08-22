@@ -113,15 +113,15 @@ export class Cpu {
 
 
         operation = this.operations.get(opcode);
-        args = operation.mode.getValue(pc, operation.size - 1);
-        oldPC = this.registers.getPC();
-
 
         if (operation == null) {
             this.last = null;
             Debugger.display();
             throw "Unknown opcode execution 0x" + opcode.toString(16).toUpperCase();
         }
+
+        args = operation.mode.getValue(pc, operation.size - 1);
+        oldPC = this.registers.getPC();
 
         if (this.interrupts.ime) { hardwareInterrupt = true }
 
