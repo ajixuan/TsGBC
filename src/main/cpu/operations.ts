@@ -869,7 +869,20 @@ export class Operations {
             }
         };
 
+        this.operations[0x38] = {
+            name: "JR",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                if (registers.getCarryFlag()) {
+                    registers.setPC(registers.getPC() + checkSign(pc) + this.size);
+                    this.cycle = 12;
+                }
+            }
+        };
 
+        
         this.operations[0x39] = {
             name: "ADD",
             cycle: 8,
@@ -3290,7 +3303,7 @@ export class Operations {
                 let val = registers.getB();
                 let lower = val & 0xF;
                 let upper = (val & 0xF0) >> 4;
-                let result = lower << 4 + upper;
+                let result = (lower << 4) + upper;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3310,7 +3323,7 @@ export class Operations {
                 let val = registers.getC();
                 let lower = val & 0xF;
                 let upper = (val & 0xF0) >> 4;
-                let result = lower << 4 + upper;
+                let result = (lower << 4) + upper;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3331,7 +3344,7 @@ export class Operations {
                 let val = registers.getD();
                 let lower = val & 0xF;
                 let upper = (val & 0xF0) >> 4;
-                let result = lower << 4 + upper;
+                let result = (lower << 4) + upper;
 
                 if (result === 0) {
                     registers.setZeroFlag(1);
@@ -3370,7 +3383,7 @@ export class Operations {
                 let val = registers.getH();
                 let lower = val & 0xF;
                 let upper = (val & 0xF0) >> 4;
-                let result = lower << 4 + upper;
+                let result = (lower << 4) + upper;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3390,7 +3403,7 @@ export class Operations {
                 let val = registers.getL();
                 let lower = val & 0xF;
                 let upper = (val & 0xF0) >> 4;
-                let result = lower << 4 + upper;
+                let result = (lower << 4) + upper;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3410,7 +3423,7 @@ export class Operations {
                 let val = registers.getHL();
                 let lower = val & 0xFF;
                 let upper = (val & 0xFF00) >> 8;
-                let result = lower << 8 + upper;
+                let result = (lower << 8) + upper;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3431,7 +3444,7 @@ export class Operations {
                 let val = registers.getA();
                 let lower = val & 0xF;
                 let upper = (val & 0xF0) >> 4;
-                let result = lower << 4 + upper;
+                let result = (lower << 4) + upper;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3500,6 +3513,23 @@ export class Operations {
             }
         };
 
+        this.operations[0xCB41] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getC();
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if (val & 0x01) {
+                    registers.setZeroFlag(0);
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
         this.operations[0xCB47] = {
             name: "BIT",
             cycle: 8,
@@ -3541,6 +3571,23 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getB();
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if (val & 0x04) {
+                    registers.setZeroFlag(0);
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
+        this.operations[0xCB57] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
                 if (val & 0x04) {
@@ -3674,6 +3721,22 @@ export class Operations {
                 registers.setZeroFlag(1);
             }
         };
+        this.operations[0xCB70] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getB();
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if (val & 0x40) {
+                    registers.setZeroFlag(0);
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
 
 
         this.operations[0xCB77] = {
@@ -3687,6 +3750,23 @@ export class Operations {
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
                 if (val & 0x40) {
+                    registers.setZeroFlag(0);
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+        this.operations[0xCB78] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getB();
+
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if (val & 0x80) {
                     registers.setZeroFlag(0);
                     return;
                 }
@@ -3750,6 +3830,30 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 registers.setA(val & ~(1 << pc));
+            }
+        };
+
+        this.operations[0xCBBE] = {
+            name: "RES",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let hl = registers.getHL();
+                let val = memory.readByte(hl);
+                memory.writeByte(hl, val & 0x7F);
+            }
+        };
+
+        this.operations[0xCBFE] = {
+            name: "SET",
+            cycle: 16,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let hl = registers.getHL();
+                let val = memory.readByte(hl);
+                memory.writeByte(hl, val |= 0x80);
             }
         };
     }
