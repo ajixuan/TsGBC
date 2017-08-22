@@ -77,7 +77,7 @@ export class GameBoy {
                 this.tick();
                 if(!this.switch.stat()){return}
             }
-            setTimeout(this.tickAnimation.bind(this), 1);
+            this.tickAnimation.bind(this)();
         }.bind(this);
 
         requestAnimationFrame(tick);
