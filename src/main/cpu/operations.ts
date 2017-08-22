@@ -259,14 +259,12 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let msb = (val & 0x80) >> 7;
-                let result = ((val << 1) & 0xFF) + msb;
+                let msb = val >> 7;
+                let result = (val << 1) & 0xFF;
 
                 //Set flags
-                registers.setSubtractFlag(0);
-                registers.setHalfFlag(0);
+                registers.setF(0);
                 registers.setCarryFlag(msb);
-
                 if (result == 0) {
                     registers.setZeroFlag(1);
                 }
@@ -659,12 +657,27 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
+                let correct;
 
-                // if (result === 0) {
-                //     registers.setZeroFlag(1);
-                // }
-                //
-                // registers.setA(result);
+                (registers.getCarryFlag()) ? correct |= 0x60 : correct |= 0x00;
+
+                //Additions
+                if (registers.getHalfFlag()) {
+                    correct |= 0x06;
+                }
+                if ((val & 0xF) > 0xA) {
+                    correct |= 0x06;
+                }
+                if ((val >> 4) > 0x0A) {
+                    correct |= 0x60;
+                }
+
+                if((val >> 4) >= 0x09 && (val & 0xF) > 0x0A){
+                    correct |= 0x66;
+                }
+                if((correct & 0xF0) == 0x60){ registers.setCarryFlag(1)}
+
+                registers.setA((val + correct) & 0xFF);
             }
         };
 
@@ -2832,7 +2845,6 @@ export class Operations {
             size: 2,
             execute(pc: number) {
                 let val = registers.getA();
-
                 let result = calcAddFlags(val, pc + registers.getCarryFlag());
 
                 registers.setSubtractFlag(0);
@@ -2840,6 +2852,19 @@ export class Operations {
             }
         };
 
+        this.operations[0xD0] = {
+            name: "POP",
+            cycle: 12,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                if (registers.getC() == 0) {
+                    let result = stack.popWord();
+                    registers.setPC(result);
+                    this.cycle = 20;
+                }
+            }
+        };
 
         this.operations[0xD1] = {
             name: "POP",
@@ -3182,6 +3207,9 @@ export class Operations {
             }
         };
 
+
+
+
         this.operations[0xCB19] = {
             name: "RR",
             cycle: 8,
@@ -3460,6 +3488,22 @@ export class Operations {
             }
         };
 
+        this.operations[0xCB47] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if (val & 0x01) {
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
         this.operations[0xCB48] = {
             name: "BIT",
             cycle: 8,
@@ -3585,7 +3629,9 @@ export class Operations {
                 let val = registers.getC();
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
-                if (val & 0x10) { return }
+                if (val & 0x10) {
+                    return
+                }
                 registers.setZeroFlag(1);
             }
         };
@@ -3600,7 +3646,9 @@ export class Operations {
 
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
-                if (val & 0x10) { return }
+                if (val & 0x10) {
+                    return
+                }
                 registers.setZeroFlag(1);
             }
         };
@@ -3615,7 +3663,9 @@ export class Operations {
 
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
-                if (val & 0x10) { return }
+                if (val & 0x10) {
+                    return
+                }
                 registers.setZeroFlag(1);
             }
         };
@@ -3648,7 +3698,9 @@ export class Operations {
 
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
-                if (val & 0x80) { return }
+                if (val & 0x80) {
+                    return
+                }
                 registers.setZeroFlag(1);
             }
         };
@@ -3663,7 +3715,9 @@ export class Operations {
 
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
-                if (val & 0x80) { return }
+                if (val & 0x80) {
+                    return
+                }
                 registers.setZeroFlag(1);
             }
         };

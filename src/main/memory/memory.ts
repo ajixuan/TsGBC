@@ -80,6 +80,8 @@ export class Memory {
                     this.nr[addr - 0xFF10] = val;
                 } else if (addr == 0xFF40) {
                     this.ppu.registers.lcdc.setAll(val);
+                } else if (addr == 0xFF41){
+                    console.log("i actually need to write to ff41");
                 } else if (addr == 0xFF42) {
                     this.ppu.registers.scy = val;
                 } else if (addr == 0xFF43) {
@@ -89,7 +91,6 @@ export class Memory {
 
                 } else if (addr == 0xFF45) {
                     this.ppu.registers.lyc = val;
-
                 }
                 //DMA
                 else if (addr == 0xFF46) {
@@ -105,12 +106,7 @@ export class Memory {
                         this.oam[i] = data;
                         this.ppu.updateOamSprite(0xFE00 + i);
                     }
-                } else if (addr == 0xFF47) {
-
-                } else if (addr == 0xFF48) {
-
-
-                } else if (addr == 0xFF49) {
+                } else if (addr < 0xFF4A) {
 
 
                 } else if (addr == 0xFF4A) {
@@ -206,6 +202,8 @@ export class Memory {
                     val = this.nr[addr - 0xFF10];
                 } else if (addr == 0xFF40) {
                     val = this.ppu.registers.lcdc.getAll();
+                } else if(addr == 0xFF41){
+                    val = this.ppu.registers.stat.getAll();
                 } else if (addr == 0xFF42) {
                     val = this.ppu.registers.scy;
                 } else if (addr == 0xFF43) {
