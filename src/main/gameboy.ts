@@ -25,7 +25,6 @@ export class GameBoy {
             stat: function () {return _val}
         }
     }(document.getElementById("switch"));
-    public joypad: Joypad;
     public keyboard: Keyboard;
 
     //Ticks per frame
@@ -36,7 +35,6 @@ export class GameBoy {
         this.memory = new Memory();
         this.cpu = new Cpu(this.memory);
         this.ppu = new Ppu(this.memory);
-        this.joypad = this.memory.joypad;
         this.keyboard = new Keyboard(this.memory.joypad);
         this.keyboard.init();
     }

@@ -18,11 +18,11 @@ export class Joypad {
 
     public writeByte(data: number): void {
         if (data == null) throw "Invalid data for joypad";
-        this.type = 0xF0 - data;
+        this.type = 0xC0 | data;
     }
 
     public readByte(): number {
-        if(this.type == 0xC0){
+        if(this.type == 0xF0){
             return 0xFF;
         } else if (this.type == 0xD0) {
             return (this.buttons | this.type) & 0xFF;
@@ -30,7 +30,7 @@ export class Joypad {
             //console.log((this.direction | this.type) & 0xFF);
             return (this.direction | this.type) & 0xFF;
         } else {
-            throw "Error unknown read type for joypad " + this.type.toString();
+            return 0xCF;
         }
     }
 
