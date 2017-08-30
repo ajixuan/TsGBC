@@ -13,12 +13,8 @@ export class Cpu {
     public stack: Stack;
     public interrupts: Interrupts;
     public halt: boolean;
-
+    public static CLOCK = { main: 0, cycles: 0, div: 0, tima: 0, tma: 0, tac: 0 };
     public last: { operation: Operation, opcode: number, opaddr: number };
-    public clock: {
-        m: number, //4,194,304Hz one cycle
-        t: number   //1,048,576Hz
-    };
 
     constructor(memory: Memory) {
         this.registers = new Registers();
@@ -58,8 +54,6 @@ export class Cpu {
         this.memory.nr[0xFF24 - 0xFF10] = 0x77; //NR50
         this.memory.nr[0xFF25 - 0xFF10] = 0xF3; //NR51
         this.memory.nr[0xFF26 - 0xFF10] = 0xF1; //NR52
-
-        this.clock = {m: 0, t: 0};
 
         this.last = {
             operation: this.operations.get(0x00),
@@ -102,7 +96,9 @@ export class Cpu {
      * Performs a single CPU cycle.
      */
     public tick(): number {
-        let cycles, hardwareInterrupt, oldPC, operation, args,
+        let clock = Cpu.CLOCK;
+
+        let hardwareInterrupt, oldPC, operation, args,
             pc = this.registers.getPC(), opcode = this.memory.readByte(pc++);
 
         if (this.halt) {
@@ -110,7 +106,6 @@ export class Cpu {
         } else if(opcode == 0xCB){
             opcode = (opcode << 8) | this.memory.readByte(pc++);
         }
-
 
         operation = this.operations.get(opcode);
 
@@ -140,22 +135,53 @@ export class Cpu {
         };
 
         //Update Infromation
-        cycles = operation.cycle;
+        clock.cycles = operation.cycle;
+        this.increaseTimer();
 
         //Service interrupt only if IME is set prior to execution
         if (this.interrupts.hasInterrupts() && hardwareInterrupt) {
             this.handledInterrupts(this.interrupts.getInterrupt());
-            cycles += 12;
+            clock.cycles = 12;
         }
-
-        //this.clock.t += cycles;
-        //this.clock.m = this.clock.t / 4;
 
         if (Debugger.status) {
             Debugger.display();
         }
 
-        return cycles;
+        return clock.cycles;
     }
 
+
+    private increaseTimer():void{
+        let clock = Cpu.CLOCK;
+
+        if((clock.cycles/4) >= 4){
+            clock.main++;
+            clock.cycles -= 4
+            if(clock.main % 16 == 0){
+                clock.div = (clock.div + 1) % 0xFF;
+            }
+        }
+
+        if(clock.tac & 4){
+            let threshold;
+            switch(clock.tac & 3) {
+                case 0: threshold = 64; break; // 4K
+                case 1: threshold =  1; break; // 256K
+                case 2: threshold =  4; break; // 64K
+                case 3: threshold = 16; break; // 16K
+                default: throw "control register for timer set to invalid val: " + clock.tac.toString();
+            }
+
+            if(clock.main >= threshold){
+                clock.main = 0;
+                clock.tima++;
+
+                if(clock.tima > 0xFF){
+                    clock.tima = clock.tma;
+                    this.interrupts.setInterruptFlag(Interrupts.TIMER);
+                }
+            }
+        }
+    }
 }

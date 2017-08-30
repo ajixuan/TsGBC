@@ -17,7 +17,6 @@ export class Keyboard {
 
     constructor(joypad : Joypad) {
         this.joypad = joypad;
-
     }
 
     init() {
@@ -26,7 +25,7 @@ export class Keyboard {
             let code = e.keyCode;
             let key = Keyboard.mapping;
 
-            console.log("Releasing" + code);
+            // console.log("Releasing" + code);
             if (code == key.up) {
                 this.joypad.releaseUp();
             } else if (code == key.down) {
@@ -44,14 +43,13 @@ export class Keyboard {
             } else if (code == key.select) {
                 this.joypad.releaseSelect();
             }
-
         }.bind(this);
 
         document.onkeydown = function (e) {
             let code = e.keyCode;
             let key = Keyboard.mapping;
 
-            console.log("Pressing " + code);
+            // console.log("Pressing " + code);
             if (code == key.up) {
                 this.joypad.pressUp();
             } else if (code == key.down) {

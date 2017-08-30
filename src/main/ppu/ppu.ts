@@ -342,12 +342,6 @@ export class Ppu {
             this.memory.oam[addr - 0xFE00] = val;
             this.updateOamSprite(addr);
         }
-        //BGP
-        //Bit 7-6 - Shade for Color Number 3
-        //Bit 5-4 - Shade for Color Number 2
-        //Bit 3-2 - Shade for Color Number 1
-        //Bit 1-0 - Shade for Color Number 0
     }
-
 }
 

@@ -1,9 +1,9 @@
 import {Cartridge} from "../cartridge/cartridge";
 import {Interrupts} from "../io/interrupts";
 import {Ppu} from '../ppu/ppu'
-import {Io} from './io'
 import {Joypad} from "../io/joypad";
 import {Debugger} from "../debugger";
+import {Cpu} from "../cpu/cpu";
 
 /**
  * Created by hkamran on 12/5/2016.
@@ -14,7 +14,6 @@ export class Memory {
 
     public cartridge: Cartridge;
     public joypad: Joypad = new Joypad();
-    public io: Io = new Io();
     public vram: Array<number> = Array(0x2000).fill(0);
     public oam: Array<number>  = Array(0xA0).fill(0);
 
@@ -50,32 +49,17 @@ export class Memory {
                 //throw new Error("Invalid write on unused i/o at 0x" + addr.toString(16) + " with 0x" + val.toString(16));
             } else if (addr < 0xFF0F) {
                 switch (addr & 0xFF) {
-                    case 0:
-                        this.joypad.writeByte(val);
-                        break;
-                    case 1:
-                        //SB
-                        break;
-                    case 2:
-                        //SC
-                        break;
-                    case 4:
-                        this.io.setDiv(val);
-                        break;
-                    case 5:
-                        this.io.setTima(val);
-                        break;
-                    case 6:
-                        this.io.setTma(val);
-                        break;
-                    case 7:
-                        this.io.setTac(val);
-                        break;
+                    case 0: this.joypad.writeByte(val); break;
+                    case 1: break; //SB
+                    case 2: break; //SC
+                    case 4: Cpu.CLOCK.div = 0; break;
+                    case 5: Cpu.CLOCK.tima = val; break;
+                    case 6: Cpu.CLOCK.tma = val; break;
+                    case 7: Cpu.CLOCK.tma = val & 7; break;
                 }
             } else if (addr == 0xFF0F) {
                 this.interrupts.if = (0xE0 | val) & 0xFF;
             } else if (addr < 0xFF6C) {
-
                 if(addr <=0xFF26){
                     this.nr[addr - 0xFF10] = val;
                 } else if (addr == 0xFF40) {
@@ -100,9 +84,9 @@ export class Memory {
                     //160 ms to complete
                     //cpu can only access FF80-FFFE
 
-                    let target = val << 8;
+                    let source = val << 8;
                     for (let i = 0; i <= 0x9F; i++) {
-                        let data = this.readByte(target + i);
+                        let data = this.readByte(source + i);
                         this.oam[i] = data;
                         this.ppu.updateOamSprite(0xFE00 + i);
                     }
@@ -129,11 +113,11 @@ export class Memory {
                 }
             }
         } else if (addr < 0xFFFF) {
-            if(addr == 0xFF81){
-                //console.log("0xFF81: " + val);
-            } else if(addr == 0xFF80){
-                //console.log("0xFF80: " + val);
-            }
+            // if(addr == 0xFF81){
+            //     console.log("write 0xFF81: " + val);
+            // } else if(addr == 0xFF80){
+            //     console.log("write 0xFF80: " + val);
+            // }
             this.cpu.stack[addr - 0xFF80] = val;
         } else if (addr == 0xFFFF) {
             this.interrupts.ie = val & 0xFF;
@@ -169,30 +153,15 @@ export class Memory {
                 return 0x00;
             } else if (addr < 0xFF0F) {
                 switch (addr & 0xFF) {
-                    case 0:
-                        val = this.joypad.readByte();
-                        break;
-                    case 1:
-                        //SB
-                    case 2:
-                        //SC
-                    case 3:
-                        val = 0xFF;
-                        break;
-                    case 4:
-                        val = this.io.getDiv();
-                        break;
-                    case 5:
-                        val = this.io.getTima();
-                        break;
-                    case 6:
-                        val = this.io.getTma();
-                        break;
-                    case 7:
-                        val = this.io.getTac();
-                        break;
-                    default:
-                        val = 0xFF;
+                    case 0: val = this.joypad.readByte(); break;
+                    case 1: val = 0xFF; break; //SB
+                    case 2: val = 0xFF; break; //SC
+                    case 3: val = 0xFF; break;
+                    case 4: val = Cpu.CLOCK.div; break;
+                    case 5: val = Cpu.CLOCK.tima; break;
+                    case 6: val = Cpu.CLOCK.tma; break;
+                    case 7: val = Cpu.CLOCK.tac; break;
+                    default: val = 0xFF;
                 }
             } else if (addr == 0xFF0F) {
                 return this.interrupts.if & 0xFF;
@@ -235,6 +204,12 @@ export class Memory {
             }
         } else if (addr < 0xFFFF) {
             val = this.cpu.stack[addr - 0xFF80];
+
+            // if(addr == 0xFF81){
+            //     console.log("0xFF81: " + val);
+            // } else if(addr == 0xFF80){
+            //     console.log("0xFF80: " + val);
+            // }
         } else if (addr == 0xFFFF) {
             val = this.interrupts.ie;
         } else {
@@ -246,15 +221,6 @@ export class Memory {
         }
 
         return val;
-    }
-
-    public writeWord(addr: number, val: number): void {
-        //TODO this might be wrong
-        let high = val >> 8;
-        let low = val & 0xFF;
-
-        this.writeByte(addr, high);
-        this.writeByte(addr + 1, low);
     }
 
     public readWord(addr: number): number {

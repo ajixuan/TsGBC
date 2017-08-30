@@ -2,6 +2,7 @@
  * Created by hkamran on 12/18/2016.
  */
 import {GameBoy} from './gameboy';
+import {Cpu} from './cpu/cpu'
 
 export class Debugger {
     public static status: boolean = false;
@@ -30,7 +31,7 @@ export class Debugger {
         Debugger.printStack();
 
         //Print to screen
-        document.getElementById('cpucycles').innerHTML = gameboy.cpu.clock.t.toString();
+        document.getElementById('cpucycles').innerHTML = Cpu.CLOCK.main.toString();
         document.getElementById('ppucycles').innerHTML = gameboy.ppu.clock.toString();
         document.getElementById('ticks').innerHTML = gameboy.ticks.toString();
         document.getElementById('pc').innerHTML = "0x" + gameboy.cpu.registers.getPC().toString(16).toUpperCase();
@@ -103,7 +104,7 @@ export class Debugger {
             eventElement.setAttribute("class","error");
             eventElement.innerHTML = "ERROR";
             ul.appendChild(eventElement);
-            log.scrollTo(0, log.scrollHeight);
+            setTimeout(log.scrollTo(0, log.scrollHeight),1);
             return;
         }
 
@@ -115,7 +116,7 @@ export class Debugger {
         }
 
         ul.appendChild(html);
-        log.scrollTo(0, log.scrollHeight);
+        setTimeout(log.scrollTo(0, log.scrollHeight),1);
     }
 
 
