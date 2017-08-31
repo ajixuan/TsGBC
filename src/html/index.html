@@ -9,15 +9,35 @@
 
 
 <body>
-<div style="display: flex; flex-direction: row;">
+<div style="display: flex; flex-direction: row;   align-items: center;   justify-content: center;">
     <div style="display: flex; flex-direction: column; ">
-        <div id="switch">off</div>
-        <div id="screenContainer">
-            <canvas id="screen"></canvas>
+        <div id="screenBorder">
+            <div id="power"></div>
+            <div style="width: 100%">
+                <div style="display: flex; align-items: stretch; flex-direction: row; width: 100%; margin-bottom: 10px;" >
+                    <div style=" flex: 1; flex-grow: 1; margin-top: 20px; margin-bottom: 5px;">
+                        <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 10px;"></div>
+                        <div style="height: 3px; width: 100%; background: #362f59;"></div>
+                    </div>
+                    <div style="font-family: nes; color: #a1acbc; font-size: 30px; padding: 8px; padding-right: 3px;">
+                        gameboy
+                    </div>
+                    <div style=" flex: 1; flex-grow: 1; margin-top: 20px; margin-bottom: 5px;">
+                        <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 10px;"></div>
+                        <div style="height: 3px; width: 100%; background: #362f59; "></div>
+                    </div>
+
+                </div>
+
+                <div id="screenContainer">
+                    <canvas id="screen"></canvas>
+                </div>
+            </div>
         </div>
 
         <div class="controllerRow">
             <div class="controllerCol">
+                <div id="switch">off</div>
                 <div>
                     <button onclick="tick()">Tick</button>
                 </div>
@@ -28,7 +48,6 @@
             </div>
 
             <div class="controllerCol">
-
                 <div>
                     Ticks per frame:
                     <input size="2" id="tpf" value="20000">
@@ -50,6 +69,14 @@
             </div>
         </div>
 
+
+
+    </div>
+
+
+    <!-- Debugger -->
+    <div class="debugger" style="display: none">
+
         <!-- Log Console -->
         <div class="debugger">
             <div style="display: flex; flex-direction: row; margin-left: 10px; flex-grow: 1; width:520px">
@@ -61,11 +88,7 @@
                 </fieldset>
             </div>
         </div>
-    </div>
 
-
-    <!-- Debugger -->
-    <div class="debugger">
         <div style="display: flex; flex-direction: row;">
             <fieldset style="flex-grow: 1" >
                 <legend>CARTIDGE</legend>
@@ -244,41 +267,42 @@
             </fieldset>
 
         </div>
+        <div style="display: flex; flex-direction: column;">
+            <fieldset>
+                <legend>Memory Map</legend>
+                <div id="memmap">
+                    <table>
+                        <!--Header-->
+                        <thead>
+                        <tr>
+                            <th>xxxx</th>
+                            <th>0x00</th>
+                            <th>0x01</th>
+                            <th>0x02</th>
+                            <th>0x03</th>
+                            <th>0x04</th>
+                            <th>0x05</th>
+                            <th>0x06</th>
+                            <th>0x07</th>
+                            <th>0x08</th>
+                            <th>0x09</th>
+                            <th>0x0A</th>
+                            <th>0x0B</th>
+                            <th>0x0C</th>
+                            <th>0x0D</th>
+                            <th>0x0E</th>
+                            <th>0x0F</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </fieldset>
+        </div>
     </div>
 
     <!--Memory Map-->
-    <div style="display: flex; flex-direction: column;">
-        <fieldset>
-            <legend>Memory Map</legend>
-            <div id="memmap">
-                <table>
-                    <!--Header-->
-                    <thead>
-                    <tr>
-                        <th>xxxx</th>
-                        <th>0x00</th>
-                        <th>0x01</th>
-                        <th>0x02</th>
-                        <th>0x03</th>
-                        <th>0x04</th>
-                        <th>0x05</th>
-                        <th>0x06</th>
-                        <th>0x07</th>
-                        <th>0x08</th>
-                        <th>0x09</th>
-                        <th>0x0A</th>
-                        <th>0x0B</th>
-                        <th>0x0C</th>
-                        <th>0x0D</th>
-                        <th>0x0E</th>
-                        <th>0x0F</th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </fieldset>
-    </div>
+
 </body>
 
 <script>
