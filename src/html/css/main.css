@@ -19,18 +19,23 @@ body {
     width: 100%;
 }
 
-#power {
-    width: 10px;
-    height: 10px;
-    background: #b92b14;
-    position: relative;
-    left: -28px;
-    top: 30%;
-    border-radius: 200px 200px 200px 200px;
-    box-shadow: inset 1px 1px 1px 0px rgba(0,0,0,0.75);
+.gameboy-screen-border {
+    box-shadow: inset 0px 0px 3px 3px rgba(71,84,97,0.87);
+    background: #606c78;
+    padding-left: 60px;
+    padding-top: 10px;
+    padding-bottom: 42px;
+    padding-right: 55px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 60px;
 }
 
-#screenContainer {
+.gameboy-screen-container {
+}
+
+.gameboy-screen {
     background: #798836;
     padding: 1px;
     border-top: 2px solid #3f471f;
@@ -39,17 +44,15 @@ body {
     border-bottom: 2px solid #8d9f3f;
 }
 
-#screenBorder {
-    box-shadow: inset 0px 0px 3px 3px rgba(71,84,97,0.87);
-    background: #606c78;
-    padding-left: 60px;
-    padding-top: 0px;
-    padding-bottom: 42px;
-    padding-right: 55px;
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 60px;
+#power {
+    width: 10px;
+    height: 10px;
+    background: #b92b14;
+    position: relative;
+    right: -30px;
+    top: 30%;
+    border-radius: 200px 200px 200px 200px;
+    box-shadow: inset 1px 1px 1px 0px rgba(0,0,0,0.75);
 }
 
 .button {
