@@ -10,6 +10,15 @@ body {
     src: url('/fonts/NES-Logo.ttf');
 }
 
+.main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
 #power {
     width: 10px;
     height: 10px;
@@ -26,114 +35,28 @@ body {
     padding: 1px;
     border-top: 2px solid #3f471f;
     border-left: 2px solid #3f471f;
+    border-right: 2px solid #8d9f3f;
+    border-bottom: 2px solid #8d9f3f;
 }
 
 #screenBorder {
     box-shadow: inset 0px 0px 3px 3px rgba(71,84,97,0.87);
     background: #606c78;
-    padding-left: 50px;
+    padding-left: 60px;
     padding-top: 0px;
     padding-bottom: 42px;
-    padding-right: 50px;
+    padding-right: 55px;
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
     border-top-right-radius: 20px;
     border-bottom-right-radius: 60px;
 }
 
-.main-button-container {
-    transform: rotateZ(-20deg);
-    margin-right: 30px;
-    box-sizing: border-box;
-}
-
-.main-button-container-border {
-    display: inline-flex;
-    background-color: #a3a3a3;
-    border-radius: 58px;
-}
-
-.main-button {
-    background-color: #B53D85;
-    height: 50px;
-    width: 50px;
-    border-radius: 50%;
-    margin: 8px;
-    text-align: center;
-    position: relative;
-    box-sizing: border-box;
-}
-
-.main-button-label {
-    font-family: 'Russo One', sans-serif;
-    position: relative;
-    color: #341378;
-    text-transform: uppercase;
-    top: 58px;
-    box-sizing: border-box;
-    line-height: 1.15;
-    text-align: center;
-    font-weight: 700;
-}
-
-.controllers {
-    display: flex;
-    align-items: stretch;
-    justify-content: space-between;
-    margin-top: 70px;
-
-}
-
-.dpad-container {
-    top: -35px;
-    position: relative;
-}
-
-.dpad-container-border {
-    position: relative;
+.button {
     margin: 5px;
-    height: 130px;
-    width: 130px;
-    border-radius: 50%;
+    padding: 5px;
     background-color: #a3a3a3;
-    padding: 20px;
+    display: inline-block;
     box-sizing: border-box;
-}
-
-.dpad-horizontal {
-    top: 30px;
-    height: 30px;
-    width: 90px;
-    background-color: #000;
-    position: relative;
-}
-
-.dpad-vertical {
-    top: -30px;
-    left: 30px;
-    height: 90px;
-    width: 30px;
-    background-color: #000;
-    position: relative;
-}
-
-.dpad-label {
-    font-family: 'Russo One', sans-serif;
-    color: #341378;
-    text-transform: uppercase;
-    box-sizing: border-box;
-    line-height: 1.15;
-    text-align: center;
-    font-weight: 700;
-}
-
-.dpad-up {
-    left: 2px;
-    position: relative;
-}
-
-.dpad-left {
-    left: -100px;
-    top: 80px;
-    position: relative;
+    flex-basis: 0;
 }
