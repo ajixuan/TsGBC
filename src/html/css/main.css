@@ -19,9 +19,18 @@ body {
     width: 100%;
 }
 
+.logo {
+    color: #36354c;
+    font-family: nes;
+    font-size: 28px;
+    padding-top: 3px;
+    padding-right: 3px;
+    padding-left: 7px;
+}
+
 .gameboy-screen-border {
-    box-shadow: inset 0px 0px 3px 3px rgba(71,84,97,0.87);
-    background: #606c78;
+    box-shadow: inset 0px 0px 3px 3px rgba(57, 68, 78, 0.87);
+    background: #525460;
     padding-left: 60px;
     padding-top: 10px;
     padding-bottom: 42px;
@@ -108,7 +117,7 @@ body {
     color: #bbc1cb;
     padding-left: 5px;
     padding-right: 5px;
-    line-height: 80%;
+    line-height: 100%;
     font-weight: 600;
     font-size: 14px;
 }
