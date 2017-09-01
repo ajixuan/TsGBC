@@ -1,3 +1,16 @@
+#debugger {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    left: 0px;
+    background: #000;
+    opacity: 0.6;
+
+    color: #FFF;
+    display : flex;
+    flex-direction: column;
+}
+
 .debugger ul {
     margin: 0;
     padding: 0;
@@ -7,6 +20,10 @@
 
 fieldset, #vrammap {
     width: 200px;
+}
+
+fieldset {
+    box-sizing: border-box;
 }
 
 .header {

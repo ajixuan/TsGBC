@@ -306,7 +306,7 @@ export class Debugger {
 
     public static init(gameboy: GameBoy) {
         Debugger.gameboy = gameboy;
-        Debugger.status = true;
+        Debugger.status = false;
         console.info("Debugger is ready!");
         Debugger.resetMemmap();
         Debugger.display();

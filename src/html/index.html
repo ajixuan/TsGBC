@@ -15,7 +15,7 @@
         <div class="gameboy-screen-container">
             <div id="power"></div>
             <div class="gameboy-screen-border">
-                <div style="display: flex; align-items: stretch; flex-direction: row; width: 100%; margin-bottom: 10px;" >
+                <div style="display: flex; align-items: stretch; flex-direction: row; width: 100%; margin-bottom: 10px;">
                     <div style=" flex: 1; flex-grow: 1; margin-top: 12px; margin-bottom: 5px;">
                         <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 10px;"></div>
                         <div style="height: 3px; width: 100%; background: #362f59;"></div>
@@ -76,202 +76,213 @@
         </div>
 
 
-
     </div>
 
 
     <!-- Debugger -->
-    <div class="debugger" style="display: none">
+    <div id="debugger" style="display: none">
 
-        <!-- Log Console -->
-        <div class="debugger">
-            <div style="display: flex; flex-direction: row; margin-left: 10px; flex-grow: 1; width:520px">
-                <fieldset style="width: 100%">
-                    <legend>LOG</legend>
-                    <div class="log" style="color: #bebebe; display: inline-block">
-                        <ul></ul>
+
+        <div style="display: flex; flex-direction: column;">
+            <div style="display: flex; flex-direction: row;">
+                <fieldset style="flex-grow: 1">
+                    <legend>CARTIDGE</legend>
+                    <div style="color: #bebebe; display: inline-block">
+                        <ul style="list-style: none;">
+                            <li>
+                                <span class="header">URL:</span>
+                                <span id="url"></span>
+                            </li>
+                            <li>
+                                <span class="header">Type:</span>
+                                <span id="type">0</span>
+                            </li>
+
+                        </ul>
                     </div>
                 </fieldset>
             </div>
-        </div>
+            <div  style="display: flex; flex-direction: row;">
+                <div style="display: flex; flex-direction: row;">
+                    <div>
+                        <div style="display: flex; flex-direction: row;">
+                            <fieldset>
+                                <legend>CONSOLE</legend>
+                                <div style="color: #bebebe; display: inline-block">
+                                    <ul style="list-style: none;">
+                                        <li>
+                                            <span class="header">CPU Cycles:</span>
+                                            <span id="cpucycles"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">PPU Cycles:</span>
+                                            <span id="ppucycles">0</span>
+                                        </li>
+                                        <li>
+                                            <span class="header">Scanlines:</span>
+                                            <span id="scanlines">0</span>
+                                        </li>
+                                        <li>
+                                            <span class="header">Ticks:</span>
+                                            <span id="ticks"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>OPERATION</legend>
+                                <div style="color: #bebebe; display: inline-block">
+                                    <ul style="list-style: none;">
+                                        <li>
+                                            <span class="header">Code:</span>
+                                            <span id="opcode"></span></li>
+                                        <li>
+                                        <li>
+                                            <span class="header">Name:</span>
+                                            <span id="opname"></span></li>
+                                        <li>
+                                            <span class="header">Mode:</span>
+                                            <span id="opmode"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">Address:</span>
+                                            <span id="opaddr"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">Operand:</span>
+                                            <span id="operand"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div style="display: flex; flex-direction: row;">
+                            <fieldset>
+                                <legend>CPU</legend>
+                                <div style="color: #bebebe; display: inline-block">
+                                    <ul style="list-style: none;">
+                                        <li>
+                                            <span class="header">PC:</span>
+                                            <span id="pc"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">SP:</span>
+                                            <span id="sp"></span>
+                                        </li>
 
-        <div style="display: flex; flex-direction: row;">
-            <fieldset style="flex-grow: 1" >
-                <legend>CARTIDGE</legend>
-                <div style="color: #bebebe; display: inline-block">
-                    <ul style="list-style: none;">
-                        <li>
-                            <span class="header">URL:</span>
-                            <span id="url"></span>
-                        </li>
-                        <li>
-                            <span class="header">Type:</span>
-                            <span id="type">0</span>
-                        </li>
+                                        <br/>
+                                        <span class="header">Flags:</span>
+                                        <div id="zero"></div>
+                                        <div id="subtract"></div>
+                                        <div id="halfcarry"></div>
+                                        <div id="fullcarry"></div>
 
-                    </ul>
+                                        </li>
+
+                                        <li>
+                                            <span class="header">AF:</span>
+                                            <span id="af"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">BC:</span>
+                                            <span id="bc"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">DE:</span>
+                                            <span id="de"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">HL:</span>
+                                            <span id="hl"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>PPU Registers</legend>
+                                <div style="color: #bebebe; display: inline-block">
+                                    <ul style="list-style: none;">
+                                        <li>
+                                            <span class="header">LCDC:</span>
+                                            <span id="lcdc"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">STAT:</span>
+                                            <span id="stat"></span>
+                                        </li>
+
+                                        <br/>
+                                        <li>
+                                            <span class="header">LY:</span>
+                                            <span id="ly"></span>
+                                        </li>
+
+                                        <li>
+                                            <span class="header">LYC:</span>
+                                            <span id="lyc"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <div style="display: flex; flex-direction: row;">
+                            <fieldset id="stack">
+                                <legend>STACK</legend>
+                                <ul style="list-style:none"></ul>
+                            </fieldset>
+                            <fieldset>
+                                <legend>VRAM View</legend>
+                                <!--VRAM viewer-->
+                                <canvas id="vrammap"></canvas>
+                                <button onclick="renderBGmap()">RenderBGmap</button>
+                                <button onclick="renderTilemap()">RenderTilemap</button>
+                            </fieldset>
+                        </div>
+
+                        <!--Stack-->
+                        <div style="display: flex; flex-direction: row;">
+                            <fieldset>
+                                <legend>Interrupts</legend>
+                                <div style="color: #bebebe; display: inline-block">
+                                    <ul style="list-style: none;">
+                                        <li>
+                                            <span class="header">IME:</span>
+                                            <span id="ime"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">IE:</span>
+                                            <span id="ie"></span>
+                                        </li>
+
+                                        <br/>
+                                        <li>
+                                            <span class="header">IF:</span>
+                                            <span id="if"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </fieldset>
+
+                        </div>
+
+
+                    </div>
                 </div>
-            </fieldset>
-        </div>
-        <div style="display: flex; flex-direction: row;">
-            <fieldset>
-                <legend>CONSOLE</legend>
-                <div style="color: #bebebe; display: inline-block">
-                    <ul style="list-style: none;">
-                        <li>
-                            <span class="header">CPU Cycles:</span>
-                            <span id="cpucycles"></span>
-                        </li>
-                        <li>
-                            <span class="header">PPU Cycles:</span>
-                            <span id="ppucycles">0</span>
-                        </li>
-                        <li>
-                            <span class="header">Scanlines:</span>
-                            <span id="scanlines">0</span>
-                        </li>
-                        <li>
-                            <span class="header">Ticks:</span>
-                            <span id="ticks"></span>
-                        </li>
-                    </ul>
+                <div style="flex-grow: 1;">
+                    <!-- Log Console -->
+                    <div class="debugger">
+                        <div style="display: flex; flex-direction: row; margin-left: 10px; height: 100%; box-sizing: border-box; ">
+                            <fieldset style="width: 100%; height: 100%">
+                                <legend>LOG</legend>
+                                <div class="log" style="color: #bebebe; display: inline-block">
+                                    <ul></ul>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
                 </div>
-            </fieldset>
-            <fieldset>
-                <legend>OPERATION</legend>
-                <div style="color: #bebebe; display: inline-block">
-                    <ul style="list-style: none;">
-                        <li>
-                            <span class="header">Code:</span>
-                            <span id="opcode"></span></li>
-                        <li>
-                        <li>
-                            <span class="header">Name:</span>
-                            <span id="opname"></span></li>
-                        <li>
-                            <span class="header">Mode:</span>
-                            <span id="opmode"></span>
-                        </li>
-                        <li>
-                            <span class="header">Address:</span>
-                            <span id="opaddr"></span>
-                        </li>
-                        <li>
-                            <span class="header">Operand:</span>
-                            <span id="operand"></span>
-                        </li>
-                    </ul>
-                </div>
-            </fieldset>
-        </div>
-        <div style="display: flex; flex-direction: row;">
-            <fieldset>
-                <legend>CPU</legend>
-                <div style="color: #bebebe; display: inline-block">
-                    <ul style="list-style: none;">
-                        <li>
-                            <span class="header">PC:</span>
-                            <span id="pc"></span>
-                        </li>
-                        <li>
-                            <span class="header">SP:</span>
-                            <span id="sp"></span>
-                        </li>
-
-                        <br/>
-                        <span class="header">Flags:</span>
-                        <div id="zero"></div>
-                        <div id="subtract"></div>
-                        <div id="halfcarry"></div>
-                        <div id="fullcarry"></div>
-
-                        </li>
-
-                        <li>
-                            <span class="header">AF:</span>
-                            <span id="af"></span>
-                        </li>
-                        <li>
-                            <span class="header">BC:</span>
-                            <span id="bc"></span>
-                        </li>
-                        <li>
-                            <span class="header">DE:</span>
-                            <span id="de"></span>
-                        </li>
-                        <li>
-                            <span class="header">HL:</span>
-                            <span id="hl"></span>
-                        </li>
-                    </ul>
-                </div>
-            </fieldset>
-            <fieldset>
-                <legend>PPU Registers</legend>
-                <div style="color: #bebebe; display: inline-block">
-                    <ul style="list-style: none;">
-                        <li>
-                            <span class="header">LCDC:</span>
-                            <span id="lcdc"></span>
-                        </li>
-                        <li>
-                            <span class="header">STAT:</span>
-                            <span id="stat"></span>
-                        </li>
-
-                        <br/>
-                        <li>
-                            <span class="header">LY:</span>
-                            <span id="ly"></span>
-                        </li>
-
-                        <li>
-                            <span class="header">LYC:</span>
-                            <span id="lyc"></span>
-                        </li>
-                    </ul>
-                </div>
-            </fieldset>
-        </div>
-
-        <div style="display: flex; flex-direction: row;">
-            <fieldset id="stack">
-                <legend>STACK</legend>
-                <ul style="list-style:none"></ul>
-            </fieldset>
-            <fieldset>
-                <legend>VRAM View</legend>
-                <!--VRAM viewer-->
-                <canvas id="vrammap"></canvas>
-                <button onclick="renderBGmap()">RenderBGmap</button>
-                <button onclick="renderTilemap()">RenderTilemap</button>
-            </fieldset>
-        </div>
-
-        <!--Stack-->
-        <div style="display: flex; flex-direction: row;">
-            <fieldset>
-                <legend>Interrupts</legend>
-                <div style="color: #bebebe; display: inline-block">
-                    <ul style="list-style: none;">
-                        <li>
-                            <span class="header">IME:</span>
-                            <span id="ime"></span>
-                        </li>
-                        <li>
-                            <span class="header">IE:</span>
-                            <span id="ie"></span>
-                        </li>
-
-                        <br/>
-                        <li>
-                            <span class="header">IF:</span>
-                            <span id="if"></span>
-                        </li>
-                    </ul>
-                </div>
-            </fieldset>
-
+            </div>
         </div>
         <div style="display: flex; flex-direction: column;">
             <fieldset>
@@ -366,7 +377,8 @@
     }
 
     var run = function () {
-        gameboy.switch.on();;
+        gameboy.switch.on();
+        ;
         gameboy.tickAnimation();
     }
 
@@ -383,21 +395,22 @@
     }
 
     var toggleDebug = function () {
-        var _tpf = 2000;
-        return function () {
-            _tpf = $('#tpf').val();
-            debug.status = !debug.status;
-            if (debug.status) {
-                debug.display();
-                debug.clearMemqueue();
-                _tpf = gameboy.tpf;
-                gameboy.tpf = 1;
-            } else {
-                console.log(_tpf);
-                gameboy.tpf = _tpf;
-            }
+
+        console.log("LOOK");
+        $("#debugger").toggle();
+        _tpf = $('#tpf').val();
+        debug.status = !debug.status;
+        if (debug.status) {
+            debug.display();
+            debug.clearMemqueue();
+            _tpf = gameboy.tpf;
+            gameboy.c = 1;
+        } else {
+            console.log(_tpf);
+            gameboy.tpf = _tpf;
         }
-    }();
+
+    };
 
     var setBreakPoint = function () {
         var val = parseInt($("#breakpoint").val(), 16);
@@ -415,35 +428,35 @@
 
     //Chrome
     /*
-    $(document).keypress(function (event) {
-        //$(this.body).prepend("<span>" + event.key + "</span>");
-        switch (event.key) {
-            case "Enter":
-                toggleDebug();
-                break;
-            case "r":
-                run();
-                break;
-            case "s": //S
-                stop();
-                break;
-            case "t": //T
-                tick();
-                break;
-        }
-    });
+     $(document).keypress(function (event) {
+     //$(this.body).prepend("<span>" + event.key + "</span>");
+     switch (event.key) {
+     case "Enter":
+     toggleDebug();
+     break;
+     case "r":
+     run();
+     break;
+     case "s": //S
+     stop();
+     break;
+     case "t": //T
+     tick();
+     break;
+     }
+     });
 
-    $(document).keydown(function (event) {
-        if (event.keyCode == 16) {
-            var input = $("#breakpoint");
-            if (input.is(":focus")) {
-                input.blur();
-            } else {
-                input.focus();
-            }
-        }
-    });
-*/
+     $(document).keydown(function (event) {
+     if (event.keyCode == 16) {
+     var input = $("#breakpoint");
+     if (input.is(":focus")) {
+     input.blur();
+     } else {
+     input.focus();
+     }
+     }
+     });
+     */
 
 
 </script>
