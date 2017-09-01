@@ -10,65 +10,70 @@
 
 <body>
 <div class="main">
-    <div style="display: flex; flex-direction: column; ">
+    <div style="">
+        <div style="display: flex; flex-direction: column; ">
 
-        <div class="menu">
-            <div>
-                <div style="font-family: nes; color: #4d4d4d; font-size: 28px; padding-top: 3px; padding-right: 3px; padding-left: 7px;">
-                    gameboy
-                </div>
-            </div>
-            <div style="flex-grow: 1"></div>
-            <div>
-                <div class="button">
-                    Settings
-                </div>
-                <div class="button" onclick="toggleDebug()">
-                    Debug
-                </div>
-                <div class="button" onclick="run()">
-                    Run
-                </div>
-                <div class="button" onclick="stop()">
-                    stop
-                </div>
-            </div>
-        </div>
-        <div class="gameboy-screen-container">
-            <div class="power-border">
-                <div class="power"></div>
-            </div>
-
-            <div class="gameboy-screen-border">
-                <div class="lines-container">
-                    <div class="lines">
-                        <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 7px;"></div>
-                        <div style="height: 3px; width: 100%; background: #362f59;"></div>
+            <div class="menu">
+                <div>
+                    <div style="font-family: nes; color: #4d4d4d; font-size: 28px; padding-top: 3px; padding-right: 3px; padding-left: 7px;">
+                        gameboy
                     </div>
-
                 </div>
-                <div class="gameboy-screen">
-                    <canvas id="screen"></canvas>
+                <div style="flex-grow: 1"></div>
+                <div>
+                    <div class="button">
+                        Settings
+                    </div>
+                    <div class="button" onclick="toggleDebug()">
+                        Debug
+                    </div>
+                    <div class="button" onclick="run()">
+                        Run
+                    </div>
+                    <div class="button" onclick="stop()">
+                        stop
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="menu" style="margin-top: 10px;">
-            <div id="switch">off</div>
-            <div style="flex-grow: 1"></div>
-            <div>
-                <div class="button" onclick="grow()">
-                    Zoom in
+            <div class="gameboy-screen-container">
+                <div class="power-border">
+                    <div class="power"></div>
                 </div>
-                <div class="button" onclick="shrink()">
-                    Zoom out
+
+                <div class="gameboy-screen-border">
+                    <div class="lines-container">
+                        <div class="lines">
+                            <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 7px;"></div>
+                            <div style="height: 3px; width: 100%; background: #362f59;"></div>
+                        </div>
+                        <div class="line-text" style="display: none">DOT MATRIX SCREEN</div>
+                        <div class="lines">
+                            <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 7px;"></div>
+                            <div style="height: 3px; width: 100%; background: #362f59;"></div>
+                        </div>
+                    </div>
+                    <div class="gameboy-screen">
+                        <canvas id="screen"></canvas>
+                    </div>
                 </div>
-                <div class="button" onclick="tick()">
-                    Tick
+            </div>
+            <div class="menu" style="margin-top: 10px;">
+                <div id="switch">off</div>
+                <div style="flex-grow: 1"></div>
+                <div>
+                    <div class="button" onclick="grow()">
+                        Zoom in
+                    </div>
+                    <div class="button" onclick="shrink()">
+                        Zoom out
+                    </div>
+                    <div class="button" onclick="tick()">
+                        Tick
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <!-- Debugger -->
     <div id="debugger" style="display: none">
@@ -91,7 +96,7 @@
                     </div>
                 </fieldset>
             </div>
-            <div  style="display: flex; flex-direction: row;">
+            <div style="display: flex; flex-direction: row;">
                 <div style="display: flex; flex-direction: row;">
                     <div>
                         <div style="display: flex; flex-direction: row;">
@@ -308,7 +313,7 @@
     </div>
 
     <!--Memory Map-->
-
+</div>
 </body>
 
 <script>
