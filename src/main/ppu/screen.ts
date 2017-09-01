@@ -6,17 +6,17 @@ export class Screen {
 
     public static PIXELS : number = 8;
     public static TILES : number = 32;
-    public HEIGHT : number = 144;
+    public HEIGHT : number = 142;
     public WIDTH : number = 160;
 
     private ZOOM : number = 3;
     private SPACING : number = 0;
 
     private COLORS : number[] = [
-        0x000000,
-        0x515151,
-        0x9e9e9e,
-        0xdee0e2
+        0x103810,
+        0x316231,
+        0x8cac10,
+        0x798836
     ];
 
     public FRAME : ImageData;
@@ -102,6 +102,7 @@ export class Screen {
     public setBufferPixel(x : number, y : number, index : number) : void {
         let color = this.COLORS[index];
         let py, px, coordinates;
+        y--;
         let zoomVal = (this.ZOOM  + this.SPACING);
         x = x * zoomVal;
         y = y * Math.pow(zoomVal, 2) * this.WIDTH;

@@ -9,276 +9,306 @@
 
 
 <body>
-<div style="display: flex; flex-direction: row;">
+<div class="main">
     <div style="display: flex; flex-direction: column; ">
-        <div id="switch">off</div>
-        <div id="screenContainer">
-            <canvas id="screen"></canvas>
-        </div>
 
-        <div class="controllerRow">
-            <div class="controllerCol">
-                <div>
-                    <button onclick="tick()">Tick</button>
-                </div>
-                <div>
-                    <button onclick="run()">Run</button>
-                    <button onclick="stop()">Stop</button>
+        <div class="menu">
+            <div>
+                <div style="font-family: nes; color: #4d4d4d; font-size: 28px; padding-top: 3px; padding-right: 3px; padding-left: 7px;">
+                    gameboy
                 </div>
             </div>
-
-            <div class="controllerCol">
-
-                <div>
-                    Ticks per frame:
-                    <input size="2" id="tpf" value="20000">
+            <div style="flex-grow: 1"></div>
+            <div>
+                <div class="button">
+                    Settings
                 </div>
-                <div>
-                    Break at pc:
-                    <input id="breakpoint" size="3">
-                    <button id="setbreak" onclick="setBreakPoint()">Set</button>
+                <div class="button" onclick="toggleDebug()">
+                    Debug
                 </div>
-
-            </div>
-
-            <div style="display:flex;margin-left:auto;margin-bottom:auto">
-                <button onclick="grow()">+</button>
-                <button onclick="shrink()">-</button>
-                <div style="color: #bebebe; display: inline-block">
-                    <button onclick="toggleDebug()">Debug</button>
+                <div class="button" onclick="run()">
+                    Run
+                </div>
+                <div class="button" onclick="stop()">
+                    stop
                 </div>
             </div>
         </div>
+        <div class="gameboy-screen-container">
+            <div class="power-border">
+                <div class="power"></div>
+            </div>
 
-        <!-- Log Console -->
-        <div class="debugger">
-            <div style="display: flex; flex-direction: row; margin-left: 10px; flex-grow: 1; width:520px">
-                <fieldset style="width: 100%">
-                    <legend>LOG</legend>
-                    <div class="log" style="color: #bebebe; display: inline-block">
-                        <ul></ul>
+            <div class="gameboy-screen-border">
+                <div class="lines-container">
+                    <div class="lines">
+                        <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 7px;"></div>
+                        <div style="height: 3px; width: 100%; background: #362f59;"></div>
                     </div>
-                </fieldset>
+
+                </div>
+                <div class="gameboy-screen">
+                    <canvas id="screen"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="menu" style="margin-top: 10px;">
+            <div id="switch">off</div>
+            <div style="flex-grow: 1"></div>
+            <div>
+                <div class="button" onclick="grow()">
+                    Zoom in
+                </div>
+                <div class="button" onclick="shrink()">
+                    Zoom out
+                </div>
+                <div class="button" onclick="tick()">
+                    Tick
+                </div>
             </div>
         </div>
     </div>
 
 
     <!-- Debugger -->
-    <div class="debugger">
-        <div style="display: flex; flex-direction: row;">
-            <fieldset style="flex-grow: 1" >
-                <legend>CARTIDGE</legend>
-                <div style="color: #bebebe; display: inline-block">
-                    <ul style="list-style: none;">
-                        <li>
-                            <span class="header">URL:</span>
-                            <span id="url"></span>
-                        </li>
-                        <li>
-                            <span class="header">Type:</span>
-                            <span id="type">0</span>
-                        </li>
+    <div id="debugger" style="display: none">
+        <div style="display: flex; flex-direction: column;">
+            <div style="display: flex; flex-direction: row;">
+                <fieldset style="flex-grow: 1">
+                    <legend>CARTIDGE</legend>
+                    <div style="color: #bebebe; display: inline-block">
+                        <ul style="list-style: none;">
+                            <li>
+                                <span class="header">URL:</span>
+                                <span id="url"></span>
+                            </li>
+                            <li>
+                                <span class="header">Type:</span>
+                                <span id="type">0</span>
+                            </li>
 
-                    </ul>
+                        </ul>
+                    </div>
+                </fieldset>
+            </div>
+            <div  style="display: flex; flex-direction: row;">
+                <div style="display: flex; flex-direction: row;">
+                    <div>
+                        <div style="display: flex; flex-direction: row;">
+                            <fieldset>
+                                <legend>CONSOLE</legend>
+                                <div style="color: #bebebe; display: inline-block">
+                                    <ul style="list-style: none;">
+                                        <li>
+                                            <span class="header">CPU Cycles:</span>
+                                            <span id="cpucycles"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">PPU Cycles:</span>
+                                            <span id="ppucycles">0</span>
+                                        </li>
+                                        <li>
+                                            <span class="header">Scanlines:</span>
+                                            <span id="scanlines">0</span>
+                                        </li>
+                                        <li>
+                                            <span class="header">Ticks:</span>
+                                            <span id="ticks"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>OPERATION</legend>
+                                <div style="color: #bebebe; display: inline-block">
+                                    <ul style="list-style: none;">
+                                        <li>
+                                            <span class="header">Code:</span>
+                                            <span id="opcode"></span></li>
+                                        <li>
+                                        <li>
+                                            <span class="header">Name:</span>
+                                            <span id="opname"></span></li>
+                                        <li>
+                                            <span class="header">Mode:</span>
+                                            <span id="opmode"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">Address:</span>
+                                            <span id="opaddr"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">Operand:</span>
+                                            <span id="operand"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div style="display: flex; flex-direction: row;">
+                            <fieldset>
+                                <legend>CPU</legend>
+                                <div style="color: #bebebe; display: inline-block">
+                                    <ul style="list-style: none;">
+                                        <li>
+                                            <span class="header">PC:</span>
+                                            <span id="pc"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">SP:</span>
+                                            <span id="sp"></span>
+                                        </li>
+
+                                        <br/>
+                                        <span class="header">Flags:</span>
+                                        <div id="zero"></div>
+                                        <div id="subtract"></div>
+                                        <div id="halfcarry"></div>
+                                        <div id="fullcarry"></div>
+
+                                        </li>
+
+                                        <li>
+                                            <span class="header">AF:</span>
+                                            <span id="af"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">BC:</span>
+                                            <span id="bc"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">DE:</span>
+                                            <span id="de"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">HL:</span>
+                                            <span id="hl"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>PPU Registers</legend>
+                                <div style="color: #bebebe; display: inline-block">
+                                    <ul style="list-style: none;">
+                                        <li>
+                                            <span class="header">LCDC:</span>
+                                            <span id="lcdc"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">STAT:</span>
+                                            <span id="stat"></span>
+                                        </li>
+
+                                        <br/>
+                                        <li>
+                                            <span class="header">LY:</span>
+                                            <span id="ly"></span>
+                                        </li>
+
+                                        <li>
+                                            <span class="header">LYC:</span>
+                                            <span id="lyc"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <div style="display: flex; flex-direction: row;">
+                            <fieldset id="stack">
+                                <legend>STACK</legend>
+                                <ul style="list-style:none"></ul>
+                            </fieldset>
+                            <fieldset>
+                                <legend>VRAM View</legend>
+                                <!--VRAM viewer-->
+                                <canvas id="vrammap"></canvas>
+                                <button onclick="renderBGmap()">RenderBGmap</button>
+                                <button onclick="renderTilemap()">RenderTilemap</button>
+                            </fieldset>
+                        </div>
+
+                        <!--Stack-->
+                        <div style="display: flex; flex-direction: row;">
+                            <fieldset>
+                                <legend>Interrupts</legend>
+                                <div style="color: #bebebe; display: inline-block">
+                                    <ul style="list-style: none;">
+                                        <li>
+                                            <span class="header">IME:</span>
+                                            <span id="ime"></span>
+                                        </li>
+                                        <li>
+                                            <span class="header">IE:</span>
+                                            <span id="ie"></span>
+                                        </li>
+
+                                        <br/>
+                                        <li>
+                                            <span class="header">IF:</span>
+                                            <span id="if"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </fieldset>
+
+                        </div>
+
+
+                    </div>
                 </div>
-            </fieldset>
+                <div style="flex-grow: 1;">
+                    <!-- Log Console -->
+                    <div class="debugger">
+                        <div style="display: flex; flex-direction: row; margin-left: 10px; height: 100%; box-sizing: border-box; ">
+                            <fieldset style="width: 100%; height: 100%">
+                                <legend>LOG</legend>
+                                <div class="log" style="color: #bebebe; display: inline-block">
+                                    <ul></ul>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div style="display: flex; flex-direction: row;">
+        <div style="display: flex; flex-direction: column;">
             <fieldset>
-                <legend>CONSOLE</legend>
-                <div style="color: #bebebe; display: inline-block">
-                    <ul style="list-style: none;">
-                        <li>
-                            <span class="header">CPU Cycles:</span>
-                            <span id="cpucycles"></span>
-                        </li>
-                        <li>
-                            <span class="header">PPU Cycles:</span>
-                            <span id="ppucycles">0</span>
-                        </li>
-                        <li>
-                            <span class="header">Scanlines:</span>
-                            <span id="scanlines">0</span>
-                        </li>
-                        <li>
-                            <span class="header">Ticks:</span>
-                            <span id="ticks"></span>
-                        </li>
-                    </ul>
+                <legend>Memory Map</legend>
+                <div id="memmap">
+                    <table>
+                        <!--Header-->
+                        <thead>
+                        <tr>
+                            <th>xxxx</th>
+                            <th>0x00</th>
+                            <th>0x01</th>
+                            <th>0x02</th>
+                            <th>0x03</th>
+                            <th>0x04</th>
+                            <th>0x05</th>
+                            <th>0x06</th>
+                            <th>0x07</th>
+                            <th>0x08</th>
+                            <th>0x09</th>
+                            <th>0x0A</th>
+                            <th>0x0B</th>
+                            <th>0x0C</th>
+                            <th>0x0D</th>
+                            <th>0x0E</th>
+                            <th>0x0F</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </fieldset>
-            <fieldset>
-                <legend>OPERATION</legend>
-                <div style="color: #bebebe; display: inline-block">
-                    <ul style="list-style: none;">
-                        <li>
-                            <span class="header">Code:</span>
-                            <span id="opcode"></span></li>
-                        <li>
-                        <li>
-                            <span class="header">Name:</span>
-                            <span id="opname"></span></li>
-                        <li>
-                            <span class="header">Mode:</span>
-                            <span id="opmode"></span>
-                        </li>
-                        <li>
-                            <span class="header">Address:</span>
-                            <span id="opaddr"></span>
-                        </li>
-                        <li>
-                            <span class="header">Operand:</span>
-                            <span id="operand"></span>
-                        </li>
-                    </ul>
-                </div>
-            </fieldset>
-        </div>
-        <div style="display: flex; flex-direction: row;">
-            <fieldset>
-                <legend>CPU</legend>
-                <div style="color: #bebebe; display: inline-block">
-                    <ul style="list-style: none;">
-                        <li>
-                            <span class="header">PC:</span>
-                            <span id="pc"></span>
-                        </li>
-                        <li>
-                            <span class="header">SP:</span>
-                            <span id="sp"></span>
-                        </li>
-
-                        <br/>
-                        <span class="header">Flags:</span>
-                        <div id="zero"></div>
-                        <div id="subtract"></div>
-                        <div id="halfcarry"></div>
-                        <div id="fullcarry"></div>
-
-                        </li>
-
-                        <li>
-                            <span class="header">AF:</span>
-                            <span id="af"></span>
-                        </li>
-                        <li>
-                            <span class="header">BC:</span>
-                            <span id="bc"></span>
-                        </li>
-                        <li>
-                            <span class="header">DE:</span>
-                            <span id="de"></span>
-                        </li>
-                        <li>
-                            <span class="header">HL:</span>
-                            <span id="hl"></span>
-                        </li>
-                    </ul>
-                </div>
-            </fieldset>
-            <fieldset>
-                <legend>PPU Registers</legend>
-                <div style="color: #bebebe; display: inline-block">
-                    <ul style="list-style: none;">
-                        <li>
-                            <span class="header">LCDC:</span>
-                            <span id="lcdc"></span>
-                        </li>
-                        <li>
-                            <span class="header">STAT:</span>
-                            <span id="stat"></span>
-                        </li>
-
-                        <br/>
-                        <li>
-                            <span class="header">LY:</span>
-                            <span id="ly"></span>
-                        </li>
-
-                        <li>
-                            <span class="header">LYC:</span>
-                            <span id="lyc"></span>
-                        </li>
-                    </ul>
-                </div>
-            </fieldset>
-        </div>
-
-        <div style="display: flex; flex-direction: row;">
-            <fieldset id="stack">
-                <legend>STACK</legend>
-                <ul style="list-style:none"></ul>
-            </fieldset>
-            <fieldset>
-                <legend>VRAM View</legend>
-                <!--VRAM viewer-->
-                <canvas id="vrammap"></canvas>
-                <button onclick="renderBGmap()">RenderBGmap</button>
-                <button onclick="renderTilemap()">RenderTilemap</button>
-            </fieldset>
-        </div>
-
-        <!--Stack-->
-        <div style="display: flex; flex-direction: row;">
-            <fieldset>
-                <legend>Interrupts</legend>
-                <div style="color: #bebebe; display: inline-block">
-                    <ul style="list-style: none;">
-                        <li>
-                            <span class="header">IME:</span>
-                            <span id="ime"></span>
-                        </li>
-                        <li>
-                            <span class="header">IE:</span>
-                            <span id="ie"></span>
-                        </li>
-
-                        <br/>
-                        <li>
-                            <span class="header">IF:</span>
-                            <span id="if"></span>
-                        </li>
-                    </ul>
-                </div>
-            </fieldset>
-
         </div>
     </div>
 
     <!--Memory Map-->
-    <div style="display: flex; flex-direction: column;">
-        <fieldset>
-            <legend>Memory Map</legend>
-            <div id="memmap">
-                <table>
-                    <!--Header-->
-                    <thead>
-                    <tr>
-                        <th>xxxx</th>
-                        <th>0x00</th>
-                        <th>0x01</th>
-                        <th>0x02</th>
-                        <th>0x03</th>
-                        <th>0x04</th>
-                        <th>0x05</th>
-                        <th>0x06</th>
-                        <th>0x07</th>
-                        <th>0x08</th>
-                        <th>0x09</th>
-                        <th>0x0A</th>
-                        <th>0x0B</th>
-                        <th>0x0C</th>
-                        <th>0x0D</th>
-                        <th>0x0E</th>
-                        <th>0x0F</th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </fieldset>
-    </div>
+
 </body>
 
 <script>
@@ -336,11 +366,16 @@
     }
 
     var run = function () {
-        gameboy.switch.on();;
+        gameboy.switch.on();
+
+        $(".power").addClass("power-on");
+        $(".power-border").addClass("power-border-on");
         gameboy.tickAnimation();
     }
 
     var stop = function () {
+        $(".power").removeClass("power-on");
+        $(".power-border").removeClass("power-border-on");
         gameboy.switch.off();
     }
 
@@ -353,21 +388,22 @@
     }
 
     var toggleDebug = function () {
-        var _tpf = 2000;
-        return function () {
-            _tpf = $('#tpf').val();
-            debug.status = !debug.status;
-            if (debug.status) {
-                debug.display();
-                debug.clearMemqueue();
-                _tpf = gameboy.tpf;
-                gameboy.tpf = 1;
-            } else {
-                console.log(_tpf);
-                gameboy.tpf = _tpf;
-            }
+
+        console.log("LOOK");
+        $("#debugger").toggle();
+        _tpf = $('#tpf').val();
+        debug.status = !debug.status;
+        if (debug.status) {
+            debug.display();
+            debug.clearMemqueue();
+            _tpf = gameboy.tpf;
+            gameboy.c = 1;
+        } else {
+            console.log(_tpf);
+            gameboy.tpf = _tpf;
         }
-    }();
+
+    };
 
     var setBreakPoint = function () {
         var val = parseInt($("#breakpoint").val(), 16);
@@ -385,35 +421,35 @@
 
     //Chrome
     /*
-    $(document).keypress(function (event) {
-        //$(this.body).prepend("<span>" + event.key + "</span>");
-        switch (event.key) {
-            case "Enter":
-                toggleDebug();
-                break;
-            case "r":
-                run();
-                break;
-            case "s": //S
-                stop();
-                break;
-            case "t": //T
-                tick();
-                break;
-        }
-    });
+     $(document).keypress(function (event) {
+     //$(this.body).prepend("<span>" + event.key + "</span>");
+     switch (event.key) {
+     case "Enter":
+     toggleDebug();
+     break;
+     case "r":
+     run();
+     break;
+     case "s": //S
+     stop();
+     break;
+     case "t": //T
+     tick();
+     break;
+     }
+     });
 
-    $(document).keydown(function (event) {
-        if (event.keyCode == 16) {
-            var input = $("#breakpoint");
-            if (input.is(":focus")) {
-                input.blur();
-            } else {
-                input.focus();
-            }
-        }
-    });
-*/
+     $(document).keydown(function (event) {
+     if (event.keyCode == 16) {
+     var input = $("#breakpoint");
+     if (input.is(":focus")) {
+     input.blur();
+     } else {
+     input.focus();
+     }
+     }
+     });
+     */
 
 
 </script>

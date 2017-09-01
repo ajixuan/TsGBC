@@ -28,7 +28,7 @@ export class GameBoy {
     public keyboard: Keyboard;
 
     //Ticks per frame
-    public tpf: number = 1;
+    public tpf: number = 20000;
 
     constructor() {
         this.cartridge = null
