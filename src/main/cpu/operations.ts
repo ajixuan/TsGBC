@@ -3849,6 +3849,29 @@ export class Operations {
             }
         };
 
+        this.operations[0xCBD0] = {
+            name: "SET",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let c = registers.getC();
+                registers.setC(c | 0x04);
+            }
+        };
+
+        this.operations[0xCBF0] = {
+            name: "SET",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let b = registers.getB();
+                registers.setB(b | 0x40);
+            }
+        };
+
+
         this.operations[0xCBFE] = {
             name: "SET",
             cycle: 16,
