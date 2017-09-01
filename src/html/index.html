@@ -35,17 +35,15 @@
             </div>
         </div>
         <div class="gameboy-screen-container">
-            <div class="power"></div>
+            <div class="power-border">
+                <div class="power"></div>
+            </div>
 
             <div class="gameboy-screen-border">
-                <div style="display: flex; align-items: stretch; flex-direction: row; width: 100%; margin-bottom: 10px;">
-                    <div style=" flex: 1; flex-grow: 1; margin-top: 12px; margin-bottom: 5px;">
-                        <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 10px;"></div>
+                <div class="lines-container">
+                    <div class="lines">
+                        <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 7px;"></div>
                         <div style="height: 3px; width: 100%; background: #362f59;"></div>
-                    </div>
-                    <div style=" flex: 1; flex-grow: 1; margin-top: 12px; margin-bottom: 5px;">
-                        <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 10px;"></div>
-                        <div style="height: 3px; width: 100%; background: #362f59; "></div>
                     </div>
 
                 </div>
@@ -371,11 +369,13 @@
         gameboy.switch.on();
 
         $(".power").addClass("power-on");
+        $(".power-border").addClass("power-border-on");
         gameboy.tickAnimation();
     }
 
     var stop = function () {
         $(".power").removeClass("power-on");
+        $(".power-border").removeClass("power-border-on");
         gameboy.switch.off();
     }
 
