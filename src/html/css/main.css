@@ -44,22 +44,47 @@ body {
     border-bottom: 2px solid #8d9f3f;
 }
 
-#power {
+.power {
+    background: #595959;
     width: 10px;
     height: 10px;
-    background: #b92b14;
     position: relative;
     right: -30px;
     top: 30%;
     border-radius: 200px 200px 200px 200px;
-    box-shadow: inset 1px 1px 1px 0px rgba(0,0,0,0.75);
+    box-shadow: inset 1px 2px 1px 0px rgba(0,0,0,0.75);
+}
+
+.power-on {
+    background: #b92b14;
 }
 
 .button {
-    margin: 5px;
+    cursor:pointer;
+    font-family: Arial, sans-serif;
+    margin: 3px;
     padding: 5px;
-    background-color: #a3a3a3;
+    padding-top: 6px;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: #4d4d4d;
     display: inline-block;
     box-sizing: border-box;
     flex-basis: 0;
+    color: #ededed;
+    text-transform: uppercase;
+    border-radius: 5px;
+    min-width: 25px;
+    text-align: center;
+    font-weight: 500;
+
+}
+
+.button:hover {
+    background: #72818e;
+}
+
+.menu {
+    display: flex;
+    flex-direction: row;
 }

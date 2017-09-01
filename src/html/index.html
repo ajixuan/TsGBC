@@ -12,16 +12,36 @@
 <div class="main">
     <div style="display: flex; flex-direction: column; ">
 
+        <div class="menu">
+            <div>
+                <div style="font-family: nes; color: #4d4d4d; font-size: 28px; padding-top: 3px; padding-right: 3px; padding-left: 7px;">
+                    gameboy
+                </div>
+            </div>
+            <div style="flex-grow: 1"></div>
+            <div>
+                <div class="button">
+                    Settings
+                </div>
+                <div class="button" onclick="toggleDebug()">
+                    Debug
+                </div>
+                <div class="button" onclick="run()">
+                    Run
+                </div>
+                <div class="button" onclick="stop()">
+                    stop
+                </div>
+            </div>
+        </div>
         <div class="gameboy-screen-container">
-            <div id="power"></div>
+            <div class="power"></div>
+
             <div class="gameboy-screen-border">
                 <div style="display: flex; align-items: stretch; flex-direction: row; width: 100%; margin-bottom: 10px;">
                     <div style=" flex: 1; flex-grow: 1; margin-top: 12px; margin-bottom: 5px;">
                         <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 10px;"></div>
                         <div style="height: 3px; width: 100%; background: #362f59;"></div>
-                    </div>
-                    <div style="font-family: nes; color: #a1acbc; font-size: 28px; padding-top: 3px; padding-right: 3px; padding-left: 7px;">
-                        gameboy
                     </div>
                     <div style=" flex: 1; flex-grow: 1; margin-top: 12px; margin-bottom: 5px;">
                         <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 10px;"></div>
@@ -34,55 +54,26 @@
                 </div>
             </div>
         </div>
-
-        <div class="menu">
-            <div class="button">
-                Settings
-            </div>
-        </div>
-
-        <div class="controllerRow">
-            <div class="controllerCol">
-                <div id="switch">off</div>
-                <div>
-                    <button onclick="tick()">Tick</button>
+        <div class="menu" style="margin-top: 10px;">
+            <div id="switch">off</div>
+            <div style="flex-grow: 1"></div>
+            <div>
+                <div class="button" onclick="grow()">
+                    Zoom in
                 </div>
-                <div>
-                    <button onclick="run()">Run</button>
-                    <button onclick="stop()">Stop</button>
+                <div class="button" onclick="shrink()">
+                    Zoom out
                 </div>
-            </div>
-
-            <div class="controllerCol">
-                <div>
-                    Ticks per frame:
-                    <input size="2" id="tpf" value="20000">
-                </div>
-                <div>
-                    Break at pc:
-                    <input id="breakpoint" size="3">
-                    <button id="setbreak" onclick="setBreakPoint()">Set</button>
-                </div>
-
-            </div>
-
-            <div style="display:flex;margin-left:auto;margin-bottom:auto">
-                <button onclick="grow()">+</button>
-                <button onclick="shrink()">-</button>
-                <div style="color: #bebebe; display: inline-block">
-                    <button onclick="toggleDebug()">Debug</button>
+                <div class="button" onclick="tick()">
+                    Tick
                 </div>
             </div>
         </div>
-
-
     </div>
 
 
     <!-- Debugger -->
     <div id="debugger" style="display: none">
-
-
         <div style="display: flex; flex-direction: column;">
             <div style="display: flex; flex-direction: row;">
                 <fieldset style="flex-grow: 1">
@@ -378,11 +369,13 @@
 
     var run = function () {
         gameboy.switch.on();
-        ;
+
+        $(".power").addClass("power-on");
         gameboy.tickAnimation();
     }
 
     var stop = function () {
+        $(".power").removeClass("power-on");
         gameboy.switch.off();
     }
 
