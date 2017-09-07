@@ -2,7 +2,7 @@
 }
 
 body {
-    background: #d1d1d1;
+    background: #d9dadc;
 }
 
 @font-face {
@@ -20,20 +20,21 @@ body {
 }
 
 .logo {
-    color: #36354c;
+    color: #42485c;
     font-family: nes;
-    font-size: 28px;
+    font-size: 32px;
     padding-top: 3px;
     padding-right: 3px;
     padding-left: 7px;
+    line-height: 100%;
 }
 
 .gameboy-screen-border {
     box-shadow: inset 0px 0px 3px 3px rgba(57, 68, 78, 0.87);
-    background: #525460;
+    background: #60687b;
     padding-left: 60px;
     padding-top: 10px;
-    padding-bottom: 42px;
+    padding-bottom: 52px;
     padding-right: 60px;
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
@@ -42,6 +43,7 @@ body {
 }
 
 .gameboy-screen-container {
+
 }
 
 .gameboy-screen {
@@ -54,10 +56,11 @@ body {
 
 .power-border {
     position: relative;
-    right: -30px;
-    top: 30%;
+    top: 30px;
     width: 12px;
     height: 12px;
+    margin-bottom: -10px;
+    left: -35px;
 }
 
 .power-border-on {
@@ -78,12 +81,11 @@ body {
 
 .button {
     cursor:pointer;
-    font-family: Arial, sans-serif;
+    font-size: 20px;
     margin: 3px;
-    padding: 5px;
-    padding-top: 6px;
-    padding-left: 8px;
-    padding-right: 8px;
+    padding: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
     background-color: #4d4d4d;
     display: inline-block;
     box-sizing: border-box;
@@ -123,10 +125,23 @@ body {
 }
 
 .button:hover {
-    background: #b4cbe0;
+    background: #59646e;
 }
 
 .menu {
     display: flex;
     flex-direction: row;
+    margin-bottom: 5px;
+}
+
+.tiptop {
+    position: absolute;
+    z-index: 9999;
+    max-width: 150px;
+    padding: 5px;
+    font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #fff;
+    background: #373737;
+    border-radius: 3px;
+    border: 1px solid #262626;
 }

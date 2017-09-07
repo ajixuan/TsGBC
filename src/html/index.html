@@ -2,9 +2,11 @@
 <head>
     <script src="./assets/SystemJS.js" type="application/javascript"></script>
     <script src="./assets/jquery.min.js" type="application/javascript"></script>
+    <script src="./assets/tiptop.js" type="text/javascript" ></script>
     <script src="app.js" type="application/javascript"></script>
     <link rel="stylesheet" type="text/css" href="./css/debugger.css">
     <link rel="stylesheet" type="text/css" href="./css/main.css">
+    <link href="./css/foundation-icons.css" rel="stylesheet">
 </head>
 
 
@@ -21,54 +23,53 @@
                 </div>
                 <div style="flex-grow: 1"></div>
                 <div>
-                    <div class="button">
-                        Settings
+                    <div class="button" title="Controls">
+                        <a class="fi-widget large"></a>
                     </div>
-                    <div class="button" onclick="toggleDebug()">
-                        Debug
+                    <div class="button" onclick="run()" title="Play">
+                        <a class="fi-play"></a>
                     </div>
-                    <div class="button" onclick="run()">
-                        Run
+                    <div class="button" onclick="stop()" title="Pause">
+                        <a class="fi-pause"></a>
                     </div>
-                    <div class="button" onclick="stop()">
-                        stop
+                    <div class="button" onclick="toggleDebug()" title="Debug">
+                        <a class="fi-wrench"></a>
                     </div>
                 </div>
             </div>
             <div class="gameboy-screen-container">
-                <div class="power-border">
-                    <div class="power"></div>
-                </div>
 
                 <div class="gameboy-screen-border">
                     <div class="lines-container">
                         <div class="lines">
-                            <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 7px;"></div>
+                            <div style="height: 3px; width: 100%; background: #983c7c; margin-bottom: 7px;"></div>
                             <div style="height: 3px; width: 100%; background: #1b1b68;"></div>
                         </div>
                         <div class="line-text" style="display: none">DOT MATRIX SCREEN</div>
                         <div class="lines">
-                            <div style="height: 3px; width: 100%; background: #7f3268; margin-bottom: 7px;"></div>
+                            <div style="height: 3px; width: 100%; background: #983c7c; margin-bottom: 7px;"></div>
                             <div style="height: 3px; width: 100%; background: #1b1b68;"></div>
                         </div>
                     </div>
                     <div class="gameboy-screen">
-                        <canvas id="screen"></canvas>
+                        <div class="power-border">
+                            <div class="power"></div>
+                        </div>
+                        <canvas id="screen" style="margin-left: 2px;"></canvas>
                     </div>
+
+
                 </div>
             </div>
             <div class="menu" style="margin-top: 10px;">
                 <div id="switch">off</div>
                 <div style="flex-grow: 1"></div>
                 <div>
-                    <div class="button" onclick="grow()">
-                        Zoom in
+                    <div class="button" onclick="grow()" title="Zoom in">
+                        <a class="fi-zoom-in"></a>
                     </div>
-                    <div class="button" onclick="shrink()">
-                        Zoom out
-                    </div>
-                    <div class="button" onclick="tick()">
-                        Tick
+                    <div class="button" onclick="shrink()" title="Zoom out">
+                        <a class="fi-zoom-out"></a>
                     </div>
                 </div>
             </div>
@@ -422,6 +423,10 @@
     var renderTilemap = function () {
         debug.renderTilemap();
     }
+
+    $(document).ready(function() {
+        $('.button').tipTop();
+    });
 
 
     //Chrome
