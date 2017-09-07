@@ -122,7 +122,7 @@ export class Debugger {
 
     public static renderBGmap() {
         let gameboy = Debugger.gameboy;
-        let bgmap: any = document.getElementById("vrammap");
+        let bgmap: any = document.getElementById("patternMap");
         let zoom = Debugger.ZOOM;
 
         bgmap.width = 32 * 9 * zoom;
@@ -157,7 +157,7 @@ export class Debugger {
 
     public static renderTilemap() {
         let gameboy = Debugger.gameboy;
-        let bgmap: any = document.getElementById("vrammap");
+        let bgmap: any = document.getElementById("tileMap");
         let zoom = Debugger.ZOOM;
 
         bgmap.width = 16 * 9 * zoom;
