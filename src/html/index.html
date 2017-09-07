@@ -85,7 +85,15 @@
             <div class="debug-tab-button" onclick="openPPU(this)">PPU</div>
             <div class="debug-tab-button" onclick="openCART(this)">CARTRIDGE</div>
             <div style="flex-grow: 1"></div>
-            <div id="logDebugger" class="debug-button" onclick="logDebug()">LOG</div>
+            <div class="debug-button" style="background: none; margin-top: 3px; margin-bottom: 0px;">
+                <div class="onoffswitch">
+                    <input id="logDebugger" type="checkbox" onclick="logDebug()" name="onoffswitch" class="onoffswitch-checkbox">
+                    <label class="onoffswitch-label" for="logDebugger">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
+            </div>
             <div class="debug-button" onclick="run()">PLAY</div>
             <div class="debug-button" onclick="stop()">STOP</div>
             <div class="debug-button" onclick="tick()">TICK</div>
@@ -312,25 +320,17 @@
     var toggleDebug = function () {
         $("#debugger").toggle();
 
-//        _tpf = $('#tpf').val();
-//        if (debug.status) {
-//            debug.display();
-//            _tpf = gameboy.tpf;
-//            gameboy.c = 1;
-//        } else {
-//            console.log(_tpf);
-//            gameboy.tpf = _tpf;
-//        }
+        if (debug.status) {
+            $("#logDebugger").attr("checked", true);
+        } else {
+            $("#logDebugger").attr("checked", false);
+        }
 
     };
 
     var logDebug = function () {
         debug.status = !debug.status;
-        if (debug.status) {
-            $("#logDebugger").addClass("active");
-        } else {
-            $("#logDebugger").removeClass("active");
-        }
+        console.log("Debug Status: " + debug.status);
     };
 
     var closeDebug = function () {
