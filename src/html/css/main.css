@@ -174,7 +174,7 @@ body {
 .onoffswitch-inner:after {
     content: "OFF";
     padding-right: 10px;
-    background-color: #292929; color: #999999;
+    background-color: #111; color: #FFFFFF;
     text-align: right;
 }
 .onoffswitch-switch {
