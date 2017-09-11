@@ -112,7 +112,6 @@ export class Debugger {
             log.removeChild(ul);
             ul = document.createElement("ul");
             log.appendChild(ul);
-            console.log("ye");
         }
 
         ul.appendChild(html);
@@ -308,7 +307,7 @@ export class Debugger {
         Debugger.gameboy = gameboy;
         Debugger.status = false;
         console.info("Debugger is ready!");
-        Debugger.resetMemmap();
+        //Debugger.resetMemmap();
         Debugger.display();
     }
 
