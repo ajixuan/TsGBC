@@ -3822,7 +3822,7 @@ export class Operations {
             execute(pc: number) {
                 let addr = registers.getHL();
                 let val = memory.readByte(addr);
-                memory.writeByte(addr, val & ~(1 << pc));
+                memory.writeByte(addr, val & ~(0x01));
             }
         };
 
@@ -3833,9 +3833,23 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                registers.setA(val & ~(1 << pc));
+                registers.setA(val & ~(0x01));
             }
         };
+
+
+        this.operations[0xCB9E] = {
+            name: "RES",
+            cycle: 16,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let hl = registers.getHL();
+                let val = memory.readByte(hl);
+                memory.writeByte(hl, val & ~(0x08));
+            }
+        };
+
 
         this.operations[0xCBBE] = {
             name: "RES",
@@ -3845,7 +3859,7 @@ export class Operations {
             execute(pc: number) {
                 let hl = registers.getHL();
                 let val = memory.readByte(hl);
-                memory.writeByte(hl, val & 0x7F);
+                memory.writeByte(hl, val & ~(0x80));
             }
         };
 
@@ -3857,6 +3871,18 @@ export class Operations {
             execute(pc: number) {
                 let c = registers.getC();
                 registers.setC(c | 0x04);
+            }
+        };
+
+
+        this.operations[0xCBDE] = {
+            name: "SET",
+            cycle: 16,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let hl = registers.getHL();
+                registers.setHL(hl | 0x08);
             }
         };
 
