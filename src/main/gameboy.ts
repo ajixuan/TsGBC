@@ -16,15 +16,14 @@ export class GameBoy {
     public timeout: any;
     public interval: number = 1000;
     private runConditions : Array<Function> = new Array<Function>();
-    public switch :any = function(element:Element){
+    public switch :any = function(){
         let _val = false;
-        let _ele = element;
         return {
-            on: function(){_val = true; _ele.innerHTML = "Running"},
-            off: function () {_val = false; _ele.innerHTML = "Stopped"},
+            on: function(){_val = true;},
+            off: function () {_val = false;},
             stat: function () {return _val}
         }
-    }(document.getElementById("switch"));
+    }();
     public keyboard: Keyboard;
 
     //Ticks per frame
