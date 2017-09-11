@@ -28,13 +28,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hkamran/Hoones.git"
+    "url": "git+https://github.com/ajixuan/TsGBC"
   },
-  "author": "hkamran490@gmail.com",
+  "author": "hkamran490@gmail.com, xuan.ji90@gmail.com",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hkamran/RCTJS/issues"
+    "url": "https://github.com/ajixuan/TsGBC/settings"
   },
-  "homepage": "https://github.com/hkamran/RCTJS#readme",
+  "homepage": "https://github.com/hkamran/TsGBC#readme",
   "dependencies": {}
 }
