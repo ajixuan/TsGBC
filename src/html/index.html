@@ -286,6 +286,9 @@
                 </div>
             </div>
         </div>
+        <div id="memory" class="debug-tab">
+
+        </div>
         <div id="cartridge" class="debug-tab">
 
             <div class="debugger block">
@@ -321,6 +324,7 @@
 
         if (debug.status) {
             $("#logDebugger").prop("checked", true);
+
         } else {
             $("#logDebugger").prop("checked", false);
         }
@@ -329,6 +333,13 @@
 
     var logDebug = function () {
         debug.status = !debug.status;
+
+        if (debug.status) {
+            gameboy.tpf=1;
+        } else {
+            gameboy.tpf=2000;
+        }
+
         console.log("Debug Status: " + debug.status);
     };
 
@@ -441,8 +452,6 @@
         gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() - 1);
     }
 
-
-
     var setBreakPoint = function () {
         var val = parseInt($("#breakpoint").val(), 16);
         gameboy.setPCBreak(val);
@@ -459,40 +468,6 @@
     $(document).ready(function () {
         $('.button').tipTop();
     });
-
-
-    //Chrome
-    /*
-     $(document).keypress(function (event) {
-     //$(this.body).prepend("<span>" + event.key + "</span>");
-     switch (event.key) {
-     case "Enter":
-     toggleDebug();
-     break;
-     case "r":
-     run();
-     break;
-     case "s": //S
-     stop();
-     break;
-     case "t": //T
-     tick();
-     break;
-     }
-     });
-
-     $(document).keydown(function (event) {
-     if (event.keyCode == 16) {
-     var input = $("#breakpoint");
-     if (input.is(":focus")) {
-     input.blur();
-     } else {
-     input.focus();
-     }
-     }
-     });
-     */
-
 
 </script>
 </html>
