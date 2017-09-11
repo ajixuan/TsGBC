@@ -80,6 +80,12 @@ Joypad =====================
 	29A6-29B0 = load 20 into joypad and read output 4 times
 	29B8-29CE = load 10 into joypad and read output 10 times 
 	29D5-29DE = load various values into cpu stack
+
+	##Note:
+		0xEE = right
+		0xED = left
+		0x
+
 =============================
 Joypad complete
 
@@ -146,7 +152,7 @@ Joypad complete
 		650C:
 		6A27
 
-##The Intro screen loop=====================
+##The Decision screen loop=====================
 2CD-2D3: If FF80 is 0F, jump to 21B
 2D6-2E2: dec FFA6 and FFA7
 2E4-2EB: IF FFC5 is not 0, load it as interrupt flag
@@ -156,13 +162,16 @@ Joypad complete
 	2C4: Joypad See above
 	2C7: 
 		2F8-2FA: Load FFE1 to A and jmp to 28
-	28: Jmp to HL: (for 369 See above)
+	28: prepare to jmp
+	33: Jmp to HL: 
+		369: See above
 		479: Jmp to player select loop
+		1A07: Mode select??
 ==============================================
 
 ##The player select loop========================
 479 - 47C : nz; 488
-482: z; If FFC6 is 0
+482: z; If FFC6 is 0 ########jump to auto play
 	41F: Jmp to auto play (see below)
 488:
 	A98 - A9B: Loop until B is 0
@@ -183,7 +192,25 @@ Joypad complete
 ##Auto play begins==============================
 41F: 
 
+
+1A07:
+	2820:
+	2828-282C: wait for 91 vblank
+
+
+1AA9:
+	2007:
+
+2a89:
+
 ================================================
+
+
+At next block=================================== 
+	21EE:
+
+
+	#Memory position C026 holds data for next block
 
 ----------------------------------------------------------------------
 
