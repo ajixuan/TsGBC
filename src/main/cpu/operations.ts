@@ -20,7 +20,7 @@ export class Operations {
      *      Opcode number
      * @returns Operation
      */
-    public get (opcode: number): Operation {
+    public get(opcode: number): Operation {
         return this.operations[opcode];
     }
 
@@ -150,7 +150,7 @@ export class Operations {
             name: string = "Immediate";
             memory: Memory;
 
-            constructor(memory : Memory) {
+            constructor(memory: Memory) {
                 this.memory = memory;
             }
 
@@ -676,10 +676,12 @@ export class Operations {
                     correct |= 0x60;
                 }
 
-                if((val >> 4) >= 0x09 && (val & 0xF) > 0x0A){
+                if ((val >> 4) >= 0x09 && (val & 0xF) > 0x0A) {
                     correct |= 0x66;
                 }
-                if((correct & 0xF0) == 0x60){ registers.setCarryFlag(1)}
+                if ((correct & 0xF0) == 0x60) {
+                    registers.setCarryFlag(1)
+                }
 
                 registers.setA((val + correct) & 0xFF);
             }
@@ -886,7 +888,7 @@ export class Operations {
             }
         };
 
-        
+
         this.operations[0x39] = {
             name: "ADD",
             cycle: 8,
@@ -2930,7 +2932,8 @@ export class Operations {
                 interrupts.enableAllInterrupts();
             }
         };
-        /*
+
+
         this.operations[0xDE] = {
             name: "SBC",
             cycle: 8,
@@ -2939,9 +2942,9 @@ export class Operations {
             execute(pc: number) {
                 let a = registers.getA();
                 let result = calcSubtractFlags(a, pc + registers.getCarryFlag());
-
+                registers.setA(result);
             }
-        };*/
+        };
 
 
         this.operations[0xE0] = {
@@ -3235,7 +3238,27 @@ export class Operations {
             }
         };
 
+        this.operations[0xCB08] = {
+            name: "RRC",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getB();
+                let bit = result & 0x01;
+                let result = val >> 1;
 
+                if (result == 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(0);
+                registers.setCarryFlag(bit);
+
+                registers.setB(result);
+            }
+        };
 
 
         this.operations[0xCB19] = {
