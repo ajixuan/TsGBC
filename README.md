@@ -3,7 +3,7 @@ Gameboy Emulator done in Typescript!
 
 ## Screenshots
 <div align="center">
-	<img src="https://raw.githubusercontent.com/ajixuan/TsGBC/raw/master/src/html/images/tetris_screen.jpg"></img>
+	<img src="https://raw.githubusercontent.com/ajixuan/TsGBC/master/src/html/images/tetris_screen.jpg"></img>
 </div>
 
 A project for learning about Emulation and Javascript.
