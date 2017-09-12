@@ -7,7 +7,7 @@ import {Cpu} from './cpu/cpu'
 export class Debugger {
     public static status: boolean = false;
     private static memqueue = {};
-    private static memmap : Element = document.getElementsByTagName("tbody")[0];
+    private static memmap : Element = document.getElementById("memory");
     private static gameboy: GameBoy;
     private static logLimit = 500;
     private static bgmap: Array<Number> = Array(0x800).fill(0);
@@ -69,7 +69,6 @@ export class Debugger {
 
         $('#tpf').change(function () {
             if ($(this).val()) {
-
                 gameboy.tpf = Number.parseInt($(this).val().toString());
             }
         });
@@ -235,7 +234,8 @@ export class Debugger {
         let queue = {};
         let memory = Debugger.gameboy.memory;
         $("tbody tr").remove();
-
+        Debugger.memmap.appendChild(document.createElement("tbody"));
+        let chart = Debugger.memmap.children[0];
         for (let i = 0x8000; i <= 0xFFF0; i += 0x10) {
             (function (addr) {
                 setTimeout(function () {
@@ -259,7 +259,7 @@ export class Debugger {
                     if (addr == 0xFFF0) {
                         keys = Object.keys(queue);
                         for(let k = 0; k<keys.length; k++){
-                            Debugger.memmap.appendChild(queue[keys[k]]);
+                            chart.appendChild(queue[keys[k]]);
                         }
                         queue = {};
                     }
@@ -309,7 +309,6 @@ export class Debugger {
         Debugger.gameboy = gameboy;
         Debugger.status = false;
         console.info("Debugger is ready!");
-        //Debugger.resetMemmap();
         Debugger.display();
     }
 

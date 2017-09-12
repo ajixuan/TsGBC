@@ -82,6 +82,7 @@
 
             <div class="debug-tab-button" onclick="openCPU(this)">CPU</div>
             <div class="debug-tab-button" onclick="openPPU(this)">PPU</div>
+            <div class="debug-tab-button" onclick="openMEMORY(this)">MEMORY</div>
             <div class="debug-tab-button" onclick="openCART(this)">CARTRIDGE</div>
             <div style="flex-grow: 1"></div>
             <div class="debug-button" style="background: none; margin-top: 3px; margin-bottom: 0px;">
@@ -101,7 +102,6 @@
             </div>
         </div>
         <div id="cpu" class="debug-tab" >
-
             <div class="debugger block" style="display:flex; flex-direction: row">
                 <div style="display: flex; flex-direction: column;">
                     <div style="display: flex; flex-direction: row;">
@@ -294,9 +294,7 @@
                 </div>
             </div>
         </div>
-        <div id="memory" class="debug-tab">
-
-        </div>
+        <div id="memory" class="debug-tab"></div>
         <div id="cartridge" class="debug-tab">
 
             <div class="debugger block">
@@ -367,6 +365,13 @@
         $("#ppu").show();
         renderBGmap();
         renderTilemap();
+    };
+
+    var openMEMORY = function (el) {
+        clearTabs();
+        $(el).addClass('active');
+        $("#memory").show();
+        renderMemoryMap();
     };
 
     var openCART = function (el) {
@@ -471,6 +476,10 @@
 
     var renderTilemap = function () {
         debug.renderTilemap();
+    }
+
+    var renderMemoryMap = function(){
+        debug.resetMemmap();
     }
 
     $(document).ready(function () {
