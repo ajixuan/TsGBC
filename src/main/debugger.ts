@@ -253,6 +253,12 @@ export class Debugger {
                         //Column
                         let td : Element = document.createElement("td");
                         td.innerHTML = memory.readByte(addr + j).toString(16);
+                        if(j == 7){
+                            td.setAttribute("style","border-right:thick double #DDDDDD;" +
+                                                                "padding-right:40px");
+                        } else if(j == 8){
+                            td.setAttribute("style","padding-left:40px;");
+                        }
                         queue[index].appendChild(td);
                     }
 

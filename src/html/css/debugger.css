@@ -159,7 +159,7 @@ fieldset {
 }
 
 #memory {
-    padding-left:25%;
+    padding-left:20%;
 }
 
 tr {
@@ -172,5 +172,5 @@ td {
 }
 
 tr:nth-child(even) {
-    background-color: #9A9A9A;
+    background-color: #8A8A8A;
 }
