@@ -191,3 +191,26 @@ body {
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
     right: 0px;
 }
+
+.github {
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 255px;
+    font-family: Arial,sans-serif;
+    font-size: 14px;
+}
+
+.github:hover {
+    background: #eee;
+}
+
+.github a {
+    color: #4d4d4d;
+    font-size: 34px;
+    text-decoration: none;
+}
+
+.github a:hover {
+    color: #59646e;
+}
