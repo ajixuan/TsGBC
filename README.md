@@ -14,10 +14,10 @@ Gameboy Emulator done in Typescript!
 | Down   | S   |
 | Left   | A   |
 | Right  | D   |
-| Select | F   |
-| Start  | G   |
-| A      | R   |
-| B      | T   |
+| Start  | T   |
+| Select | Y   |
+| A      | G   |
+| B      | H   |
 
 
 ## NPM Commands
