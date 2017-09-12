@@ -32,8 +32,8 @@ Gameboy Emulator done in Typescript!
 
 ## Contributors
 
-**[ajixuan](https://github.com/ajixuan)**
-**[hkamran](https://github.com/hkamran)**
+- **[ajixuan](https://github.com/ajixuan)**
+- **[hkamran](https://github.com/hkamran)**
 
 
 
