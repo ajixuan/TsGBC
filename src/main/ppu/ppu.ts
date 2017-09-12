@@ -205,11 +205,6 @@ export class Ppu {
             let x, y, chr, attr, tile;
             let spriteCount = 0;
 
-            //When sprites with the same x coordinate values overlap, they have priority according to table ordering. (i.e. $FE00 - highest, $FE04 - next highest, etc.)
-            // Only 10 sprites can be displayed on any one line. When this limit is exceeded, the lower priority sprites (priorities listed above) won't be displayed.
-            // To keep unused sprites from affecting onscreen sprites set their Y coordinate to Y=0 or Y=>144+16.
-            // Just setting the X coordinate to X=0 or X=>160+8 on a sprite will hide it but it will still affect other sprites sharing the same lines.
-
             //8x16 Sprites
             if (lcdc.objsize.get()) {
 
@@ -275,7 +270,7 @@ export class Ppu {
                 }
 
                 //Y coordinate does not change during line render
-                mapy = (this.registers.ly + this.registers.scy);
+                mapy = (this.registers.ly + this.registers.scy) % 256;
                 //ycoor = Screen.TILES * Math.floor(y / Screen.PIXELS);
 
                 //Render whole line

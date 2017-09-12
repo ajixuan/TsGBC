@@ -59,6 +59,8 @@ export class Debugger {
         document.getElementById('lcdc').innerHTML = "0x" + gameboy.ppu.registers.lcdc.getAll().toString(16);
         document.getElementById('stat').innerHTML = "0x" + gameboy.ppu.registers.stat.getAll().toString(16);
         document.getElementById('ly').innerHTML = gameboy.ppu.registers.ly.toString();
+        document.getElementById('scx').innerHTML = gameboy.ppu.registers.scx.toString();
+        document.getElementById('scy').innerHTML = gameboy.ppu.registers.scy.toString();
 
         //Interrupts
         document.getElementById('ime').innerHTML = "0x" + gameboy.memory.interrupts.ime.toString(16);
@@ -102,7 +104,7 @@ export class Debugger {
         if (Debugger.gameboy.cpu.last == null) {
             let eventElement = document.createElement("li");
             eventElement.setAttribute("class","error");
-            eventElement.innerHTML = "ERROR";
+            eventElement.innerHTML = "ERROR: " +  cpu.registers.getPC().toString(16).toUpperCase();
             ul.appendChild(eventElement);
             setTimeout(log.scrollTo(0, log.scrollHeight),1);
             return;
