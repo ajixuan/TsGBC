@@ -12,7 +12,7 @@
 
 <body>
 <div class="main">
-    <div style="">
+    <div style="display: flex; flex-direction: column; justify-content: center">
         <div style="display: flex; flex-direction: column; ">
 
             <div class="menu">
@@ -73,14 +73,16 @@
                 </div>
             </div>
         </div>
+        <div class="github" style="margin: auto" title="View Source!">
+            <a href="https://github.com/ajixuan/TsGBC" class="fi-social-github"></a>
+        </div>
     </div>
 
-    <!-- Debugger -->
     <div id="debugger" style="display: none">
         <div class="debug-menu">
             <div class="debug-title">Debugger</div>
 
-            <div class="debug-tab-button" onclick="openCPU(this)">CPU</div>
+            <div class="debug-tab-button active" onclick="openCPU(this)">CPU</div>
             <div class="debug-tab-button" onclick="openPPU(this)">PPU</div>
             <div class="debug-tab-button" onclick="openMEMORY(this)">MEMORY</div>
             <div class="debug-tab-button" onclick="openCART(this)">CARTRIDGE</div>
@@ -101,7 +103,7 @@
                 <a class="fi-x"></a>
             </div>
         </div>
-        <div id="cpu" class="debug-tab" >
+        <div id="cpu" class="debug-tab" style="display: inline-block">
             <div class="debugger block" style="display:flex; flex-direction: row">
                 <div style="display: flex; flex-direction: column;">
                     <div style="display: flex; flex-direction: row;">
@@ -318,8 +320,6 @@
 
         </div>
     </div>
-
-    <!--Memory Map-->
 </div>
 </body>
 
@@ -484,6 +484,7 @@
 
     $(document).ready(function () {
         $('.button').tipTop();
+        $('.github').tipTop();
     });
 
 </script>

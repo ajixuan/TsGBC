@@ -1,19 +1,40 @@
 # TsGbc
-# TypeScript Game Boy Classic
-Gameboy Emulator
+Gameboy Emulator done in Typescript!
 
-A project for learning about Emulation and Javascript.
+## Screenshots
+<div align="center">
+	<img src="https://raw.githubusercontent.com/ajixuan/TsGBC/master/src/html/images/tetris_screen.jpg"></img>
+</div>
 
-Contributors:
-hkamran
-ajixuan
+## Controls
 
-## NPM commands
-- start
-	Creates HTTP Server delivering ./target at 127.0.0.1:8080
-- clean
-- build
-- package
+| Input  | Key |
+| ----   |:---:|
+| Up     | W   |
+| Down   | S   |
+| Left   | A   |
+| Right  | D   |
+| Select | F   |
+| Start  | G   |
+| A      | R   |
+| B      | T   |
+
+
+## NPM Commands
+- start -- Creates HTTP Server delivering ./target at 127.0.0.1:8080
+- clean 
+- build -- Generates the output artifact
+- package -- Packages the output artifact
+
+## Requirements
+	
+- Modern Browsers
+
+## Contributors
+
+- **[ajixuan](https://github.com/ajixuan)**
+- **[hkamran](https://github.com/hkamran)**
+
 
 
 

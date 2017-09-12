@@ -10,6 +10,7 @@ export class Screen {
     public WIDTH : number = 160;
 
     private ZOOM : number = 3;
+    public static MIN_ZOOM : number = 2;
     private SPACING : number = 0;
 
     private COLORS : number[] = [
@@ -53,7 +54,8 @@ export class Screen {
     }
 
     public setZoom(zoom : number) {
-        this.ZOOM = zoom <= 0 ? 1 : zoom;
+        this.ZOOM = zoom <= Screen.MIN_ZOOM ? Screen.MIN_ZOOM : zoom;
+
         this.reset();
     }
 
