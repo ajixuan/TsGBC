@@ -20,7 +20,7 @@ Gameboy Emulator done in Typescript!
 | B      | T   |
 
 
-## Commands
+## NPM Commands
 - start -- Creates HTTP Server delivering ./target at 127.0.0.1:8080
 - clean 
 - build -- Generates the output artifact
