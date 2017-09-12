@@ -6,9 +6,21 @@ Gameboy Emulator done in Typescript!
 	<img src="https://raw.githubusercontent.com/ajixuan/TsGBC/master/src/html/images/tetris_screen.jpg"></img>
 </div>
 
-A project for learning about Emulation and Javascript.
+## Controls
 
-Contributors:
+| Input  | Key |
+| ----   |:---:|
+| Up     | W   |
+| Down   | S   |
+| Left   | A   |
+| Right  | D   |
+| Select | F   |
+| Start  | G   |
+| A      | R   |
+| B      | T   |
+
+
+## Contributors
 hkamran
 ajixuan
 
