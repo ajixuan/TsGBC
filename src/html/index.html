@@ -265,6 +265,14 @@
                                 <span class="header">LYC:</span>
                                 <span id="lyc"></span>
                             </li>
+                            <li>
+                                <span class="header">SCX:</span>
+                                <span id="scx"></span>
+                            </li>
+                            <li>
+                                <span class="header">SCY:</span>
+                                <span id="scy"></span>
+                            </li>
                         </ul>
                     </div>
                 </fieldset>
@@ -337,7 +345,7 @@
         if (debug.status) {
             gameboy.tpf=1;
         } else {
-            gameboy.tpf=2000;
+            gameboy.tpf=20000;
         }
 
         console.log("Debug Status: " + debug.status);
