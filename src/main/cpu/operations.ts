@@ -3245,8 +3245,8 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getB();
-                let bit = result & 0x01;
                 let result = val >> 1;
+                let bit = result & 0x01;
 
                 if (result == 0) {
                     registers.setZeroFlag(1);
