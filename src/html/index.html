@@ -341,6 +341,7 @@
         debug.status = !debug.status;
 
         if (debug.status) {
+            debug.clearMemqueue();
             gameboy.tpf=1;
         } else {
             gameboy.tpf=20000;
@@ -385,6 +386,7 @@
         $("#cpu").hide();
         $("#ppu").hide();
         $("#cartridge").hide();
+        $("#memory").hide();
     };
 
 </script>

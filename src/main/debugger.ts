@@ -286,6 +286,9 @@ export class Debugger {
         Debugger.memqueue[addr] = val;
     }
 
+    /**
+     * Clear the queue when turning on debug mode
+     */
     public static clearMemqueue() {
         Object.keys(Debugger.memqueue).map(function (addr) {
                 Debugger.writeMem(Number.parseInt(addr), Debugger.memqueue[addr]);

@@ -124,7 +124,10 @@ export class Memory {
         } else {
             throw "Invalid write led to unknown address at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
         }
-        //Debugger.updatemap(addr);
+
+        if(Debugger.status){
+            Debugger.updatemap(addr);
+        }
     }
 
     public readByte(addr: number): number {
