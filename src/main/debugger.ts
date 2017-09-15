@@ -105,7 +105,7 @@ export class Debugger {
             eventElement.setAttribute("class","error");
             eventElement.innerHTML = "ERROR: " +  cpu.registers.getPC().toString(16).toUpperCase();
             ul.appendChild(eventElement);
-            setTimeout(log.scrollTo(0, log.scrollHeight),1);
+            log.scrollTop += log.scrollHeight;
             return;
         }
 
@@ -116,7 +116,7 @@ export class Debugger {
         }
 
         ul.appendChild(html);
-        setTimeout(log.scrollTo(0, log.scrollHeight),1);
+        log.scrollTop += log.scrollHeight;
     }
 
 
