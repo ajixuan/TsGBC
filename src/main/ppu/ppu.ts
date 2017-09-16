@@ -14,8 +14,6 @@ export class Ppu {
     private memory: Memory;
     public vramTileset: Array<Array<Array<number>>>;
     public oamTileset: Array<Obj>;
-
-
     public clock: number = 0;
     public registers: Registers;
 
@@ -227,7 +225,6 @@ export class Ppu {
                     if (this.registers.ly >= y && this.registers.ly < y + 8) {
 
                         tile = this.vramTileset[chr];
-
 
                         //Print one line
                         for (let col = 0; col < 8; col++) {

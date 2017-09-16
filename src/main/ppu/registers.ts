@@ -136,7 +136,6 @@ export class Registers {
      * When bit 7 of LCDC is 1, ly is locked
      * @type {number}
      */
-
     public ly: number = 0;
 
     /**

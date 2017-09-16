@@ -104,7 +104,6 @@ export class Screen {
     public setBufferPixel(x : number, y : number, index : number) : void {
         let color = this.COLORS[index];
         let py, px, coordinates;
-        y--;
         let zoomVal = (this.ZOOM  + this.SPACING);
         x = x * zoomVal;
         y = y * Math.pow(zoomVal, 2) * this.WIDTH;
