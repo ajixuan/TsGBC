@@ -7,7 +7,7 @@ import {Cpu} from './cpu/cpu'
 export class Debugger {
     public static status: boolean = false;
     private static memqueue = {};
-    private static memmap : Element = document.getElementById("memory");
+    private static memmap : Element = document.getElementById("memory-table");
     private static gameboy: GameBoy;
     private static logLimit = 500;
     private static bgmap: Array<Number> = Array(0x800).fill(0);

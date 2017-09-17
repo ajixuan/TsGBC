@@ -159,7 +159,11 @@ fieldset {
 }
 
 #memory {
-    padding-left:20%;
+}
+
+table {
+    color: #fff;
+    width: 100%;
 }
 
 tr {
@@ -171,6 +175,10 @@ td {
     padding: 5px 20px 5px 30px;
 }
 
+tr:nth-child(odd) {
+    background-color: #444;
+}
+
 tr:nth-child(even) {
-    background-color: #8A8A8A;
+    background-color: #222;
 }
