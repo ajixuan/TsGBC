@@ -221,7 +221,7 @@ export class Ppu {
                 attr = this.oamTileset[i].attr;
 
                 //Check if the obj is within current scanline
-                if ((y >= 16 && y < 160) && (x >= 8 && x < 168)) {
+                if ((y < 160) && (x < 168)) {
                     if (this.registers.ly >= y && this.registers.ly < y + 8) {
 
                         tile = this.vramTileset[chr];
