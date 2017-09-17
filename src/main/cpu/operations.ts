@@ -2920,6 +2920,22 @@ export class Operations {
             }
         };
 
+
+
+        this.operations[0xD8] = {
+            name: "RET",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                if (registers.getCarryFlag()) {
+                    //Pop from stack pointer to pc
+                    registers.setPC(stack.popWord());
+                    this.cycle = 20;
+                }
+            }
+        };
+
         this.operations[0xD9] = {
             name: "RETI",
             cycle: 16,
@@ -3765,6 +3781,23 @@ export class Operations {
             }
         };
 
+        this.operations[0xCB71] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getC();
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if (val & 0x40) {
+                    registers.setZeroFlag(0);
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
 
         this.operations[0xCB77] = {
             name: "BIT",
@@ -3790,6 +3823,24 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getB();
+
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if (val & 0x80) {
+                    registers.setZeroFlag(0);
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
+        this.operations[0xCB79] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getC();
 
                 registers.setSubtractFlag(0);
                 registers.setHalfFlag(1);
@@ -3897,6 +3948,17 @@ export class Operations {
             }
         };
 
+        this.operations[0xCBD8] = {
+            name: "SET",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let b = registers.getB();
+                registers.setC(b | 0x03);
+            }
+        };
+
 
         this.operations[0xCBDE] = {
             name: "SET",
@@ -3920,6 +3982,16 @@ export class Operations {
             }
         };
 
+        this.operations[0xCBF8] = {
+            name: "SET",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let b = registers.getB();
+                registers.setB(b | 0x80);
+            }
+        };
 
         this.operations[0xCBFE] = {
             name: "SET",
