@@ -26,13 +26,13 @@ export class Stack {
 
         //Read
         if (addr < 0xA000) {
-            throw "Stack pop error on addr 0x" + addr.toString(16);
+            throw new Error("Stack pop error on addr 0x" + addr.toString(16));
         } else if (addr < 0xC000) {
             val = this.memory.cartridge.readByte(addr);
         } else if (addr < 0xE000) {
             val = this.memory.cpu.ram[addr - 0xC000];
         } else if (addr < 0xFF80) {
-            throw "Stack push error on addr 0x" + addr.toString(16);
+            throw new Error("Stack push error on addr 0x" + addr.toString(16));
         } else if (addr > 0xFFFE) {
             throw "ERROR: Popping an empty stack"
         } else {
@@ -57,13 +57,14 @@ export class Stack {
         }
 
         if (addr < 0xA000) {
-            throw "Stack push error on addr 0x" + addr.toString(16);
+            throw new Error("Stack pop error on addr 0x" + addr.toString(16));;
         } else if (addr < 0xC000) {
             this.memory.cartridge.writeByte(addr, val);
         } else if (addr < 0xE000) {
             this.memory.cpu.ram[addr - 0xC000] = val;
         } else if (addr < 0xFF80) {
-            throw "Stack push error on addr 0x" + addr.toString(16);
+
+            throw new Error("Stack push error on addr 0x" + addr.toString(16));;
         } else {
             this.memory.cpu.stack[addr - 0xFF80] = val;
         }

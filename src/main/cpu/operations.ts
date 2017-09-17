@@ -2552,7 +2552,7 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = memory.readWord(registers.getHL());
+                let oper = memory.readWord(registers.getHL()) & 0xFF;
                 let result = val | oper;
 
                 //reset all flags
@@ -3187,7 +3187,7 @@ export class Operations {
             size: 2,
             execute(pc: number) {
 
-                let val = pc + registers.getSP();
+                let val = pc + registers.getSP() ;
                 let orig = registers.getHL();
 
                 //Set flags
@@ -3195,7 +3195,7 @@ export class Operations {
                 registers.setSubtractFlag(0);
                 let result = calcAddFlags(val, orig, false);
 
-                memory.writeByte(result, val);
+                memory.writeByte(result, val & 0xFF);
             }
         };
 

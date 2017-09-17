@@ -264,7 +264,8 @@ export class Registers {
 
     private isValid(num : number, size: number, error : string): void {
         if (num == null || num > size || num < 0) {
-            throw error;
+            var err = new Error(error);
+            throw err;
         }
     }
 
