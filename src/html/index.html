@@ -1,5 +1,6 @@
 <html>
 <head>
+    <title>TsGBA | Typescript GB Emulator</title>
     <script src="./assets/SystemJS.js" type="application/javascript"></script>
     <script src="./assets/jquery.min.js" type="application/javascript"></script>
     <script src="./assets/tiptop.js" type="text/javascript"></script>
@@ -170,16 +171,6 @@
                                         <span class="header">SP:</span>
                                         <span id="sp"></span>
                                     </li>
-
-                                    <br/>
-                                    <span class="header">Flags:</span>
-                                    <div id="zero"></div>
-                                    <div id="subtract"></div>
-                                    <div id="halfcarry"></div>
-                                    <div id="fullcarry"></div>
-
-                                    </li>
-
                                     <li>
                                         <span class="header">AF:</span>
                                         <span id="af"></span>
@@ -195,6 +186,16 @@
                                     <li>
                                         <span class="header">HL:</span>
                                         <span id="hl"></span>
+                                    </li>
+                                    <li>
+                                        <br />
+                                        <span class="header">FLAGS:</span>
+                                        <div style="margin-left: 10px;">
+                                            <div id="zero"></div>
+                                            <div id="subtract"></div>
+                                            <div id="halfcarry"></div>
+                                            <div id="fullcarry"></div>
+                                        </div>
                                     </li>
                                 </ul>
                             </div>
@@ -423,7 +424,7 @@
                 console.error(err);
             }
         );
-    }
+    };
 
     var loadDebugger = function () {
         System.import('debugger').then(function (e) {
@@ -442,13 +443,13 @@
             }
         );
         console.log("debugger ready!");
-    }
+    };
 
     loadGameBoy();
 
     var tick = function () {
         gameboy.tickAnimation();
-    }
+    };
 
     var run = function () {
         gameboy.switch.on();
@@ -456,38 +457,38 @@
         $(".power").addClass("power-on");
         $(".power-border").addClass("power-border-on");
         gameboy.tickAnimation();
-    }
+    };
 
     var stop = function () {
         $(".power").removeClass("power-on");
         $(".power-border").removeClass("power-border-on");
         gameboy.switch.off();
-    }
+    };
 
     var grow = function () {
         gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() + 1);
-    }
+    };
 
     var shrink = function () {
         gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() - 1);
-    }
+    };
 
     var setBreakPoint = function () {
         var val = parseInt($("#breakpoint").val(), 16);
         gameboy.setPCBreak(val);
-    }
+    };
 
     var renderBGmap = function () {
         debug.renderBGmap();
-    }
+    };
 
     var renderTilemap = function () {
         debug.renderTilemap();
-    }
+    };
 
     var renderMemoryMap = function(){
         debug.resetMemmap();
-    }
+    };
 
     $(document).ready(function () {
         $('.button').tipTop();
