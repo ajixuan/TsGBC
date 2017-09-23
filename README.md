@@ -38,7 +38,11 @@ Gameboy Emulator done in Typescript!
 - **[ajixuan](https://github.com/ajixuan)**
 - **[hkamran](https://github.com/hkamran)**
 
+## Work Notes
 
+-Missings opcodes.
+-PPU reverse sprites not working! 
+-Invalid opcodes.
 
 
 
