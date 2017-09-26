@@ -13,7 +13,7 @@ export class Screen {
     public static MIN_ZOOM : number = 2;
     private SPACING : number = 0;
 
-    private COLORS : number[] = [
+    public COLORS : number[] = [
         0x103810,
         0x316231,
         0x8cac10,
@@ -93,6 +93,20 @@ export class Screen {
                 (this.ZOOM)
             );
         }
+    }
+
+
+    public getBufferPixel(x: number, y: number): number {
+        let coordinate, color;
+        let zoomVal = (this.ZOOM + this.SPACING);
+        x = x * zoomVal;
+        y = y * Math.pow(zoomVal, 2) * this.WIDTH;
+        coordinate = (y + x) * 4;
+        color =
+          (this.FRAME.data[coordinate + 0] << 16) |
+          (this.FRAME.data[coordinate + 1] << 8)  |
+          (this.FRAME.data[coordinate + 2]);
+        return color;
     }
 
     /**

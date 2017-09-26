@@ -26,8 +26,7 @@ export class Ppu {
     }
 
     /**
-     * reset()
-     * Resets the bitmap
+     * reset() * Resets the bitmap
      */
     public reset(): void {
         this.vramTileset = [];
@@ -185,10 +184,13 @@ export class Ppu {
 
         //Cycle through stat
         if (stat.modeFlag.hblank.get() && this.clock >= 204) {
+
             stat.modeFlag.oamlock.set();
             this.clock = 0;
+            this.registers.ly++;
 
         } else if (stat.modeFlag.vblank.get() && this.clock >= 456) {
+
             if (this.registers.ly > 153 || this.registers.ly == 0) {
                 this.registers.ly = 0;
                 stat.modeFlag.vramlock.set();
@@ -202,6 +204,16 @@ export class Ppu {
 
             let x, y, chr, attr, tile;
             let spriteCount = 0;
+            //Sprite flip function
+            let spriteFlip = function(array){
+              let h = 0, e = array.length - 1, tmp;
+              while(h < array.length / 2){
+                tmp = array[h];
+                array[h] = array[e];
+                array[e] = tmp;
+                h++; e--;
+              }
+            }
 
             //8x16 Sprites
             if (lcdc.objsize.get()) {
@@ -232,14 +244,22 @@ export class Ppu {
                                 return;
                             }
 
-                            let offset = col * 4;
-                            let bg =
-                                this.screen.FRAME.data[y][x + offset] |
-                                this.screen.FRAME.data[y][x + offset + 1] |
-                                this.screen.FRAME.data[y][x + offset + 2];
+                            //Times 4 because each buffer screen pixel has 4 values
+                            let bg = this.screen.getBufferPixel(x + col, y);
 
-                            if ((attr & 0x01) && bg > 0) {
-                                continue;
+                            //Pixel priority: 1 = below background, 2 = above background
+                            console.log(bg.toString(16));
+                            if ((attr & 0x80) && bg != this.screen.COLORS[0]) {
+                                console.log("di");
+                                continue
+                            }
+                            //Vertical flip
+                            else if (attr & 0x40) {
+                              spriteFlip(tile);
+                            }
+                            //Horizontal flip
+                            else if (attr & 0x20) {
+                              spriteFlip(tile[this.registers.ly - y]);
                             }
 
                             this.screen.setBufferPixel(x + col, this.registers.ly, tile[this.registers.ly - y][col]);
@@ -249,10 +269,10 @@ export class Ppu {
             }
 
             stat.modeFlag.vramlock.set();
-            this.registers.ly++;
             this.clock = 0;
 
         } else if (stat.modeFlag.vramlock.get() && this.clock >= 172) {
+
             let mapy, mapx, tile;
             let row = this.registers.ly;
 
@@ -336,4 +356,3 @@ export class Ppu {
         }
     }
 }
-
