@@ -204,16 +204,6 @@ export class Ppu {
 
             let x, y, chr, attr, tile;
             let spriteCount = 0;
-            //Sprite flip function
-            let spriteFlip = function(array){
-              let h = 0, e = array.length - 1, tmp;
-              while(h < array.length / 2){
-                tmp = array[h];
-                array[h] = array[e];
-                array[e] = tmp;
-                h++; e--;
-              }
-            }
 
             //8x16 Sprites
             if (lcdc.objsize.get()) {
@@ -248,21 +238,19 @@ export class Ppu {
                             let bg = this.screen.getBufferPixel(x + col, y);
 
                             //Pixel priority: 1 = below background, 2 = above background
-                            console.log(bg.toString(16));
                             if ((attr & 0x80) && bg != this.screen.COLORS[0]) {
-                                console.log("di");
+                                console.log("below");
                                 continue
                             }
-                            //Vertical flip
-                            else if (attr & 0x40) {
-                              spriteFlip(tile);
-                            }
-                            //Horizontal flip
-                            else if (attr & 0x20) {
-                              spriteFlip(tile[this.registers.ly - y]);
-                            }
 
-                            this.screen.setBufferPixel(x + col, this.registers.ly, tile[this.registers.ly - y][col]);
+                            let ypix = this.registers.ly - y;
+                            let xpix = col;
+
+                            //Horizontal and Vertical flips
+                            xpix = (attr & 0x20) ? 7-xpix: xpix;                            
+                            ypix = (attr & 0x40) ? 7-ypix: ypix;
+                            
+                            this.screen.setBufferPixel(x + col, this.registers.ly, tile[ypix][xpix]);
                         }
                     }
                 }
@@ -295,6 +283,7 @@ export class Ppu {
                     mapx = (this.registers.scx + cell);
 
                     //TODO: Make it so it only gets tile when needs to
+
                     let tilenum = (mapx >> 3) + ((mapy >> 3) * 0x20);
                     tile = this.getVramTile(tilenum);
                     this.screen.setBufferPixel(cell, row, tile[row % Screen.PIXELS][cell % Screen.PIXELS]);
