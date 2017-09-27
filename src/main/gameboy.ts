@@ -15,19 +15,21 @@ export class GameBoy {
     public ticks: number = 0;
     public timeout: any;
     public interval: number = 1000;
-    private runConditions : Array<Function> = new Array<Function>();
-    public switch :any = function(){
+    public keyboard: Keyboard;    
+    public switch :any = function(gameboy){
         let _val = false;
         return {
-            on: function(){_val = true;},
+            on: function(){_val = true; gameboy.tickAnimation() },
             off: function () {_val = false;},
             stat: function () {return _val}
         }
-    }();
-    public keyboard: Keyboard;
+    }(this);
 
     //Ticks per frame
     public tpf: number = 20000;
+
+    private runConditions : Array<Function> = new Array<Function>();
+    
 
     constructor() {
         this.cartridge = null

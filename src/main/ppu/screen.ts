@@ -33,6 +33,19 @@ export class Screen {
         this.reset();
     }
 
+    public printStatic():void {
+
+        //Print static
+        for (let y = 0; y < this.HEIGHT; y++) {
+            for (let x = 0; x < this.WIDTH; x++) {
+                let random : number = Math.floor(Math.random() * this.COLORS.length);
+                this.setBufferPixel(x, y, random);
+            }
+        }
+
+        this.printBuffer();
+    }
+
     public reset() : void {
         this.canvas.width  = this.WIDTH * (this.ZOOM + this.SPACING);
         this.canvas.height = this.HEIGHT * (this.ZOOM + this.SPACING);
@@ -42,11 +55,9 @@ export class Screen {
             this.HEIGHT * (this.ZOOM + this.SPACING)
         );
 
-        //Print static
         for (let y = 0; y < this.HEIGHT; y++) {
             for (let x = 0; x < this.WIDTH; x++) {
-                let random : number = Math.floor(Math.random() * this.COLORS.length);
-                this.setBufferPixel(x, y, random);
+                this.setBufferPixel(x, y, 0);
             }
         }
 
