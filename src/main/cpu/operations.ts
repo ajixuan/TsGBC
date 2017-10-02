@@ -662,25 +662,41 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let correct;
-
-                (registers.getCarryFlag()) ? correct |= 0x60 : correct |= 0x00;
+/*
+                registers.setCarryFlag(1);
 
                 //Additions
-                if (registers.getHalfFlag()) {
-                    correct |= 0x06;
-                }
-                if ((val & 0xF) > 0xA) {
-                    correct |= 0x06;
-                }
-                if ((val >> 4) > 0x0A) {
-                    correct |= 0x60;
+                if (registers.getHalfFlag() || ((val & 0x15) > 0x9)) {
+                    correct += 0x06;
                 }
 
-                if ((val >> 4) >= 0x09 && (val & 0xF) > 0x0A) {
-                    correct |= 0x66;
+                if((registers.getHalfFlag() || (val > 0x99))){
+                    correct += 0x60;
+                    registers.setCarryFlag(1);
                 }
-                if ((correct & 0xF0) == 0x60) {
-                    registers.setCarryFlag(1)
+*/
+                (registers.getCarryFlag()) ? correct |= 0x60 : correct |= 0x00;
+            
+                            //Additions
+                            if (registers.getHalfFlag()) {
+                                correct |= 0x06;
+                            }
+                            if ((val & 0xF) > 0xA) {
+                                correct |= 0x06;
+                            }
+                            if ((val >> 4) > 0x0A) {
+                                correct |= 0x60;
+                            }
+            
+                            if ((val >> 4) >= 0x09 && (val & 0xF) > 0x0A) {
+                                correct |= 0x66;
+                            }
+                            if ((correct & 0xF0) == 0x60) {
+                                registers.setCarryFlag(1)
+                            }
+
+                if(val == 0){
+                    registers.setZeroFlag(1);
                 }
 
                 registers.setA((val + correct) & 0xFF);
@@ -2871,6 +2887,20 @@ export class Operations {
             }
         };
 
+        this.operations[0xCF] = {
+            name: "RST",
+            cycle: 16,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                //Push onto stack
+                registers.setSP(registers.getSP() - 1);
+                stack.pushWord(pc);
+                registers.setPC(0x08);
+            }
+        };
+
+
         this.operations[0xD0] = {
             name: "POP",
             cycle: 12,
@@ -3199,6 +3229,20 @@ export class Operations {
             }
         };
 
+        this.operations[0xF7] = {
+            name: "RST",
+            cycle: 16,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                //Push onto stack
+                registers.setSP(registers.getSP() - 1);
+                stack.pushWord(pc);
+                registers.setPC(0x30);
+            }
+        };
+
+
         this.operations[0xF9] = {
             name: "LD",
             cycle: 8,
@@ -3276,6 +3320,26 @@ export class Operations {
             }
         };
 
+        this.operations[0xCB18] = {
+            name: "RR",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getB();
+                let bit = val & 1;
+                let result = val >> 1;
+
+                registers.setF(0);
+                if (result === 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setCarryFlag(bit);
+                registers.setB(result);
+            }
+        };
+
 
         this.operations[0xCB19] = {
             name: "RR",
@@ -3314,6 +3378,26 @@ export class Operations {
 
                 registers.setCarryFlag(bit);
                 registers.setD(result);
+            }
+        };
+
+        this.operations[0xCB1B] = {
+            name: "RR",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getE();
+                let bit = val & 1;
+                let result = val >> 1;
+
+                registers.setF(0);
+                if (result === 0) {
+                    registers.setZeroFlag(1);
+                }
+
+                registers.setCarryFlag(bit);
+                registers.setE(result);
             }
         };
 
@@ -3658,6 +3742,24 @@ export class Operations {
                 registers.setZeroFlag(1);
             }
         };
+
+        this.operations[0xCB5C] = {
+            name: "BIT",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getH();
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(1);
+                if (val & 0x08) {
+                    registers.setZeroFlag(0);
+                    return;
+                }
+                registers.setZeroFlag(1);
+            }
+        };
+
 
         this.operations[0xCB5F] = {
             name: "BIT",
