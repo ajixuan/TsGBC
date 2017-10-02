@@ -7,7 +7,7 @@ Gameboy Emulator done in Typescript!
 </div>
 
 ## Demo
-<a href="http://hkamran.info/projects/tsgba/">Demo Page</a>
+<a href="http://18.220.155.199:8080">Demo Page</a>
 
 ## Controls
 
