@@ -65,7 +65,6 @@ export class Memory {
                 } else if (addr == 0xFF40) {
                     this.ppu.registers.lcdc.setAll(val);
                 } else if (addr == 0xFF41){
-                    console.log("i actually need to write to ff41");
                 } else if (addr == 0xFF42) {
                     this.ppu.registers.scy = val;
                 } else if (addr == 0xFF43) {

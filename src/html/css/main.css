@@ -7,7 +7,7 @@ body {
 
 @font-face {
     font-family: nes;
-    src: url('/fonts/NES-Logo.ttf');
+    src: url('./../fonts/NES-Logo.ttf');
 }
 
 .main {

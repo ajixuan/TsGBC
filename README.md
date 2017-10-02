@@ -6,6 +6,9 @@ Gameboy Emulator done in Typescript!
 	<img src="https://raw.githubusercontent.com/ajixuan/TsGBC/master/src/html/images/tetris_screen.jpg"></img>
 </div>
 
+## Demo
+<a href="http://hkamran.info/projects/tsgba/">Demo Page</a>
+
 ## Controls
 
 | Input  | Key |
@@ -35,7 +38,11 @@ Gameboy Emulator done in Typescript!
 - **[ajixuan](https://github.com/ajixuan)**
 - **[hkamran](https://github.com/hkamran)**
 
+## Work Notes
 
+- Missings opcodes.
+- PPU reverse sprites not working! 
+- Invalid opcodes.
 
 
 
