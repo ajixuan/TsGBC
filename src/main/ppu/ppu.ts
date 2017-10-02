@@ -14,7 +14,6 @@ export class Ppu {
     private memory: Memory;
     public vramTileset: Array<Array<Array<number>>>;
     public oamTileset: Array<Obj>;
-    private oamBuf:Array<any>;
     
     public clock: number = 0;
     public registers: Registers;
@@ -33,7 +32,6 @@ export class Ppu {
     public reset(): void {
         this.vramTileset = [];
         this.oamTileset = [];
-        this.oamBuf = [];
         this.registers.reset();
         this.clock = 0;
 
@@ -187,11 +185,8 @@ export class Ppu {
 
         //Cycle through stat
         if (stat.modeFlag.hblank.get() && this.clock >= 204) {
-
             stat.modeFlag.oamlock.set();
             this.clock = 0;
-            this.oamBuf = [];
-            this.registers.ly++;
 
         } else if (stat.modeFlag.vblank.get() && this.clock >= 456) {
 
@@ -217,11 +212,6 @@ export class Ppu {
 
             //for each tile in oam
             for (let i = 0; i < this.oamTileset.length; i++) {
-                //Cannot display more than 10 sprites
-                if (this.oamBuf.length >= 10) {
-                    return;
-                }
-
                 x = this.oamTileset[i].x - 8;
                 y = this.oamTileset[i].y - 16;
                 chr = this.oamTileset[i].tile;
@@ -247,14 +237,10 @@ export class Ppu {
                             ypix = (attr & 0x40) ? 7-ypix: ypix;                            
                             this.screen.setBufferPixel(x + col, this.registers.ly, tile[ypix][xpix]);
                         }
-                        
-                        //Put this sprite into list
-                        //1 = below background, 0 = above background
-                        (attr & 0x80)? this.oamBuf.push({priority: 1, x: x}) : this.oamBuf.push({priority:0, x:x});
                     }
                 }
             }
-
+            this.registers.ly++;            
             stat.modeFlag.vramlock.set();
             this.clock = 0;
 
@@ -285,22 +271,7 @@ export class Ppu {
                     //TODO: Make it so it only gets tile when needs to
                     let tilenum = (mapx >> 3) + ((mapy >> 3) * 0x20);
                     tile = this.getVramTile(tilenum);
-                    let cindex = tile[row % Screen.PIXELS][cell % Screen.PIXELS];
-
-                    //Check oam
-                    for(let i of this.oamBuf){
-                        if(i.x + 8 < mapx && i.x > mapx && !(i.priority == 1 && cindex == 0)){
-                            console.log(cell + ' ' + row);
-                            screen.setBufferPixel(cell, row, cindex);                            
-                        }
-                    }
-
-                    /*
-                    this.oamBuf.map(function(current){
-                        if(current.x != mapx && !(current.priority == 1 && cindex == 0)){
-                            screen.setBufferPixel(mapx, row, cindex);                            
-                        } 
-                    });*/
+                    screen.setBufferPixel(cell, row, tile[row % Screen.PIXELS][cell % Screen.PIXELS]);                                               
                 }
                 stat.modeFlag.hblank.set();
             }
