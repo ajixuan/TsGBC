@@ -102,8 +102,12 @@ export class Debugger {
 
         if (Debugger.gameboy.cpu.last == null) {
             let eventElement = document.createElement("li");
+            let pc = cpu.registers.getPC();
             eventElement.setAttribute("class","error");
-            eventElement.innerHTML = "ERROR: " +  cpu.registers.getPC().toString(16).toUpperCase();
+
+        eventElement.innerHTML = "ERROR: " +  pc.toString(16).toUpperCase() + " - " 
+                                + cpu.memory.readByte(pc).toString(16).toUpperCase() + " " 
+                                + cpu.memory.readByte(pc+1).toString(16).toUpperCase();
             ul.appendChild(eventElement);
             log.scrollTop += log.scrollHeight;
             return;

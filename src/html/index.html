@@ -229,8 +229,14 @@
                                 </ul>
                             </div>
                         </fieldset>
+                        <fieldset>
+                            <legend>Set Breakpoint</legend>
+                            <span>
+                            <input size="5" id=breakpoint/>
+                            <button onclick="setBreak()"/>SET
+                            </span>
+                        </fieldset>
                     </div>
-
 
                 </div>
                 <div style="display: flex; flex-direction: row; flex-grow: 1">
@@ -415,7 +421,9 @@
             //gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");
             //gameboy.load("./roms/cpu_instrs/individual/01-special.gb");
             gameboy.load("./roms/Tetris.gb");
+            //gameboy.load("./roms/castlevania.gb")
             gameboy.reset();
+
             loadDebugger();
             console.info("Gameboy is ready!");
         }).catch(

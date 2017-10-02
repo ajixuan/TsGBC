@@ -23,6 +23,15 @@
 
 }
 
+.debug-input {
+    background: #111;    
+    margin-top: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 10px;
+    padding-top: 10px;
+}
+
 .debug-tab-button {
     background: #111;
     user-select: none;
