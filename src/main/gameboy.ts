@@ -28,8 +28,7 @@ export class GameBoy {
     //Ticks per frame
     public tpf: number = 20000;
 
-    private runConditions : Array<Function> = new Array<Function>();
-    
+    private runConditions : Array<any> = new Array<any>();
 
     constructor() {
         this.cartridge = null
@@ -52,8 +51,9 @@ export class GameBoy {
 
     public checkRunConditions(): void {
         for(let i = 0 ; i < this.runConditions.length; i++){
-            if(this.runConditions[i]()){
+            if(this.runConditions[i].check()){
                 this.runConditions.splice(i, 1);
+                this.updateBreaks();
                 this.switch.off();
             }
         }
@@ -73,8 +73,8 @@ export class GameBoy {
     public tickAnimation(): void {
         let tick = function(){
             for(let i = 0; i <= this.tpf; i++){
-                this.tick();
                 if(!this.switch.stat()){return}
+                this.tick();           
             }
             this.tickAnimation.bind(this)();
         }.bind(this);
@@ -86,10 +86,21 @@ export class GameBoy {
         let cb = (function(pc : number, registers : Registers){
             let _pc = pc;
             let _registers = registers;
-            return () => {
-                return (_registers.getPC() == _pc);
+            return  {
+                    check : ()=> {return (_registers.getPC() == _pc)},
+                    val : _pc
             };
         })(pc, this.cpu.registers);
         this.runConditions.push(cb);
+        this.updateBreaks();
+    }
+
+
+    private updateBreaks(){
+        let list = "";
+        for(let point of this.runConditions){
+            list += "<li>" + point.val.toString(16).toUpperCase() + "<\li>";
+        }
+        $("#listbreaks").html(list);
     }
 }

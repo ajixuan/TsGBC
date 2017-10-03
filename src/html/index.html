@@ -232,9 +232,10 @@
                         <fieldset>
                             <legend>Set Breakpoint</legend>
                             <span>
-                            <input size="5" id=breakpoint/>
-                            <button onclick="setBreak()"/>SET
+                            <input size="5" id="breakpoint"/>
+                            <button onclick="setBreakPoint()">SET</button>
                             </span>
+                            <ul style="list-style:none;" id="listbreaks"></ul>
                         </fieldset>
                     </div>
 
@@ -456,7 +457,7 @@
     loadGameBoy();
 
     var tick = function () {
-        gameboy.tickAnimation();
+        gameboy.tick();
     };
 
     var run = function () {
