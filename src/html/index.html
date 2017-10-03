@@ -80,7 +80,7 @@
     </div>
 
     <div id="debugger" style="display: none">
-        <div class="debug-menu">
+        <span class="debug-menu">
             <div class="debug-title">Debugger</div>
 
             <div class="debug-tab-button active" onclick="openCPU(this)">CPU</div>
@@ -103,7 +103,7 @@
             <div class="debug-button" onclick="closeDebug()">
                 <a class="fi-x"></a>
             </div>
-        </div>
+        </span>
         <div id="cpu" class="debug-tab" style="display: inline-block">
             <div class="debugger block" style="display:flex; flex-direction: row">
                 <div style="display: flex; flex-direction: column;">
@@ -305,10 +305,7 @@
             </div>
         </div>
         <div id="memory" class="debug-tab">
-            <table id="memory-table">
-
-            </table>
-
+            <table id="memory-table"></table>
         </div>
         <div id="cartridge" class="debug-tab">
 

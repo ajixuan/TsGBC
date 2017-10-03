@@ -5,7 +5,6 @@
     right: 0px;
     left: 0px;
     bottom: 0px;
-    height: 100%;
     background: #252525;
     opacity: 0.75;
     color: #fff;
@@ -77,11 +76,12 @@
 }
 
 .debug-tab {
+    position: relative;
     background: #000;
     display: none;
     overflow-y: auto;
     flex-direction: column;
-
+    height: 100%;
     margin-left: 20px;
     margin-right: 20px;
 
@@ -93,6 +93,7 @@
 }
 
 .debug-menu {
+    position : relative;
     display: flex;
     flex-direction: row;
     border-bottom: 1px solid #000000;
