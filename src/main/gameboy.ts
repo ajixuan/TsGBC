@@ -19,8 +19,16 @@ export class GameBoy {
     public switch :any = function(gameboy){
         let _val = false;
         return {
-            on: function(){_val = true; gameboy.tickAnimation() },
-            off: function () {_val = false;},
+            on: function(){
+                _val = true;         
+                $(".power").addClass("power-on");
+                $(".power-border").addClass("power-border-on");
+                gameboy.tickAnimation() },
+            off: function () {
+                _val = false;
+                $(".power").removeClass("power-on");
+                $(".power-border").removeClass("power-border-on");        
+            },
             stat: function () {return _val}
         }
     }(this);
