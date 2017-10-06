@@ -555,7 +555,7 @@ export class Operations {
 
                 let val = registers.getA();
                 let bit = val >> 7;
-                let result = val >> 1;
+                let result = (checkSign(val) >> 1) & 0xFF;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -810,7 +810,7 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                if (registers.getCarryFlag()) {
+                if (registers.getCarryFlag() == 0) {
                     registers.setPC(registers.getPC() + checkSign(pc) + this.size);
                     this.cycle = 12;
                 }
@@ -3305,7 +3305,7 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getB();
-                let result = val >> 1;
+                let result = (checkSign(val) >> 1) & 0xFF;
                 let bit = result & 0x01;
 
                 if (result == 0) {
@@ -3328,7 +3328,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getB();
                 let bit = val & 1;
-                let result = val >> 1;
+                let result = (checkSign(val) >> 1) & 0xFF;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3349,7 +3349,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getC();
                 let bit = val & 1;
-                let result = val >> 1;
+                let result = (checkSign(val) >> 1) & 0xFF;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3369,7 +3369,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getD();
                 let bit = val & 1;
-                let result = val >> 1;
+                let result = (checkSign(val) >> 1) & 0xFF;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3389,7 +3389,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getE();
                 let bit = val & 1;
-                let result = val >> 1;
+                let result = (checkSign(val) >> 1) & 0xFF;
 
                 registers.setF(0);
                 if (result === 0) {

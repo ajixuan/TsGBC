@@ -143,10 +143,10 @@ export class Registers {
 
     public setF(num : number): void {
         this.isValid(num, 0xFF, "Register argument to large for F: " + num);
-        this.f.zero = num >> 7 & 0x1;
-        this.f.subtract = num >> 6 & 0x1;
-        this.f.half = num >> 5 & 0x1;
-        this.f.carry = num >> 4 & 0x1;
+        this.f.zero =       (num & 0x80)? 1 : 0;
+        this.f.subtract =   (num & 0x40)? 1: 0;
+        this.f.half =       (num & 0x20)? 1: 0;
+        this.f.carry =      (num & 0x10)? 1: 0;
     }
 
 
