@@ -368,16 +368,16 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let result = registers.getA();
-                registers.setCarryFlag(result & 0x1)
-                result = result >> 1;
+                let val = registers.getA();
+                registers.setCarryFlag(val & 0x1)
+                val = val >> 1;
 
                 registers.setF(0);
-                if (result == 0) {
+                if (val == 0) {
                     registers.setZeroFlag(1);
                 }
 
-                registers.setA(result);
+                registers.setA(val);
             }
         };
 
@@ -553,9 +553,9 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
 
-                let val = registers.getA();
-                let bit = val >> 7;
-                let result = (checkSign(val) >> 1) & 0xFF;
+                let val = registers.getA() + (registers.getCarryFlag() << 8);
+                let bit = val & 1;
+                let result = val >> 1;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3304,10 +3304,10 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                let val = registers.getB();
-                let result = (checkSign(val) >> 1) & 0xFF;
-                let bit = result & 0x01;
-
+                let val = registers.getB() + (registers.getCarryFlag() << 8);
+                let bit = val & 0x01;                
+                let result = val >> 1;
+                
                 if (result == 0) {
                     registers.setZeroFlag(1);
                 }
@@ -3326,9 +3326,9 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                let val = registers.getB();
+                let val = registers.getB() + (registers.getCarryFlag() << 8);
                 let bit = val & 1;
-                let result = (checkSign(val) >> 1) & 0xFF;
+                let result = val;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3347,9 +3347,9 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                let val = registers.getC();
+                let val = registers.getC() + (registers.getCarryFlag() << 8);
                 let bit = val & 1;
-                let result = (checkSign(val) >> 1) & 0xFF;
+                let result = val>> 1 ;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3367,9 +3367,9 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                let val = registers.getD();
+                let val = registers.getD() + (registers.getCarryFlag() << 8);
                 let bit = val & 1;
-                let result = (checkSign(val) >> 1) & 0xFF;
+                let result = val >> 1;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3387,7 +3387,7 @@ export class Operations {
             size: 2,
             mode: immediate,
             execute(pc: number) {
-                let val = registers.getE();
+                let val = registers.getE() + (registers.getCarryFlag() << 8);
                 let bit = val & 1;
                 let result = (checkSign(val) >> 1) & 0xFF;
 
