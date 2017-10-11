@@ -351,6 +351,7 @@
         debug.status = !debug.status;
 
         if (debug.status) {
+            debug.display();
             debug.clearMemqueue();
             gameboy.tpf=1;
         } else {
@@ -416,9 +417,9 @@
                 return;
             }
 
-            //gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");
+            gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");
             //gameboy.load("./roms/cpu_instrs/individual/01-special.gb");
-            gameboy.load("./roms/Tetris.gb");
+            //gameboy.load("./roms/Tetris.gb");
             //gameboy.load("./roms/castlevania.gb")
             gameboy.reset();
 
@@ -459,15 +460,10 @@
 
     var run = function () {
         gameboy.switch.on();
-
-        $(".power").addClass("power-on");
-        $(".power-border").addClass("power-border-on");
         gameboy.tickAnimation();
     };
 
     var stop = function () {
-        $(".power").removeClass("power-on");
-        $(".power-border").removeClass("power-border-on");
         gameboy.switch.off();
     };
 
