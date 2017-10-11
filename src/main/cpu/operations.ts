@@ -381,6 +381,16 @@ export class Operations {
             }
         };
 
+        this.operations[0x10] = {
+            name: "STOP",
+            cycle: 4,
+            mode: immediate,
+            size: 2,
+            execute(pc: number) {
+                //Not sure what to do here...
+            }
+        };
+
 
         this.operations[0x11] = {
             name: "LD",
