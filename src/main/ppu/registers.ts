@@ -21,6 +21,7 @@ export class Registers {
     public bgp: number = 0;
     public obp0: number = 0;
     public obp1: number = 0;
+    public speed: number = 0;
 
     //@formatter:off
     // LCD Controller

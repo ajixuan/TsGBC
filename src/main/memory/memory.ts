@@ -98,6 +98,8 @@ export class Memory {
                 } else if (addr == 0xFF4B) {
                     this.ppu.registers.wx = val;
 
+                } else if (addr == 0xFF4D){
+                    this.ppu.registers.speed = val;
                 } else if (addr == 0xFF68) {
                     this.ppu.registers.bcps = val;
 
@@ -188,7 +190,9 @@ export class Memory {
                     val = this.ppu.registers.wy;
                 } else if (addr == 0xFF4B) {
                     val = this.ppu.registers.wx;
-                } else if (addr < 0xFF68) {
+                } else if (addr == 0xFF4D){
+                    val = this.ppu.registers.speed;
+                }  else if (addr < 0xFF68) {
                     val = 0xFF;
                 } else if (addr == 0xFF68) {
                     val = this.ppu.registers.bcps;
