@@ -25,7 +25,6 @@ export class Memory {
     public interrupts : Interrupts = new Interrupts();
     public nr : Array<number> = Array(0x16).fill(0);
 
-
     public writeByte(addr: number, val: number): void {
         if (val == null || val > 0xFF || addr == null || addr > 0xFFFF) {
             throw new Error("Invalid write at 0x" + addr.toString(16) + " with " + val);
@@ -99,7 +98,7 @@ export class Memory {
                     this.ppu.registers.wx = val;
 
                 } else if (addr == 0xFF4D){
-                    this.ppu.registers.speed = val;
+                    this.ppu.registers.setSpeed(val);
                 } else if (addr == 0xFF68) {
                     this.ppu.registers.bcps = val;
 

@@ -132,6 +132,13 @@ export class Registers {
     })(this);
     //@formatter:on
 
+    public setSpeed(val : number): void{
+        if (val & 0x01) this.speed ^= 1;
+    }
+
+    public changeSpeed(): void {
+        (this.speed & 0x01) ? this.speed = 0xFE: this.speed = 0x7E;
+    }
 
     /**
      * When bit 7 of LCDC is 1, ly is locked
@@ -161,6 +168,7 @@ export class Registers {
         this.bgp = 0xFC;
         this.obp0 = 0xFF;
         this.obp1 = 0xFF;
+        this.speed = 0x7E;
 
         this.stat.reset();
         this.lcdc.lcdon.set();
