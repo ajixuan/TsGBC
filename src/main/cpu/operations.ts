@@ -141,6 +141,7 @@ export class Operations {
         let registers = this.cpu.registers;
         let memory = this.cpu.memory;
         let stack = this.cpu.stack;
+        let ppu = this.ppu;
 
         /**
          * Modes
@@ -387,7 +388,7 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
-                //Not sure what to do here...
+                memory.ppu.registers.changeSpeed();
             }
         };
 
@@ -568,10 +569,6 @@ export class Operations {
                 let result = val >> 1;
 
                 registers.setF(0);
-                if (result === 0) {
-                    registers.setZeroFlag(1);
-                }
-
                 registers.setCarryFlag(bit);
                 registers.setA(result);
             }
@@ -3399,7 +3396,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getE() + (registers.getCarryFlag() << 8);
                 let bit = val & 1;
-                let result = (checkSign(val) >> 1) & 0xFF;
+                let result = val >> 1;
 
                 registers.setF(0);
                 if (result === 0) {
