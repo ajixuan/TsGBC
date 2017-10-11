@@ -79,6 +79,15 @@ export class Debugger {
         }
     }
 
+    public static clearLog(): void {
+        let log:Element = document.getElementsByClassName("log")[0];
+        let ul = log.getElementsByTagName("ul")[0];
+        
+        log.removeChild(ul);
+        ul = document.createElement("ul");
+        log.appendChild(ul);
+    }
+
     public static printLog(): void {
         //Add to log
         let cpu = Debugger.gameboy.cpu;

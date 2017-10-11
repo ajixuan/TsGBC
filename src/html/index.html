@@ -351,6 +351,7 @@
         debug.status = !debug.status;
 
         if (debug.status) {
+            debug.clearLog();
             debug.display();
             debug.clearMemqueue();
             gameboy.tpf=1;
