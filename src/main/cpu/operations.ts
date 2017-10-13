@@ -141,7 +141,6 @@ export class Operations {
         let registers = this.cpu.registers;
         let memory = this.cpu.memory;
         let stack = this.cpu.stack;
-        let ppu = this.ppu;
 
         /**
          * Modes
@@ -2962,7 +2961,7 @@ export class Operations {
         this.operations[0xD8] = {
             name: "RET",
             cycle: 8,
-            size: 2,
+            size: 1,
             mode: immediate,
             execute(pc: number) {
                 if (registers.getCarryFlag()) {

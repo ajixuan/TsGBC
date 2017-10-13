@@ -123,7 +123,7 @@ export class Cpu {
         operation.execute(args);
 
         //If pc did not change during op execution, increment pc
-        if (oldPC == this.registers.getPC()) {
+        if (oldPC == this.registers.getPC() && opcode != 0x18) {
             this.registers.setPC(this.registers.getPC() + operation.size & 0xFFFF);
         }
 
