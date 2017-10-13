@@ -60,7 +60,7 @@ export class Ppu {
 
     public updateOamSprite(addr: number): void {
         let index = addr - 0xFE00;
-        let block = Math.floor((index / 4));
+        let block = Math.floor(index / 4);
         let prop = index % 4;
         let val = this.memory.oam[index];
         switch (prop) {
@@ -308,10 +308,12 @@ export class Ppu {
 
         //Vram
         if (addr < 0xA000) {
+
+            /*
             if (this.registers.stat.modeFlag.vramlock.get()) {
                 //console.log("ERROR: VRAM locked");
                 return;
-            }
+            }*/
 
             this.memory.vram[addr - 0x8000] = val;
             if (addr < 0x9800) {
