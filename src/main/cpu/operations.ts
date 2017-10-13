@@ -58,12 +58,12 @@ export class Operations {
             this.cpu.registers.setCarryFlag(1);
         }
 
-        full &= fullmask;
-
-        //Set 0 flag
-        if (full == 0) {
+        if(full > fullmask){
+            full = 0;
             this.cpu.registers.setZeroFlag(1);
         }
+
+        full &= fullmask;
 
         return full;
     }
@@ -284,7 +284,7 @@ export class Operations {
             mode: immediate,
             size: 3,
             execute(pc: number) {
-                memory.writeByte(pc + 1, registers.getSP());
+                memory.writeWord(pc, registers.getSP());
             }
         };
 
@@ -297,7 +297,10 @@ export class Operations {
                 let val = registers.getHL();
                 let oper = registers.getBC();
 
+                let z = registers.getZeroFlag();
                 let result = calcAddFlags(val, oper, false);
+                registers.setZeroFlag(z); 
+                
                 registers.setHL(result);
             }
         };
@@ -731,7 +734,9 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getHL();
+                let z = registers.getZeroFlag();
                 let result = calcAddFlags(val, val, false);
+                registers.setZeroFlag(z); 
                 registers.setHL(result);
             }
         };
@@ -919,8 +924,9 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getHL();
                 let oper = registers.getSP();
-
+                let z = registers.getZeroFlag();
                 let result = calcAddFlags(val, oper, false);
+                registers.setZeroFlag(z); 
                 registers.setHL(result);
             }
         };
@@ -1378,7 +1384,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                let val = memory.readByte(registers.getH());
+                let val = memory.readByte(registers.getHL());
                 registers.setH(val);
             }
         };
@@ -2663,9 +2669,6 @@ export class Operations {
                 let val = registers.getA();
                 let oper = registers.getE();
                 calcSubtractFlags(val, oper, false);
-
-                registers.setF(0);
-                registers.setSubtractFlag(1);
             }
         };
 
@@ -2931,6 +2934,33 @@ export class Operations {
             }
         };
 
+        this.operations[0xD2] = {
+            name: "JP",
+            cycle: 12,
+            mode: immediate,
+            size: 3,
+            execute(pc: number) {
+                if (registers.getZeroFlag() == 0) {
+                    registers.setPC(pc);
+                    this.cycle = 16;
+                }
+            }
+        };
+
+        this.operations[0xD4] = {
+            name: "CALL",
+            cycle: 12,
+            mode: immediate,
+            size: 3,
+            execute(pc: number) {
+                if (registers.getCarryFlag() == 0) {
+                    stack.pushWord(registers.getPC() + this.size);
+                    registers.setPC(pc);
+                    this.cycle = 24;
+                }
+            }
+        };
+
 
         this.operations[0xD5] = {
             name: "PUSH",
@@ -2984,6 +3014,34 @@ export class Operations {
                 interrupts.enableAllInterrupts();
             }
         };
+
+        this.operations[0xDA] = {
+            name: "JP",
+            cycle: 12,
+            mode: immediate,
+            size: 3,
+            execute(pc: number) {
+                if (registers.getCarryFlag()) {
+                    registers.setPC(pc);
+                    this.cycle = 16;
+                }
+            }
+        };
+
+        this.operations[0xDC] = {
+            name: "CALL",
+            cycle: 12,
+            mode: immediate,
+            size: 3,
+            execute(pc: number) {
+                if (registers.getCarryFlag()) {
+                    stack.pushWord(registers.getPC() + this.size);
+                    registers.setPC(pc);
+                    this.cycle = 24;
+                }
+            }
+        };
+
 
 
         this.operations[0xDE] = {

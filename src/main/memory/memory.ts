@@ -27,7 +27,7 @@ export class Memory {
 
     public writeByte(addr: number, val: number): void {
         if (val == null || val > 0xFF || addr == null || addr > 0xFFFF) {
-            throw new Error("Invalid write at 0x" + addr.toString(16) + " with " + val);
+            throw new Error("Invalid write at 0x" + addr.toString(16) + " with " + val.toString(16));
         } else if (addr < 0) {
             addr &= 0xFFFF;
         }
@@ -128,6 +128,11 @@ export class Memory {
         if(Debugger.status){
             Debugger.updatemap(addr);
         }
+    }
+
+    public writeWord(addr:number, val:number):void{
+        this.writeByte(addr, val & 0xFF);
+        this.writeByte(addr+1, val >> 8);
     }
 
     public readByte(addr: number): number {
