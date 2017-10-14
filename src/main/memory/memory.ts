@@ -131,8 +131,8 @@ export class Memory {
     }
 
     public writeWord(addr:number, val:number):void{
-        this.writeByte(addr, val & 0xFF);
-        this.writeByte(addr+1, val >> 8);
+        this.writeByte(addr, val >> 8);
+        this.writeByte(addr+1, val & 0xFF);
     }
 
     public readByte(addr: number): number {

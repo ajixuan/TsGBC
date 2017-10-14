@@ -58,11 +58,6 @@ export class Operations {
             this.cpu.registers.setCarryFlag(1);
         }
 
-        if(full > fullmask){
-            full = 0;
-            this.cpu.registers.setZeroFlag(1);
-        }
-
         full &= fullmask;
 
         return full;
@@ -224,7 +219,14 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcAddFlags(registers.getB(), 1);
+                let result = registers.getB() + 1;
+                
+                if((result & 0xF) == 0){registers.setHalfFlag(1)}                
+                if(result > 0xFF){
+                    result = 0;
+                    registers.setZeroFlag(1);
+                }
+        
                 registers.setCarryFlag(carry);
                 registers.setB(result);
             }
@@ -334,7 +336,14 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcAddFlags(registers.getC(), 1);
+                let result = registers.getC() + 1;
+
+                if((result & 0xF) == 0){registers.setHalfFlag(1)}                
+                if(result > 0xFF){
+                    result = 0;
+                    registers.setZeroFlag(1);
+                }
+
                 registers.setCarryFlag(carry);
                 registers.setC(result);
             }
@@ -438,7 +447,14 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcAddFlags(registers.getD(), 1);
+                let result = registers.getD() + 1;
+
+                if((result & 0xF) == 0){registers.setHalfFlag(1)}                
+                if(result > 0xFF){
+                    result = 0;
+                    registers.setZeroFlag(1);
+                }
+
                 registers.setCarryFlag(carry);
                 registers.setD(result);
             }
@@ -530,7 +546,13 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcAddFlags(registers.getE(), 1);
+                let result = registers.getE()+ 1;
+                if((result & 0xF) == 0){registers.setHalfFlag(1)}                
+                if(result > 0xFF){
+                    result = 0;
+                    registers.setZeroFlag(1);
+                }
+
                 registers.setCarryFlag(carry);
                 registers.setE(result);
             }
@@ -632,7 +654,13 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcAddFlags(registers.getH(), 1);
+                let result = registers.getH() + 1;
+                if((result & 0xF) == 0){registers.setHalfFlag(1)}                
+                if(result > 0xFF){
+                    result = 0;
+                    registers.setZeroFlag(1);
+                }
+
                 registers.setCarryFlag(carry);
                 registers.setH(result);
             }
@@ -771,7 +799,13 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcAddFlags(registers.getL(), 1);
+                let result = registers.getL()+ 1;
+                if((result & 0xF) == 0){registers.setHalfFlag(1)}                
+                if(result > 0xFF){
+                    result = 0;
+                    registers.setZeroFlag(1);
+                }
+
                 registers.setCarryFlag(carry);
                 registers.setL(result);
             }
@@ -871,7 +905,13 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcAddFlags(memory.readByte(registers.getHL()), 1);
+                let result = memory.readByte(registers.getHL()) +1;
+                if((result & 0xF) == 0){registers.setHalfFlag(1)}
+                if(result > 0xFF){
+                    result = 0;
+                    registers.setZeroFlag(1);
+                }
+
                 registers.setCarryFlag(carry);
                 memory.writeByte(registers.getHL(), result);
             }
@@ -963,7 +1003,13 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcAddFlags(registers.getA(), 1);
+                let result = registers.getA() + 1;
+                if((result & 0xF) == 0){registers.setHalfFlag(1)}                
+                if(result > 0xFF){
+                    result = 0;
+                    registers.setZeroFlag(1);
+                }
+        
                 registers.setCarryFlag(carry);
                 registers.setA(result);
             }
