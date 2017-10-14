@@ -60,6 +60,10 @@ export class Operations {
 
         full &= fullmask;
 
+        if(full == 0){
+            this.cpu.registers.setZeroFlag(1);
+        }
+
         return full;
     }
 
@@ -89,13 +93,9 @@ export class Operations {
         let half = (first & mask) - (second & mask);
         let full = first - second;
 
-        if (half < 0) {
-            this.cpu.registers.setHalfFlag(1);
-        }
+        (half < 0)?this.cpu.registers.setHalfFlag(1): this.cpu.registers.setHalfFlag(0);
 
-        if (full < 0) {
-            this.cpu.registers.setCarryFlag(1);
-        }
+        (full < 0) ? this.cpu.registers.setCarryFlag(1):this.cpu.registers.setCarryFlag(0);
 
         full &= limit;
 
@@ -220,7 +220,7 @@ export class Operations {
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
                 let result = registers.getB() + 1;
-                
+                registers.setF(0);
                 if((result & 0xF) == 0){registers.setHalfFlag(1)}                
                 if(result > 0xFF){
                     result = 0;
@@ -240,7 +240,11 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcSubtractFlags(registers.getB(), 1);
+                let result = (registers.getB() - 1) & 0xFF;
+                registers.setF(0);                
+                if(result == 0){ registers.setZeroFlag(1)}                
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(1) :registers.setHalfFlag(0);
+                registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
                 registers.setB(result);
             }
@@ -271,10 +275,7 @@ export class Operations {
                 //Set flags
                 registers.setF(0);
                 registers.setCarryFlag(msb);
-                if (result == 0) {
-                    registers.setZeroFlag(1);
-                }
-
+                if (result == 0) {registers.setZeroFlag(1)}
                 registers.setA(result);
             }
         };
@@ -298,11 +299,9 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getHL();
                 let oper = registers.getBC();
-
                 let z = registers.getZeroFlag();
                 let result = calcAddFlags(val, oper, false);
                 registers.setZeroFlag(z); 
-                
                 registers.setHL(result);
             }
         };
@@ -337,7 +336,7 @@ export class Operations {
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
                 let result = registers.getC() + 1;
-
+                registers.setF(0);
                 if((result & 0xF) == 0){registers.setHalfFlag(1)}                
                 if(result > 0xFF){
                     result = 0;
@@ -357,7 +356,11 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcSubtractFlags(registers.getC(), 1);
+                let result = (registers.getC() - 1) & 0xFF;
+                registers.setF(0);
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                if(result == 0){ registers.setZeroFlag(1) }
+                registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
                 registers.setC(result);
             }
@@ -448,7 +451,7 @@ export class Operations {
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
                 let result = registers.getD() + 1;
-
+                registers.setF(0);
                 if((result & 0xF) == 0){registers.setHalfFlag(1)}                
                 if(result > 0xFF){
                     result = 0;
@@ -468,7 +471,11 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcSubtractFlags(registers.getD(), 1);
+                let result = (registers.getD() - 1) & 0xFF;
+                registers.setF(0);
+                if(result == 0){ registers.setZeroFlag(1)}                
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
                 registers.setD(result);
             }
@@ -547,7 +554,8 @@ export class Operations {
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
                 let result = registers.getE()+ 1;
-                if((result & 0xF) == 0){registers.setHalfFlag(1)}                
+                registers.setF(0);
+                if((result & 0xF) == 0){registers.setHalfFlag(1)}
                 if(result > 0xFF){
                     result = 0;
                     registers.setZeroFlag(1);
@@ -565,7 +573,13 @@ export class Operations {
             size: 1,
             mode: immediate,
             execute(pc: number) {
-                let result = calcSubtractFlags(registers.getE(), 1);
+                let carry = registers.getCarryFlag();                
+                let result = (registers.getE() - 1) & 0xFF;
+                registers.setF(0);
+                if(result == 0){ registers.setZeroFlag(1)}                
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                registers.setSubtractFlag(1);
+                registers.setCarryFlag(carry);
                 registers.setE(result);
             }
         };
@@ -655,6 +669,7 @@ export class Operations {
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
                 let result = registers.getH() + 1;
+                registers.setF(0);
                 if((result & 0xF) == 0){registers.setHalfFlag(1)}                
                 if(result > 0xFF){
                     result = 0;
@@ -674,7 +689,11 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcSubtractFlags(registers.getH(), 1);
+                let result = (registers.getH() - 1) & 0xFF;
+                registers.setF(0);
+                if(result == 0){ registers.setZeroFlag(1)}                
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
                 registers.setH(result);
             }
@@ -800,6 +819,7 @@ export class Operations {
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
                 let result = registers.getL()+ 1;
+                registers.setF(0);
                 if((result & 0xF) == 0){registers.setHalfFlag(1)}                
                 if(result > 0xFF){
                     result = 0;
@@ -819,7 +839,11 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcSubtractFlags(registers.getL(), 1);
+                let result = (registers.getL() - 1) & 0xFF;
+                registers.setF(0);
+                if(result == 0){ registers.setZeroFlag(1)}                
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
                 registers.setL(result);
             }
@@ -906,6 +930,7 @@ export class Operations {
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
                 let result = memory.readByte(registers.getHL()) +1;
+                registers.setF(0);
                 if((result & 0xF) == 0){registers.setHalfFlag(1)}
                 if(result > 0xFF){
                     result = 0;
@@ -925,7 +950,11 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcSubtractFlags(memory.readByte(registers.getHL()), 1);
+                let result = (memory.readByte(registers.getHL()) - 1) & 0xFF;
+                registers.setF(0);
+                if(result == 0){ registers.setZeroFlag(1)}                
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
                 memory.writeByte(registers.getHL(), result);
             }
@@ -1004,6 +1033,7 @@ export class Operations {
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
                 let result = registers.getA() + 1;
+                registers.setF(0);
                 if((result & 0xF) == 0){registers.setHalfFlag(1)}                
                 if(result > 0xFF){
                     result = 0;
@@ -1023,7 +1053,11 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let carry = registers.getCarryFlag();
-                let result = calcSubtractFlags(registers.getA(), 1);
+                let result = (registers.getA() - 1) & 0xFF;
+                registers.setF(0);
+                if(result == 0){ registers.setZeroFlag(1)}                
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
                 registers.setA(result);
             }
@@ -1802,8 +1836,8 @@ export class Operations {
             size: 1,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = registers.getB();
-                let result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let oper = (registers.getB()  + registers.getCarryFlag()) & 0xFF;
+                let result = calcAddFlags(val, oper);
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1817,8 +1851,8 @@ export class Operations {
             size: 1,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = registers.getC();
-                let result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let oper = (registers.getC()  + registers.getCarryFlag()) & 0xFF;
+                let result = calcAddFlags(val, oper);
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1832,8 +1866,8 @@ export class Operations {
             size: 1,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = registers.getD();
-                let result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let oper = (registers.getD()  + registers.getCarryFlag()) & 0xFF;
+                let result = calcAddFlags(val, oper);
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1848,8 +1882,8 @@ export class Operations {
             size: 1,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = registers.getE();
-                let result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let oper = (registers.getE() + registers.getCarryFlag()) & 0xFF;
+                let result = calcAddFlags(val, oper);
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1863,8 +1897,8 @@ export class Operations {
             size: 1,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = registers.getH();
-                let result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let oper = (registers.getH() + registers.getCarryFlag()) & 0xFF;
+                let result = calcAddFlags(val, oper);
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1879,8 +1913,8 @@ export class Operations {
             size: 1,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = registers.getL();
-                let result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let oper = (registers.getL() + registers.getCarryFlag()) & 0xFF;
+                let result = calcAddFlags(val, oper);
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1895,8 +1929,8 @@ export class Operations {
             size: 1,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = memory.readWord(registers.getHL());
-                let result = calcAddFlags(val, oper + registers.getCarryFlag());
+                let oper = (memory.readByte(registers.getHL()) +  registers.getCarryFlag()) & 0xFF ;
+                let result = calcAddFlags(val, oper);
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1911,7 +1945,7 @@ export class Operations {
             size: 1,
             execute(pc: number) {
                 let val = registers.getA();
-                let result = calcAddFlags(val, val + registers.getCarryFlag());
+                let result = calcAddFlags(val, (val + registers.getCarryFlag()) & 0xFF);
 
                 registers.setSubtractFlag(0);
                 registers.setA(result);
@@ -1927,9 +1961,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getB();
-                let result = calcSubtractFlags(val, oper, true);
-
-                registers.setSubtractFlag(1);
+                let result = calcSubtractFlags(val, oper);
                 registers.setA(result);
             }
         };
@@ -1942,9 +1974,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getC();
-                let result = calcSubtractFlags(val, oper, true);
-
-                registers.setSubtractFlag(1);
+                let result = calcSubtractFlags(val, oper);
                 registers.setA(result);
             }
         };
@@ -1958,9 +1988,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getD();
-                let result = calcSubtractFlags(val, oper, true);
-
-                registers.setSubtractFlag(1);
+                let result = calcSubtractFlags(val, oper);
                 registers.setA(result);
             }
         };
@@ -1973,7 +2001,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getE();
-                let result = calcSubtractFlags(val, oper, true);
+                let result = calcSubtractFlags(val, oper);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -1988,9 +2016,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getH();
-                let result = calcSubtractFlags(val, oper, true);
-
-                registers.setSubtractFlag(1);
+                let result = calcSubtractFlags(val, oper);
                 registers.setA(result);
             }
         };
@@ -2003,9 +2029,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getL();
-                let result = calcSubtractFlags(val, oper, true);
-
-                registers.setSubtractFlag(1);
+                let result = calcSubtractFlags(val, oper);
                 registers.setA(result);
             }
         };
@@ -2017,10 +2041,8 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = memory.readWord(registers.getHL());
-                let result = calcSubtractFlags(val, oper, true);
-
-                registers.setSubtractFlag(1);
+                let oper = memory.readByte(registers.getHL());
+                let result = calcSubtractFlags(val, oper);
                 registers.setA(result);
             }
         };
@@ -2033,9 +2055,7 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let result = calcSubtractFlags(val, val, true);
-
-                registers.setSubtractFlag(1);
+                let result = calcSubtractFlags(val, val);
                 registers.setA(result);
             }
         };
@@ -2048,10 +2068,8 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = registers.getB();
-                let result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
-
-                registers.setSubtractFlag(1);
+                let oper = (registers.getB() + registers.getCarryFlag()) & 0xFF;
+                let result = calcSubtractFlags(val, oper);
                 registers.setA(result);
             }
         };
@@ -2063,10 +2081,8 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = registers.getC();
-                let result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
-
-                registers.setSubtractFlag(1);
+                let oper = (registers.getC() + registers.getCarryFlag()) & 0xFF;
+                let result = calcSubtractFlags(val, oper);
                 registers.setA(result);
             }
         };
@@ -2079,10 +2095,8 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = registers.getD();
-                let result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
-
-                registers.setSubtractFlag(1);
+                let oper = (registers.getD() + registers.getCarryFlag())  & 0xFF;
+                let result = calcSubtractFlags(val, oper);
                 registers.setA(result);
             }
         };
@@ -2094,10 +2108,8 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = registers.getE();
-                let result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
-
-                registers.setSubtractFlag(1);
+                let oper = (registers.getE()  + registers.getCarryFlag()) & 0xFF;
+                let result = calcSubtractFlags(val, oper);
                 registers.setA(result);
             }
         };
@@ -2109,10 +2121,8 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = registers.getH();
-                let result = calcSubtractFlags(val, oper - registers.getCarryFlag(), false);
-
-                registers.setSubtractFlag(1);
+                let oper = (registers.getH() + registers.getCarryFlag()) & 0xFF;
+                let result = calcSubtractFlags(val, oper);
                 registers.setA(result);
             }
         };
@@ -2124,10 +2134,8 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let oper = registers.getL();
-                let result = calcSubtractFlags(val, oper, false);
-
-                registers.setSubtractFlag(1);
+                let oper = (registers.getL() + registers.getCarryFlag()) & 0xFF;
+                let result = calcSubtractFlags(val, oper);
                 registers.setA(result);
             }
         };
@@ -2139,7 +2147,7 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let result = calcSubtractFlags(val, val - registers.getCarryFlag(), false);
+                let result = calcSubtractFlags(val, (val + registers.getCarryFlag()) & 0xFF);
 
                 registers.setSubtractFlag(1);
                 registers.setA(result);
@@ -2936,8 +2944,6 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let result = calcAddFlags(val, pc + registers.getCarryFlag());
-
-                registers.setSubtractFlag(0);
                 registers.setA(result);
             }
         };
