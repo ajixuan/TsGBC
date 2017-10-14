@@ -63,6 +63,7 @@ export class GameBoy {
                 this.runConditions.splice(i, 1);
                 this.updateBreaks();
                 this.switch.off();
+                break;
             }
         }
     }
