@@ -684,7 +684,7 @@ export class Operations {
 
         this.operations[0x25] = {
             name: "DEC",
-            cycle: 4,
+            cycle: 4, 
             size: 1,
             mode: immediate,
             execute(pc: number) {
@@ -717,45 +717,32 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getA();
-                let correct;
-/*
-                registers.setCarryFlag(1);
 
-                //Additions
-                if (registers.getHalfFlag() || ((val & 0x15) > 0x9)) {
-                    correct += 0x06;
+                if(registers.getSubtractFlag() == 0){
+                    if(registers.getHalfFlag() || (val & 0xF) >0x9){
+                        val += 0x06;
+                    }
+                    
+                    if(registers.getCarryFlag() || (val > 0x9F)){
+                        val += 0x60;
+                    }
+                } else {
+                    if(registers.getHalfFlag()) val = (val - 6) & 0xFF;
+                    if(registers.getCarryFlag()) val -= 0x60;
                 }
 
-                if((registers.getHalfFlag() || (val > 0x99))){
-                    correct += 0x60;
+                registers.setZeroFlag(0);
+                registers.setHalfFlag(0);
+
+                if((val & 0x100) == 0x100){
                     registers.setCarryFlag(1);
                 }
-*/
-                (registers.getCarryFlag()) ? correct |= 0x60 : correct |= 0x00;
-            
-                            //Additions
-                            if (registers.getHalfFlag()) {
-                                correct |= 0x06;
-                            }
-                            if ((val & 0xF) > 0xA) {
-                                correct |= 0x06;
-                            }
-                            if ((val >> 4) > 0x0A) {
-                                correct |= 0x60;
-                            }
-            
-                            if ((val >> 4) >= 0x09 && (val & 0xF) > 0x0A) {
-                                correct |= 0x66;
-                            }
-                            if ((correct & 0xF0) == 0x60) {
-                                registers.setCarryFlag(1)
-                            }
 
+                val &= 0xFF;
                 if(val == 0){
                     registers.setZeroFlag(1);
                 }
-
-                registers.setA((val + correct) & 0xFF);
+                registers.setA(val);
             }
         };
 
