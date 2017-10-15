@@ -3307,7 +3307,7 @@ export class Operations {
                 let result = calcAddFlags(val, pc, false)
 
                 if(checkSign(pc) < 0){
-                    result = val + checkSign(pc);
+                    result = val + checkSign(pc) & 0xFFFF;
                     registers.setCarryFlag(c);
                 }
                 

@@ -46,8 +46,8 @@ export class Stack {
 
     public popWord(): number {
         let sp = this.register.getSP();
-        let high = this.readByte(sp);
-        let low = this.readByte(sp - 1);
+        let low = this.readByte(sp);
+        let high = this.readByte(sp + 1);
         this.register.setSP(sp + 2);
         return high << 8 | low;
     }
@@ -76,9 +76,9 @@ export class Stack {
     public pushWord(val: number): void {
         let high = val >> 8;
         let low = val & 0xFF;
-        let sp = this.register.getSP() -2;
-        this.writeByte(high, sp);
-        this.writeByte(low, sp - 1);
-        this.register.setSP(sp);
+        let sp = this.register.getSP();
+        this.writeByte(high, sp - 1);
+        this.writeByte(low, sp - 2);
+        this.register.setSP(sp - 2);
     }
 }

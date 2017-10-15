@@ -215,15 +215,15 @@ export class Debugger {
             let lower = 0;
 
             //Handle stack jumps
-            if (cur < 0xC000) {
-                upper = gameboy.memory.cartridge.readByte(cur);
-                lower = gameboy.memory.cartridge.readByte(cur - 1);
-            } else if (cur < 0xE000) {
-                upper = gameboy.memory.cpu.ram[cur - 0xC000];
-                lower = gameboy.memory.cpu.ram[cur - 1 - 0xC000];
-            } else if (cur >= 0xFF80 && cur <= 0xFFFE) {
-                upper = gameboy.memory.cpu.stack[cur - 0xFF80];
-                lower = gameboy.memory.cpu.stack[cur - 1 - 0xFF80];
+            if (cur < 0xC000 - 1) {
+                upper = gameboy.memory.cartridge.readByte(cur+1);
+                lower = gameboy.memory.cartridge.readByte(cur);
+            } else if (cur < 0xE000 - 1) {
+                upper = gameboy.memory.cpu.ram[cur + 1 - 0xC000];
+                lower = gameboy.memory.cpu.ram[cur - 0xC000];
+            } else if (cur >= 0xFF80 && cur < 0xFFFE) {
+                upper = gameboy.memory.cpu.stack[cur +1 - 0xFF80];
+                lower = gameboy.memory.cpu.stack[cur - 0xFF80];
             } else {
                 continue;
             }
@@ -231,14 +231,14 @@ export class Debugger {
             if (cur == sp) {
                 //Create cursor
                 $("#stack ul").append("<li style='background-color:#3394FF'>"
-                    + "<div style='float:left;margin-left: 20px'>" + cur.toString(16) + ":" + upper.toString(16)
-                    + "</div><div style='float:left;margin-left: 20px'>" + (cur - 1).toString(16) + ":" + lower.toString(16)
+                    + "<div style='float:left;margin-left: 20px'>" +  cur.toString(16) + ":" + upper.toString(16)
+                    + "</div><div style='float:left;margin-left: 20px'>" + (cur+1).toString(16) + ":" + lower.toString(16)
                     + "</div><div style='clear:both'></div></li>");
             } else {
                 $("#stack ul").append("<li>" +
                     "<div style='float:left;margin-left: 20px'>"
                     + cur.toString(16) + ":" + upper.toString(16) + "</div><div style='float:left;margin-left:20px'> "
-                    + (cur - 1).toString(16) + ":" + lower.toString(16) + "</div><div style='clear:both'></div></li>");
+                    + (cur+1).toString(16) + ":" +  lower.toString(16) + "</div><div style='clear:both'></div></li>");
             }
         }
     }
