@@ -2664,9 +2664,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getB();
-
-                registers.setF(0);
-                registers.setSubtractFlag(1);
+                calcSubtractFlags(val, oper);
             }
         };
 
@@ -2678,10 +2676,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getC();
-                calcSubtractFlags(val, oper, false);
-
-                registers.setF(0);
-                registers.setSubtractFlag(1);
+                calcSubtractFlags(val, oper);
             }
         };
 
@@ -2694,10 +2689,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getD();
-                calcSubtractFlags(val, oper, false);
-
-                registers.setF(0);
-                registers.setSubtractFlag(1);
+                calcSubtractFlags(val, oper);
             }
         };
 
@@ -2709,7 +2701,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getE();
-                calcSubtractFlags(val, oper, false);
+                calcSubtractFlags(val, oper);
             }
         };
 
@@ -2721,10 +2713,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getH();
-                calcSubtractFlags(val, oper, false);
-
-                registers.setF(0);
-                registers.setSubtractFlag(1);
+                calcSubtractFlags(val, oper);
             }
         };
 
@@ -2736,10 +2725,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = registers.getL();
-                calcSubtractFlags(val, oper, false);
-
-                registers.setF(0);
-                registers.setSubtractFlag(1);
+                calcSubtractFlags(val, oper);
             }
         };
 
@@ -2751,10 +2737,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let oper = memory.readWord(registers.getHL());
-                calcSubtractFlags(val, oper, false);
-
-                registers.setF(0);
-                registers.setSubtractFlag(1);
+                calcSubtractFlags(val, oper);
             }
         };
 
