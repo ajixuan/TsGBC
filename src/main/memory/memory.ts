@@ -57,7 +57,7 @@ export class Memory {
                     case 7: Cpu.CLOCK.tma = val & 7; break;
                 }
             } else if (addr == 0xFF0F) {
-                this.interrupts.if = (0xE0 | val) & 0xFF;
+                this.interrupts.if = val;
             } else if (addr < 0xFF6C) {
                 if(addr <=0xFF26){
                     this.nr[addr - 0xFF10] = val;
@@ -171,7 +171,7 @@ export class Memory {
                     default: val = 0xFF;
                 }
             } else if (addr == 0xFF0F) {
-                return this.interrupts.if & 0xFF;
+                return this.interrupts.if;
             } else if (addr < 0xFF6C) {
 
                 if(addr <=0xFF26){

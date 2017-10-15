@@ -30,7 +30,7 @@ export class Operations {
      * @param second
      * @param short whether or not the operation is between 8bit or 16bit
      */
-    private calcAddFlags(first: number, second: number, short: boolean = true): number {
+    private calcAddFlags(first: number, second: number, short: boolean = true): number {        
         //Default short is true (8bit operation by default)
         let fullmask = 0xFF;
         let mask = 0xF;
@@ -358,7 +358,7 @@ export class Operations {
                 let carry = registers.getCarryFlag();
                 let result = (registers.getC() - 1) & 0xFF;
                 registers.setF(0);
-                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(1):registers.setHalfFlag(0);
                 if(result == 0){ registers.setZeroFlag(1) }
                 registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
@@ -474,7 +474,7 @@ export class Operations {
                 let result = (registers.getD() - 1) & 0xFF;
                 registers.setF(0);
                 if(result == 0){ registers.setZeroFlag(1)}                
-                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(1):registers.setHalfFlag(0);
                 registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
                 registers.setD(result);
@@ -577,7 +577,7 @@ export class Operations {
                 let result = (registers.getE() - 1) & 0xFF;
                 registers.setF(0);
                 if(result == 0){ registers.setZeroFlag(1)}                
-                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(1):registers.setHalfFlag(0);
                 registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
                 registers.setE(result);
@@ -692,7 +692,7 @@ export class Operations {
                 let result = (registers.getH() - 1) & 0xFF;
                 registers.setF(0);
                 if(result == 0){ registers.setZeroFlag(1)}                
-                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(1):registers.setHalfFlag(0);
                 registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
                 registers.setH(result);
@@ -829,7 +829,7 @@ export class Operations {
                 let result = (registers.getL() - 1) & 0xFF;
                 registers.setF(0);
                 if(result == 0){ registers.setZeroFlag(1)}                
-                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(1):registers.setHalfFlag(0);
                 registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
                 registers.setL(result);
@@ -940,7 +940,7 @@ export class Operations {
                 let result = (memory.readByte(registers.getHL()) - 1) & 0xFF;
                 registers.setF(0);
                 if(result == 0){ registers.setZeroFlag(1)}                
-                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(1):registers.setHalfFlag(0);
                 registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
                 memory.writeByte(registers.getHL(), result);
@@ -1043,7 +1043,7 @@ export class Operations {
                 let result = (registers.getA() - 1) & 0xFF;
                 registers.setF(0);
                 if(result == 0){ registers.setZeroFlag(1)}                
-                ((result & 0xF) == 0xF)? registers.setHalfFlag(0):registers.setHalfFlag(1);
+                ((result & 0xF) == 0xF)? registers.setHalfFlag(1):registers.setHalfFlag(0);
                 registers.setSubtractFlag(1);
                 registers.setCarryFlag(carry);
                 registers.setA(result);
@@ -3302,16 +3302,18 @@ export class Operations {
             mode: immediate,
             size: 2,
             execute(pc: number) {
+                let val = registers.getSP();
+                let c = registers.getCarryFlag();
+                let result = calcAddFlags(val, pc, false)
 
-                let val = pc + registers.getSP() ;
-                let orig = registers.getHL();
-
-                //Set flags
+                if(checkSign(pc) < 0){
+                    result = val + checkSign(pc);
+                    registers.setCarryFlag(c);
+                }
+                
                 registers.setZeroFlag(0);
                 registers.setSubtractFlag(0);
-                let result = calcAddFlags(val, orig, false);
-
-                memory.writeByte(result, val & 0xFF);
+                registers.setHL(result);
             }
         };
 
