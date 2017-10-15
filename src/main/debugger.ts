@@ -58,9 +58,9 @@ export class Debugger {
         //PPU Register
         document.getElementById('lcdc').innerHTML = "0x" + gameboy.ppu.registers.lcdc.getAll().toString(16);
         document.getElementById('stat').innerHTML = "0x" + gameboy.ppu.registers.stat.getAll().toString(16);
-        document.getElementById('ly').innerHTML = gameboy.ppu.registers.ly.toString();
-        document.getElementById('scx').innerHTML = gameboy.ppu.registers.scx.toString();
-        document.getElementById('scy').innerHTML = gameboy.ppu.registers.scy.toString();
+        document.getElementById('ly').innerHTML = gameboy.ppu.registers.ly.toString(16);
+        document.getElementById('scx').innerHTML = gameboy.ppu.registers.scx.toString(16);
+        document.getElementById('scy').innerHTML = gameboy.ppu.registers.scy.toString(16);
 
         //Interrupts
         document.getElementById('ime').innerHTML = "0x" + gameboy.memory.interrupts.ime.toString(16);
