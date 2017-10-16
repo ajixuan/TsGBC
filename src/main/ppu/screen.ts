@@ -1,3 +1,4 @@
+import {Debugger} from "../debugger";
 
 export class Screen {
 

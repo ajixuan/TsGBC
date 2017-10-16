@@ -144,7 +144,7 @@ export class Cpu {
             clock.cycles = 12;
         }
 
-        if (Debugger.status) {
+        if (Debugger.status.cpu && Debugger.status.switch) {
             Debugger.display();
         }
 

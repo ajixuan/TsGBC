@@ -33,7 +33,7 @@
                     <div class="button" onclick="stop()" title="Pause">
                         <a class="fi-pause"></a>
                     </div>
-                    <div class="button" onclick="toggleDebug()" title="Debug">
+                    <div class="button" onclick="toggleDebugScreen()" title="Debug">
                         <a class="fi-wrench"></a>
                     </div>
                 </div>
@@ -90,7 +90,7 @@
             <div style="flex-grow: 1"></div>
             <div class="debug-button" style="background: none; margin-top: 3px; margin-bottom: 0px;">
                 <div class="onoffswitch">
-                    <input id="logDebugger" type="checkbox" onclick="logDebug()" name="onoffswitch" class="onoffswitch-checkbox">
+                    <input id="logDebugger" type="checkbox" onclick="toggleDebug()" name="onoffswitch" class="onoffswitch-checkbox">
                     <label class="onoffswitch-label" for="logDebugger">
                         <span class="onoffswitch-inner"></span>
                         <span class="onoffswitch-switch"></span>
@@ -335,41 +335,46 @@
 
 <script>
 
-    var toggleDebug = function () {
+    var toggleDebugScreen = function () {
         $("#debugger").toggle();
+        openCPU();
 
-        if (debug.status) {
+        if (debug.status.switch) {
             $("#logDebugger").prop("checked", true);
-
         } else {
             $("#logDebugger").prop("checked", false);
         }
-
     };
 
-    var logDebug = function () {
-        debug.status = !debug.status;
+    var toggleDebug = function () {
+        debug.status.switch = !debug.status.switch;
+        checkDebugSpeed();
+        console.log("Debug Status: " + debug.status.switch);
+    };
 
-        if (debug.status) {
+    var checkDebugSpeed = function() {
+        if (debug.status.cpu && debug.status.switch) {            
             debug.clearLog();
             debug.display();
-            debug.clearMemqueue();
             gameboy.tpf=1;
-        } else {
+        }else {
             gameboy.tpf=20000;
         }
-
-        console.log("Debug Status: " + debug.status);
-    };
+    }
 
     var closeDebug = function () {
         $("#debugger").toggle();
+        clearTabs();
+        debug.status.switch = false;
+        debug.status.off();
     };
 
     var openCPU = function (el) {
         clearTabs();
         $(el).addClass('active');
         $("#cpu").show();
+        debug.status.cpu = true;
+        checkDebugSpeed();
     };
 
     var openPPU = function (el) {
@@ -378,12 +383,15 @@
         $("#ppu").show();
         renderBGmap();
         renderTilemap();
+        debug.status.ppu = true;
     };
 
     var openMEMORY = function (el) {
         clearTabs();
         $(el).addClass('active');
         $("#memory").show();
+        debug.resetMemmap();
+        debug.status.memory = true;
     };
 
     var openCART = function (el) {
@@ -398,6 +406,8 @@
         $("#ppu").hide();
         $("#cartridge").hide();
         $("#memory").hide();
+        debug.status.off();
+        gameboy.tpf=20000;
     };
 
 </script>

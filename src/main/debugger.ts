@@ -5,7 +5,15 @@ import {GameBoy} from './gameboy';
 import {Cpu} from './cpu/cpu'
 
 export class Debugger {
-    public static status: boolean = false;
+    public static status = {
+        cpu : false,
+        memory: false,
+        ppu : false,
+        switch : false,
+        off: function(){
+            this.cpu = false; this.memory = false; this.ppu=false;
+        }
+    };
     private static gameboy: GameBoy;
     private static logLimit = 500;
     private static bgmap: Array<Number> = Array(0x800).fill(0);
@@ -287,11 +295,23 @@ export class Debugger {
         }
     }
 
+    public static resetMemmap() {
+        let memory = Debugger.gameboy.memory;        
+        for (let i = 0x8000; i <= 0xFFF0; i += 0x10) {
+            (function (addr) {
+                setTimeout(function () {
+                    for (let j = 0; j <= 0xF; j++) {
+                        let td : Element = document.getElementById((addr + j).toString());
+                        td.innerHTML = memory.readByte(addr + j).toString(16);
+                    }
+                }, 100);
+            })(i);
+        }
+    }
 
 
     public static init(gameboy: GameBoy) {
         Debugger.gameboy = gameboy;
-        Debugger.status = false;
         console.info("Debugger is ready!");
         Debugger.initMemmap();
         Debugger.display();
