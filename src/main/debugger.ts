@@ -226,12 +226,12 @@ export class Debugger {
                 //Create cursor
                 $("#stack ul").append("<li style='background-color:#3394FF'>"
                     + "<div style='float:left;margin-left: 20px'>" 
-                    +  cur.toString(16) + ":" + upper.toString(16) + lower.toString(16)
+                    +  cur.toString(16) + ":" + upper.toString(16) + " " + lower.toString(16)
                     + "</div><div style='clear:both'></div></li>");
             } else {
                 $("#stack ul").append("<li>" +
                     "<div style='float:left;margin-left: 20px'>"
-                    + cur.toString(16) + ":" + upper.toString(16) +  lower.toString(16)
+                    + cur.toString(16) + ":" + upper.toString(16) + " " + lower.toString(16)
                     + "</div><div style='clear:both'></div></li>");
             }
         }
@@ -292,7 +292,7 @@ export class Debugger {
                         let td : Element = document.getElementById((addr + j).toString());
                         td.innerHTML = memory.readByte(addr + j).toString(16);
                     }
-                }, 100);
+                }, 50);
             })(i);
         }
     }
