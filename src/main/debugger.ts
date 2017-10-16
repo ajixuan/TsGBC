@@ -6,7 +6,6 @@ import {Cpu} from './cpu/cpu'
 
 export class Debugger {
     public static status: boolean = false;
-    private static memmap : Element = document.getElementById("memory-table");
     private static gameboy: GameBoy;
     private static logLimit = 500;
     private static bgmap: Array<Number> = Array(0x800).fill(0);
@@ -246,9 +245,9 @@ export class Debugger {
     public static initMemmap(){
         let queue = {};
         let memory = Debugger.gameboy.memory;
-        $("tbody tr").remove();
-        Debugger.memmap.appendChild(document.createElement("tbody"));
-        let chart = Debugger.memmap.children[0];
+        let memmap : Element = document.getElementById("memory-table");
+        memmap.appendChild(document.createElement("tbody"));
+        let chart = memmap.children[0];
         for (let i = 0x8000; i <= 0xFFF0; i += 0x10) {
             (function (addr:number) {
                 setTimeout(function () {
@@ -288,19 +287,7 @@ export class Debugger {
         }
     }
 
-    public static resetMemmap() {
-        let memory = Debugger.gameboy.memory;        
-        for (let i = 0x8000; i <= 0xFFF0; i += 0x10) {
-            (function (addr) {
-                setTimeout(function () {
-                    for (let j = 0; j <= 0xF; j++) {
-                        let td : Element = document.getElementById((addr + j).toString());
-                        td.innerHTML = memory.readByte(addr + j).toString(16);
-                    }
-                }, 100);
-            })(i);
-        }
-    }
+
 
     public static init(gameboy: GameBoy) {
         Debugger.gameboy = gameboy;
