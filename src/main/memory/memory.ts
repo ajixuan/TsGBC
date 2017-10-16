@@ -57,7 +57,7 @@ export class Memory {
                     case 7: Cpu.CLOCK.tma = val & 7; break;
                 }
             } else if (addr == 0xFF0F) {
-                this.interrupts.if = val;
+                this.interrupts.if = 0xE0 | val;
             } else if (addr < 0xFF6C) {
                 if(addr <=0xFF26){
                     this.nr[addr - 0xFF10] = val;
@@ -120,7 +120,7 @@ export class Memory {
             // }
             this.cpu.stack[addr - 0xFF80] = val;
         } else if (addr == 0xFFFF) {
-            this.interrupts.ie = val & 0xFF;
+            this.interrupts.ie = val;
         } else {
             throw "Invalid write led to unknown address at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
         }
@@ -133,13 +133,8 @@ export class Memory {
     }
 
     public writeWord(addr:number, val:number):void{
-        if(val >> 8 == 0){
-            this.writeByte(addr, val & 0xFF);
-        } else {
             this.writeByte(addr+1, val >> 8);
-            this.writeByte(addr, val & 0xFF);    
-        }
-
+            this.writeByte(addr, val & 0xFF); 
     }
 
     public readByte(addr: number): number {
