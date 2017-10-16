@@ -384,7 +384,6 @@
         clearTabs();
         $(el).addClass('active');
         $("#memory").show();
-        debug.resetMemmap();
     };
 
     var openCART = function (el) {
@@ -420,14 +419,14 @@
 
             //gameboy.load("./roms/cpu_instrs/individual/01-special.gb");
             //gameboy.load("./roms/cpu_instrs/individual/02-interrupts.gb");
-            gameboy.load("./roms/cpu_instrs/individual/03-op sp,hl.gb");
+            //gameboy.load("./roms/cpu_instrs/individual/03-op sp,hl.gb");
             //gameboy.load("./roms/cpu_instrs/individual/04-op r,imm.gb");
             //gameboy.load("./roms/cpu_instrs/individual/05-op rp.gb");
             //gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");
             //gameboy.load("./roms/cpu_instrs/individual/07-jr,jp,call,ret,rst.gb");
             //gameboy.load("./roms/cpu_instrs/individual/08-misc instrs.gb");
             //gameboy.load("./roms/cpu_instrs/individual/09-op r,r.gb");
-            //gameboy.load("./roms/Tetris.gb");
+            gameboy.load("./roms/Tetris.gb");
             //gameboy.load("./roms/castlevania.gb")
             gameboy.reset();
 

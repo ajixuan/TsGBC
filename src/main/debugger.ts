@@ -302,23 +302,6 @@ export class Debugger {
         }
     }
 
-    public static updatemap(addr: number): void {
-        let val = Debugger.gameboy.memory.readByte(addr);
-        if (val == null) {return}
-        let tr = Math.floor((addr - 0x8000) / 0x10);
-        let td = (addr & 0xF) + 1;
-
-        try{
-            Debugger.memmap
-                .children[tr]
-                .children[td]
-                .innerHTML = val.toString(16);
-        } catch(e){
-            console.log(e.toString());
-            console.log(tr + " " + td);
-        }
-    }
-
     public static init(gameboy: GameBoy) {
         Debugger.gameboy = gameboy;
         Debugger.status = false;

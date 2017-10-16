@@ -125,8 +125,8 @@ export class Memory {
             throw "Invalid write led to unknown address at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
         }
 
-        if(Debugger.status){
-            Debugger.updatemap(addr);
+        if(addr >= 0x8000){
+            document.getElementById(addr.toString()).innerHTML = val.toString(16);            
         }
     }
 
