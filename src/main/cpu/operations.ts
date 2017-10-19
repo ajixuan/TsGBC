@@ -3147,8 +3147,7 @@ export class Operations {
 
             }
         };
-
-
+        
         this.operations[0xE8] = {
             name: "ADD",
             cycle: 16,
@@ -3156,7 +3155,19 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let val = registers.getSP();
-                let result = calcAddFlags(val, pc, false);
+                let result, f;
+                
+                if(pc == 0xFF){
+                    result = calcAddFlags(val, 0xFFFF, false);
+                    calcAddFlags((val & 0xFF), (pc & 0xFF));                    
+                } else {
+                    result = calcAddFlags(val, pc , false);
+                    f = registers.getF();                    
+                    calcAddFlags((val & 0xFF), (pc & 0xFF));                    
+                    registers.setF(f | registers.getF());                    
+                }
+                //For some reason e8 sets flags on carries for short and long
+                registers.setZeroFlag(0);
                 registers.setSP(result);
             }
         };
