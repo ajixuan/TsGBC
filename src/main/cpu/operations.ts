@@ -492,6 +492,27 @@ export class Operations {
             }
         };
 
+        this.operations[0x17] = {
+            name: "RLA",
+            cycle: 4,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let bit = val >> 7;
+                let result = ((val << 1) + registers.getCarryFlag()) & 0xFF;
+
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(0);
+                if(result == 0){
+                    registers.setZeroFlag(1);
+                }
+                registers.setCarryFlag(bit);
+                registers.setA(result);
+            }
+        };
+
+
 
         this.operations[0x18] = {
             name: "JR",
@@ -958,6 +979,19 @@ export class Operations {
             }
         };
 
+        this.operations[0x37] = {
+            name: "SCF",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(0);
+                registers.setCarryFlag(1);
+            }
+        };
+
+
         this.operations[0x38] = {
             name: "JR",
             cycle: 8,
@@ -1057,6 +1091,19 @@ export class Operations {
             size: 2,
             execute(pc: number) {
                 registers.setA(pc);
+            }
+        };
+
+
+        this.operations[0x3F] = {
+            name: "CCF",
+            cycle: 4,
+            mode: immediate,
+            size: 1,
+            execute(pc: number) {
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(0);
+                (registers.getCarryFlag())? registers.setCarryFlag(0) : registers.setCarryFlag(1);
             }
         };
 
@@ -3394,6 +3441,26 @@ export class Operations {
                 registers.setSP(registers.getSP() - 1);
                 stack.pushWord(pc);
                 registers.setPC(0x38);
+            }
+        };
+
+
+        this.operations[0xCB00] = {
+            name: "RLCB",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getB();
+                let bit = val >> 7;
+                let result = ((val << 1) + registers.getCarryFlag()) & 0xFF;
+
+                //Set flags
+                registers.setSubtractFlag(0);
+                registers.setHalfFlag(0);
+                registers.setCarryFlag(bit);
+                if (result == 0) {registers.setZeroFlag(1)}
+                registers.setB(result);
             }
         };
 
