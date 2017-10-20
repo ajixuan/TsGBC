@@ -3361,14 +3361,12 @@ export class Operations {
             size: 2,
             execute(pc: number) {
                 let val = registers.getSP();
-                let c = registers.getCarryFlag();
-                let result = calcAddFlags(val, pc, false)
-
-                if(checkSign(pc) < 0){
-                    result = val + checkSign(pc) & 0xFFFF;
-                    registers.setCarryFlag(c);
-                }
-                
+                let result = (val + checkSign(pc)) & 0xFFFF;
+                let f;
+                calcAddFlags(val, pc, false);
+                f = registers.getF();
+                calcAddFlags(val & 0xFF, pc & 0xFF);
+                registers.setF(f | registers.getF());
                 registers.setZeroFlag(0);
                 registers.setSubtractFlag(0);
                 registers.setHL(result);
