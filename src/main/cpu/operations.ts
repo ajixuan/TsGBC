@@ -2960,7 +2960,12 @@ export class Operations {
             size: 2,
             execute(pc: number) {
                 let val = registers.getA();
-                let result = calcAddFlags(val, pc + registers.getCarryFlag());
+                let oper = calcAddFlags(pc, registers.getCarryFlag()); 
+                registers.setZeroFlag(0);
+                registers.setSubtractFlag(0);
+                let f = registers.getF();
+                let result = calcAddFlags(val, oper);
+                registers.setF(f | registers.getF());
                 registers.setA(result);
             }
         };
