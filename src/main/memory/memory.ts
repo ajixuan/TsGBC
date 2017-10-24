@@ -12,6 +12,10 @@ import {Cpu} from "../cpu/cpu";
 
 export class Memory {
 
+    public lastChange = {
+        addr : null,
+        val  : null
+    }
     public cartridge: Cartridge;
     public joypad: Joypad = new Joypad();
     public vram: Array<number> = Array(0x2000).fill(0);
@@ -125,16 +129,22 @@ export class Memory {
             throw "Invalid write led to unknown address at 0x" + addr.toString(16) + " with 0x" + val.toString(16);
         }
 
+        //Debugger
         if(Debugger.status.memory && Debugger.status.switch){
             if(addr >= 0x8000){
                 document.getElementById(addr.toString()).innerHTML = val.toString(16);
-            }    
+            }
         }
+
+        this.lastChange.addr = addr;
+        this.lastChange.val = val;
     }
 
     public writeWord(addr:number, val:number):void{
             this.writeByte(addr+1, val >> 8);
-            this.writeByte(addr, val & 0xFF); 
+            this.writeByte(addr, val & 0xFF);
+            this.lastChange.addr = addr;
+            this.lastChange.val = val;     
     }
 
     public readByte(addr: number): number {

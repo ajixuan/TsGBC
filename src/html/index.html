@@ -233,9 +233,21 @@
                             <legend>Set Breakpoint</legend>
                             <span>
                             <input size="5" id="breakpoint"/>
-                            <button onclick="setBreakPoint()">SET</button>
+                            <button onclick="setPCBreak()">SET</button>
                             </span>
                             <ul style="list-style:none;" id="listbreaks"></ul>
+                        </fieldset>
+                    </div>
+
+                    <div style="display: flex; flex-direction: row;">
+                        <fieldset>
+                            <legend>Set Memory Access Point</legend>
+                            <span>
+                            <input size="2" id="mempoint"/>
+                            <input size="3" id="memval"/>
+                            <button onclick="setMemoryBreak()">SET</button>
+                            </span>
+                            <ul style="list-style:none;" id="listmembreaks"></ul>
                         </fieldset>
                     </div>
 
@@ -322,6 +334,8 @@
                                 <span class="header">Type:</span>
                                 <span id="type">0</span>
                             </li>
+                        </ul>
+                        <ul class="dropdown-menu">
 
                         </ul>
                     </div>
@@ -427,17 +441,24 @@
                 return;
             }
 
-            //gameboy.load("./roms/cpu_instrs/individual/01-special.gb");
+            //Load cartridges
+            var req = new XMLHttpRequest();
+            req.open('GET', "./roms");
+            req.send(null);
+
+            //gameboy.load("./roms/cpu_instrs/individual/01-special.gb");       okay
+            //gameboy.load("./roms/cpu_instrs/individual/05-op rp.gb");         okay
+            //gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");        okay
+            //gameboy.load("./roms/cpu_instrs/individual/08-misc instrs.gb");   okay
+            //gameboy.load("./roms/cpu_instrs/individual/03-op sp,hl.gb");      okay
+            
             //gameboy.load("./roms/cpu_instrs/individual/02-interrupts.gb");
-            //gameboy.load("./roms/cpu_instrs/individual/03-op sp,hl.gb");
-            //gameboy.load("./roms/cpu_instrs/individual/04-op r,imm.gb");
-            //gameboy.load("./roms/cpu_instrs/individual/05-op rp.gb");
-            //gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");
+            //gameboy.load("./roms/cpu_instrs/individual/e8ye.gb");
+            gameboy.load("./roms/cpu_instrs/individual/04-op r,imm.gb");
             //gameboy.load("./roms/cpu_instrs/individual/07-jr,jp,call,ret,rst.gb");
-            //gameboy.load("./roms/cpu_instrs/individual/08-misc instrs.gb");
             //gameboy.load("./roms/cpu_instrs/individual/09-op r,r.gb");
-            gameboy.load("./roms/Tetris.gb");
-            //gameboy.load("./roms/castlevania.gb")
+            //gameboy.load("./roms/Tetris.gb");
+            //gameboy.load("./roms/castlevania.gb");
             gameboy.reset();
 
             loadDebugger();
@@ -492,10 +513,27 @@
         gameboy.ppu.screen.setZoom(gameboy.ppu.screen.getZoom() - 1);
     };
 
-    var setBreakPoint = function () {
+    var setPCBreak = function () {
         var val = parseInt($("#breakpoint").val(), 16);
         gameboy.setPCBreak(val);
     };
+
+    var setMemoryBreak = function () {
+        var addr = parseInt($("#mempoint").val(), 16);
+        var val = parseInt($("#memval").val(), 16);
+        gameboy.setMemoryBreak(addr, val);
+    };
+
+    var removePCBreak = function(el){
+        gameboy.removePCBreak(parseInt(el.innerText,16));
+        $(el).remove();
+    }
+
+    var removeMemBreak = function(el){
+        var vals = el.innerText.split(":");
+        gameboy.removeMemBreak(parseInt(vals[0],16),parseInt(vals[1],16));
+        $(el).remove();
+    }
 
     var renderBGmap = function () {
         debug.renderBGmap();
