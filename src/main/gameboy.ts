@@ -115,7 +115,7 @@ export class GameBoy {
         };
     }
 
-    public setMemoryBreak(addr: number, val: number):void{
+    public setMemBreak(addr: number, val: number):void{
         let element;
         let key = addr + ":" + val;
         let memBreak = (function(addr : number, val : number, memory : Memory){
@@ -134,11 +134,11 @@ export class GameBoy {
         this.runConditions.set(key, memBreak)
         
         element = "<li>" + addr.toString(16).toUpperCase() + " : " + 
-        ((val)? val.toString(16).toUpperCase() : val) + "<span class=\"fi-x\" onclick=\"removeMemBreak(this)\"></span><\li>";
+        ((val)? val.toString(16).toUpperCase() : val) + "<span class=\"fi-x\" onclick=\"removeMemBreak(this.parentElement)\"></span><\li>";
         $("#listmembreaks").append(element);
     }
 
-    public removeMemoryBreak(addr: number, val : number):void {
+    public removeMemBreak(addr: number, val : number):void {
         if(!this.runConditions.delete(addr + ":" + val)){
             console.log(addr + ":" + val + " doesnt exist")
         };

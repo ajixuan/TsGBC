@@ -245,7 +245,7 @@
                             <span>
                             <input size="2" id="mempoint"/>
                             <input size="3" id="memval"/>
-                            <button onclick="setMemoryBreak()">SET</button>
+                            <button onclick="setMemBreak()">SET</button>
                             </span>
                             <ul style="list-style:none;" id="listmembreaks"></ul>
                         </fieldset>
@@ -518,10 +518,10 @@
         gameboy.setPCBreak(val);
     };
 
-    var setMemoryBreak = function () {
+    var setMemBreak = function () {
         var addr = parseInt($("#mempoint").val(), 16);
         var val = parseInt($("#memval").val(), 16);
-        gameboy.setMemoryBreak(addr, val);
+        gameboy.setMemBreak(addr, val);
     };
 
     var removePCBreak = function(el){
