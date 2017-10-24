@@ -3125,7 +3125,11 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 let a = registers.getA();
-                let result = calcSubtractFlags(a, pc + registers.getCarryFlag());
+                let op = calcAddFlags(pc, registers.getCarryFlag());
+                registers.setZeroFlag(0);
+                let f = registers.getF();
+                let result = calcSubtractFlags(a, op);
+                registers.setF(f | registers.getF());
                 registers.setA(result);
             }
         };
