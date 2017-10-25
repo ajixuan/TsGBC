@@ -2888,6 +2888,17 @@ export class Operations {
             }
         };
 
+        this.operations[0xC7] = {
+            name: "RST",
+            cycle: 16,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                //Push onto stack
+                stack.pushWord(registers.getPC() + this.size);         
+                registers.setPC(0x00);
+            }
+        };
 
         this.operations[0xC8] = {
             name: "RET",
@@ -2977,8 +2988,7 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 //Push onto stack
-                registers.setSP(registers.getSP() - 1);
-                stack.pushWord(pc);
+                stack.pushWord(registers.getPC() + this.size);
                 registers.setPC(0x08);
             }
         };
@@ -3060,6 +3070,18 @@ export class Operations {
             }
         };
 
+        this.operations[0xD7] = {
+            name: "RST",
+            cycle: 16,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                stack.pushWord(registers.getPC() + this.size);
+                registers.setPC(0x10);
+            }
+        };
+
+
 
 
         this.operations[0xD8] = {
@@ -3134,6 +3156,18 @@ export class Operations {
             }
         };
 
+        this.operations[0xDF] = {
+            name: "RST",
+            cycle: 16,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                stack.pushWord(registers.getPC() + this.size);
+                registers.setPC(0x18);
+            }
+        };
+
+
 
         this.operations[0xE0] = {
             name: "LD",
@@ -3203,6 +3237,18 @@ export class Operations {
 
             }
         };
+
+        this.operations[0xE7] = {
+            name: "RST",
+            cycle: 16,
+            size: 1,
+            mode: immediate,
+            execute(pc: number) {
+                stack.pushWord(registers.getPC() + this.size);
+                registers.setPC(0x20);
+            }
+        };
+
         
         this.operations[0xE8] = {
             name: "ADD",
@@ -3389,8 +3435,7 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 //Push onto stack
-                registers.setSP(registers.getSP() - 1);
-                stack.pushWord(pc);
+                stack.pushWord(registers.getPC() + this.size);
                 registers.setPC(0x30);
             }
         };
@@ -3445,8 +3490,7 @@ export class Operations {
             mode: immediate,
             execute(pc: number) {
                 //Push onto stack
-                registers.setSP(registers.getSP() - 1);
-                stack.pushWord(pc);
+                stack.pushWord(registers.getPC() + this.size);         
                 registers.setPC(0x38);
             }
         };
