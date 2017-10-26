@@ -40,8 +40,5 @@ Gameboy Emulator done in Typescript!
 
 ## Work Notes
 
-- Missings opcodes.
-- Invalid opcodes.
-
 
 
