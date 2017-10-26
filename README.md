@@ -39,6 +39,6 @@ Gameboy Emulator done in Typescript!
 - **[hkamran](https://github.com/hkamran)**
 
 ## Work Notes
-
+- Missing opcodes
 
 
