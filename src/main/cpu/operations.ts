@@ -2399,10 +2399,7 @@ export class Operations {
                 registers.setF(0);
                 registers.setHalfFlag(1);
 
-                if (result == 0) {
-                    registers.setZeroFlag(1);
-                }
-
+                if (result == 0) registers.setZeroFlag(1);
                 registers.setA(result);
             }
         };
@@ -3039,7 +3036,7 @@ export class Operations {
             mode: immediate,
             size: 1,
             execute(pc: number) {
-                if (registers.getC() == 0) {
+                if (registers.getCarryFlag() == 0) {
                     let result = stack.popWord();
                     registers.setPC(result);
                     this.cycle = 20;
@@ -3063,7 +3060,7 @@ export class Operations {
             mode: immediate,
             size: 3,
             execute(pc: number) {
-                if (registers.getZeroFlag() == 0) {
+                if (registers.getCarryFlag() == 0) {
                     registers.setPC(pc);
                     this.cycle = 16;
                 }
@@ -3583,7 +3580,7 @@ export class Operations {
                 //Set flags
                 registers.setF(0);
                 registers.setCarryFlag(bit);
-                if (val != 0 && result == 0) registers.setZeroFlag(1);
+                if (result == 0) registers.setZeroFlag(1);
                 registers.setD(result);
             }
         };
@@ -3618,7 +3615,7 @@ export class Operations {
 
                 registers.setF(0);
                 registers.setCarryFlag(bit);
-                if (val != 0 && result == 0) registers.setZeroFlag(1)
+                if (result == 0) registers.setZeroFlag(1)
                 registers.setH(result);
             }
         };
@@ -3635,7 +3632,7 @@ export class Operations {
 
                 registers.setF(0);
                 registers.setCarryFlag(bit);
-                if (val != 0 && result == 0) {registers.setZeroFlag(1)}
+                if (result == 0) {registers.setZeroFlag(1)}
                 registers.setL(result);
             }
         };
@@ -3784,6 +3781,142 @@ export class Operations {
             }
         };
 
+        this.operations[0xCB10] = {
+            name: "RL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getB();
+                let bit = val >> 7;
+                let result = ((val << 1) + registers.getCarryFlag()) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+                registers.setCarryFlag(bit);
+                registers.setB(result);
+            }
+        };
+
+        this.operations[0xCB11] = {
+            name: "RL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getC();
+                let bit = val >> 7;
+                let result = ((val << 1) + registers.getCarryFlag()) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+                registers.setCarryFlag(bit);
+                registers.setC(result);
+            }
+        };
+
+        this.operations[0xCB12] = {
+            name: "RL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getD();
+                let bit = val >> 7;
+                let result = ((val << 1) + registers.getCarryFlag()) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+                registers.setCarryFlag(bit);
+                registers.setD(result);
+            }
+        };
+
+        this.operations[0xCB13] = {
+            name: "RL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getE();
+                let bit = val >> 7;
+                let result = ((val << 1) + registers.getCarryFlag()) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+                registers.setCarryFlag(bit);
+                registers.setE(result);
+            }
+        };
+
+        this.operations[0xCB14] = {
+            name: "RL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getH();
+                let bit = val >> 7;
+                let result = ((val << 1) + registers.getCarryFlag()) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+                registers.setCarryFlag(bit);
+                registers.setH(result);
+            }
+        };
+
+        this.operations[0xCB15] = {
+            name: "RL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getL();
+                let bit = val >> 7;
+                let result = ((val << 1) + registers.getCarryFlag()) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+                registers.setCarryFlag(bit);
+                registers.setL(result);
+            }
+        };
+
+        this.operations[0xCB16] = {
+            name: "RL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = memory.readByte(registers.getHL());
+                let bit = val >> 7;
+                let result = ((val << 1) + registers.getCarryFlag()) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+                registers.setCarryFlag(bit);
+                memory.writeByte(registers.getHL(), result);
+            }
+        };
+
+        this.operations[0xCB17] = {
+            name: "RL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let bit = val >> 7;
+                let result = ((val << 1) + registers.getCarryFlag()) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+                registers.setCarryFlag(bit);
+                registers.setA(result);
+            }
+        };
+
         this.operations[0xCB18] = {
             name: "RR",
             cycle: 8,
@@ -3792,12 +3925,10 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getB() + (registers.getCarryFlag() << 8);
                 let bit = val & 1;
-                let result = val;
+                let result = val >> 1;
 
                 registers.setF(0);
-                if (result === 0) {
-                    registers.setZeroFlag(1);
-                }
+                if (result === 0) registers.setZeroFlag(1);
 
                 registers.setCarryFlag(bit);
                 registers.setB(result);
@@ -3813,7 +3944,7 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getC() + (registers.getCarryFlag() << 8);
                 let bit = val & 1;
-                let result = val>> 1 ;
+                let result = val >> 1;
 
                 registers.setF(0);
                 if (result === 0) {
@@ -3865,6 +3996,206 @@ export class Operations {
             }
         };
 
+        this.operations[0xCB1C] = {
+            name: "RR",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getH() + (registers.getCarryFlag() << 8);
+                let bit = val & 1;
+                let result = val >> 1;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setH(result);
+            }
+        };
+
+        this.operations[0xCB1D] = {
+            name: "RR",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getL() + (registers.getCarryFlag() << 8);
+                let bit = val & 1;
+                let result = val >> 1;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setL(result);
+            }
+        };
+
+        this.operations[0xCB1E] = {
+            name: "RR",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let hl = registers.getHL();
+                let val = memory.readByte(hl) + (registers.getCarryFlag() << 8);
+                let bit = val & 1;
+                let result = val >> 1;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                memory.writeByte(hl, result);
+            }
+        };
+
+        this.operations[0xCB1F] = {
+            name: "RR",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA() + (registers.getCarryFlag() << 8);
+                let bit = val & 1;
+                let result = val >> 1;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xCB20] = {
+            name: "SLA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getB();
+                let bit = val >> 7;
+                let result = (val << 1) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setB(result);
+            }
+        };
+
+        this.operations[0xCB21] = {
+            name: "SLA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getC();
+                let bit = val >> 7;
+                let result = (val << 1) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setC(result);
+            }
+        };
+
+        this.operations[0xCB22] = {
+            name: "SLA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getD();
+                let bit = val >> 7;
+                let result = (val << 1) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setD(result);
+            }
+        };
+
+        this.operations[0xCB23] = {
+            name: "SLA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getE();
+                let bit = val >> 7;
+                let result = (val << 1) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setE(result);
+            }
+        };
+
+        this.operations[0xCB24] = {
+            name: "SLA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getH();
+                let bit = val >> 7;
+                let result = (val << 1) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setH(result);
+            }
+        };
+
+        this.operations[0xCB25] = {
+            name: "SLA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getL();
+                let bit = val >> 7;
+                let result = (val << 1) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setL(result);
+            }
+        };
+
+        this.operations[0xCB26] = {
+            name: "SLA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let hl = registers.getHL();
+                let val = memory.readByte(hl);
+                let bit = val >> 7;
+                let result = (val << 1) & 0xFF;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                memory.writeByte(hl, result);
+            }
+        };
+
         this.operations[0xCB27] = {
             name: "SLA",
             cycle: 8,
@@ -3873,12 +4204,157 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let bit = val >> 7;
-                let result = (val << 1) & 0xFFFF;
+                let result = (val << 1) & 0xFF;
 
                 registers.setF(0);
-                if (result === 0) {
-                    registers.setZeroFlag(1);
-                }
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setA(result);
+            }
+        };
+
+        this.operations[0xCB28] = {
+            name: "SRA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getB();
+                let bit = val & 0x1;
+                let result = (val & 0x80) | (val >> 1);
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setB(result);
+            }
+        };
+
+        this.operations[0xCB29] = {
+            name: "SRA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getC();
+                let bit = val & 0x1;
+                let result = (val & 0x80) | (val >> 1);
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setC(result);
+            }
+        };
+
+        this.operations[0xCB2A] = {
+            name: "SRA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getD();
+                let bit = val & 0x1;
+                let result = (val & 0x80) | (val >> 1);
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setD(result);
+            }
+        };
+
+        this.operations[0xCB2B] = {
+            name: "SRA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getE();
+                let bit = val & 0x1;
+                let result = (val & 0x80) | (val >> 1);
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setE(result);
+            }
+        };
+
+        this.operations[0xCB2C] = {
+            name: "SRA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getH();
+                let bit = val & 0x1;
+                let result = (val & 0x80) | (val >> 1);
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setH(result);
+            }
+        };
+
+
+        this.operations[0xCB2D] = {
+            name: "SRA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getL();
+                let bit = val & 0x1;
+                let result = (val & 0x80) | (val >> 1);
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setL(result);
+            }
+        };
+
+        this.operations[0xCB2E] = {
+            name: "SRA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let hl = registers.getHL();
+                let val = memory.readByte(hl);
+                let bit = val & 0x1;
+                let result = (val & 0x80) | (val >> 1);
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                memory.writeByte(hl, result);
+            }
+        };
+
+
+        this.operations[0xCB2F] = {
+            name: "SRA",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getA();
+                let bit = val & 0x1;
+                let result = (val & 0x80) | (val >> 1);
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
 
                 registers.setCarryFlag(bit);
                 registers.setA(result);
@@ -3937,9 +4413,8 @@ export class Operations {
                 let upper = (val & 0xF0) >> 4;
                 let result = (lower << 4) + upper;
 
-                if (result === 0) {
-                    registers.setZeroFlag(1);
-                }
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
 
                 registers.setD(result);
             }
@@ -3957,10 +4432,7 @@ export class Operations {
                 let result = lower + upper;
 
                 registers.setF(0);
-                if (result === 0) {
-                    registers.setZeroFlag(1);
-                }
-
+                if (result === 0) registers.setZeroFlag(1);
                 registers.setE(result);
             }
         };
@@ -3977,10 +4449,7 @@ export class Operations {
                 let result = (lower << 4) + upper;
 
                 registers.setF(0);
-                if (result === 0) {
-                    registers.setZeroFlag(1);
-                }
-
+                if (result === 0) registers.setZeroFlag(1);
                 registers.setH(result);
             }
         };
@@ -3997,10 +4466,7 @@ export class Operations {
                 let result = (lower << 4) + upper;
 
                 registers.setF(0);
-                if (result === 0) {
-                    registers.setZeroFlag(1);
-                }
-
+                if (result === 0) registers.setZeroFlag(1);
                 registers.setL(result);
             }
         };
@@ -4017,10 +4483,7 @@ export class Operations {
                 let result = (lower << 8) + upper;
 
                 registers.setF(0);
-                if (result === 0) {
-                    registers.setZeroFlag(1);
-                }
-
+                if (result === 0) registers.setZeroFlag(1);
                 registers.setHL(result);
             }
         };
@@ -4034,13 +4497,11 @@ export class Operations {
             execute(pc: number) {
                 let val = registers.getA();
                 let lower = val & 0xF;
-                let upper = (val & 0xF0) >> 4;
+                let upper = val >> 4;
                 let result = (lower << 4) + upper;
 
                 registers.setF(0);
-                if (result === 0) {
-                    registers.setZeroFlag(1);
-                }
+                if (result === 0) registers.setZeroFlag(1);
 
                 registers.setA(result);
             }
@@ -4057,12 +4518,119 @@ export class Operations {
                 let result = val >> 1;
 
                 registers.setF(0);
-                if (result === 0) {
-                    registers.setZeroFlag(1);
-                }
+                if (result === 0) registers.setZeroFlag(1);
 
                 registers.setCarryFlag(bit);
                 registers.setB(result);
+            }
+        };
+
+        this.operations[0xCB39] = {
+            name: "SRL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getC();
+                let bit = val & 1;
+                let result = val >> 1;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setC(result);
+            }
+        };
+
+        this.operations[0xCB3A] = {
+            name: "SRL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getD();
+                let bit = val & 1;
+                let result = val >> 1;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setD(result);
+            }
+        };
+
+        this.operations[0xCB3B] = {
+            name: "SRL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getE();
+                let bit = val & 1;
+                let result = val >> 1;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setE(result);
+            }
+        };
+
+        this.operations[0xCB3C] = {
+            name: "SRL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getH();
+                let bit = val & 1;
+                let result = val >> 1;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setH(result);
+            }
+        };
+
+        this.operations[0xCB3D] = {
+            name: "SRL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let val = registers.getL();
+                let bit = val & 1;
+                let result = val >> 1;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                registers.setL(result);
+            }
+        };
+
+        this.operations[0xCB3E] = {
+            name: "SRL",
+            cycle: 8,
+            size: 2,
+            mode: immediate,
+            execute(pc: number) {
+                let hl = registers.getHL();
+                let val = memory.readByte(hl);
+                let bit = val & 1;
+                let result = val >> 1;
+
+                registers.setF(0);
+                if (result === 0) registers.setZeroFlag(1);
+
+                registers.setCarryFlag(bit);
+                memory.writeByte(hl, result);
             }
         };
 
