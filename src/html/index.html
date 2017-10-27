@@ -1,5 +1,6 @@
 <html>
 <head>
+    <meta name="viewport" content="width=device-width" />        
     <title>TsGBA | Typescript GB Emulator</title>
     <script src="./assets/SystemJS.js" type="application/javascript"></script>
     <script src="./assets/jquery.min.js" type="application/javascript"></script>
@@ -467,17 +468,18 @@
             req.open('GET', "./roms");
             req.send(null);
 
-            //gameboy.load("./roms/cpu_instrs/individual/01-special.gb");       okay
-            //gameboy.load("./roms/cpu_instrs/individual/05-op rp.gb");         okay
-            //gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");        okay
-            //gameboy.load("./roms/cpu_instrs/individual/08-misc instrs.gb");   okay
-            //gameboy.load("./roms/cpu_instrs/individual/03-op sp,hl.gb");      okay
+            //gameboy.load("./roms/cpu_instrs/individual/01-special.gb");               okay
+            //gameboy.load("./roms/cpu_instrs/individual/03-op sp,hl.gb");              okay
+            //gameboy.load("./roms/cpu_instrs/individual/04-op r,imm.gb");              okay
+            //gameboy.load("./roms/cpu_instrs/individual/05-op rp.gb");                 okay
+            //gameboy.load("./roms/cpu_instrs/individual/06-ld r,r.gb");                okay
+            //gameboy.load("./roms/cpu_instrs/individual/07-jr,jp,call,ret,rst.gb");    okay
+            //gameboy.load("./roms/cpu_instrs/individual/08-misc instrs.gb");           okay
+            //gameboy.load("./roms/cpu_instrs/individual/09-op r,r.gb");                okay
+
             
             //gameboy.load("./roms/cpu_instrs/individual/02-interrupts.gb");
             //gameboy.load("./roms/cpu_instrs/individual/e8ye.gb");
-            //gameboy.load("./roms/cpu_instrs/individual/04-op r,imm.gb");
-            //gameboy.load("./roms/cpu_instrs/individual/07-jr,jp,call,ret,rst.gb");
-            //gameboy.load("./roms/cpu_instrs/individual/09-op r,r.gb");
             gameboy.load("./roms/Tetris.gb");
             //gameboy.load("./roms/castlevania.gb");
             gameboy.reset();

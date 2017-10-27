@@ -33,12 +33,20 @@
     font-weight: 700;
 }
 
-.controllers {
-    display: flex;
-    align-items: stretch;
-    justify-content: space-between;
-    margin-top: 70px;
+@media screen and (max-width : 600px){
+    .controllers {
+        display: flex;
+        align-items: stretch;
+        justify-content: space-between;
+        margin-top: 70px;
+    
+    }
+}
 
+@media screen and (min-width : 600px){
+    .controllers{
+        display:none;
+    }
 }
 
 .dpad-container {
