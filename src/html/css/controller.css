@@ -33,17 +33,16 @@
     font-weight: 700;
 }
 
-@media screen and (max-width : 600px){
+@media screen and (max-device-width : 600px){
     .controllers {
         display: flex;
         align-items: stretch;
         justify-content: space-between;
-        margin-top: 70px;
-    
+        margin-top: 70px;    
     }
 }
 
-@media screen and (min-width : 600px){
+@media screen and (min-device-width : 600px){
     .controllers{
         display:none;
     }
