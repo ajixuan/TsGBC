@@ -5,8 +5,10 @@
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-start" : "npm run clean && npm run build && npm run start",
+    "build-dev-start": "npm run clean && npm run build && npm run start",
+    "build-prod-start": "npm run clean && npm run build && npm run uglify && npm run start",
     "start": "http-server ./target",
+    "uglify": "uglifyjs ./target/app.js",
     "build": "gulp build",
     "clean": "gulp clean",
     "watch": "gulp watch"
@@ -36,5 +38,7 @@
     "url": "https://github.com/ajixuan/TsGBC/settings"
   },
   "homepage": "https://github.com/hkamran/TsGBC#readme",
-  "dependencies": {}
+  "dependencies": {
+    "uglify-es": "^3.1.5"
+  }
 }
