@@ -165,47 +165,44 @@ export class Ppu {
      * Render scan on one tick
      */
     public renderscan(cycles: number): void {
-        let stat = this.registers.stat;
-        let lcdc = this.registers.lcdc;
-
         this.clock += cycles;
-        stat.lyco.unset();
+        this.registers.stat.lyco.unset();
 
         //LCD is off, reset renderscan
         if (!this.registers.lcdc.lcdon.get()) {
-            stat.interrupts.hblank.set();
+            this.registers.stat.interrupts.hblank.set();
             this.clock = 0;
             return;
         }
 
         //Set the ly,lyc coincidence interrupt
         if (this.registers.ly == this.registers.lyc) {
-            stat.lyco.set();
+            this.registers.stat.lyco.set();
         }
 
-        //Cycle through stat
-        if (stat.modeFlag.hblank.get() && this.clock >= 204) {
-            stat.modeFlag.oamlock.set();
+        //Cycle through this.registers.stat
+        if (this.registers.stat.modeFlag.hblank.get() && this.clock >= 204) {
+            this.registers.stat.modeFlag.oamlock.set();
             this.clock = 0;
 
-        } else if (stat.modeFlag.vblank.get() && this.clock >= 456) {
+        } else if (this.registers.stat.modeFlag.vblank.get() && this.clock >= 456) {
 
             if (this.registers.ly > 153 || this.registers.ly == 0) {
                 this.registers.ly = 0;
-                stat.modeFlag.vramlock.set();
-                stat.interrupts.vblank.unset();
+                this.registers.stat.modeFlag.vramlock.set();
+                this.registers.stat.interrupts.vblank.unset();
             } else {
                 this.registers.ly++;
                 this.clock = 0;
             }
 
-        } else if (stat.modeFlag.oamlock.get() && this.clock >= 80) {
+        } else if (this.registers.stat.modeFlag.oamlock.get() && this.clock >= 80) {
 
             let x, y, chr, attr, tile;
             let spriteCount = 0;
 
             //8x16 Sprites
-            if (lcdc.objsize.get()) {
+            if (this.registers.lcdc.objsize.get()) {
 
 
             }
@@ -241,21 +238,21 @@ export class Ppu {
                 }
             }
             this.registers.ly++;            
-            stat.modeFlag.vramlock.set();
+            this.registers.stat.modeFlag.vramlock.set();
             this.clock = 0;
 
-        } else if (stat.modeFlag.vramlock.get() && this.clock >= 172) {
+        } else if (this.registers.stat.modeFlag.vramlock.get() && this.clock >= 172) {
 
             let mapy, mapx, tile;
             let row = this.registers.ly;
             let screen = this.screen;
 
-            if (lcdc.lcdon.get()) {
+            if (this.registers.lcdc.lcdon.get()) {
                 this.clock = 0;
 
                 //Vertical blank
                 if (this.registers.ly == 144) {
-                    stat.interrupts.vblank.set();
+                    this.registers.stat.interrupts.vblank.set();
                     screen.printBuffer();
                     return;
                 }
@@ -273,7 +270,7 @@ export class Ppu {
                     tile = this.getVramTile(tilenum);
                     screen.setBufferPixel(cell, row, tile[row % Screen.PIXELS][cell % Screen.PIXELS]);                                               
                 }
-                stat.modeFlag.hblank.set();
+                this.registers.stat.modeFlag.hblank.set();
             }
         }
     }

@@ -14,7 +14,6 @@ export class GameBoy {
     public cartridge: Cartridge;
     public ticks: number = 0;
     public timeout: any;
-    public interval: number = 1000;
     public keyboard: Keyboard;    
     public switch :any = function(gameboy){
         let _val = false;
@@ -34,7 +33,7 @@ export class GameBoy {
     }(this);
 
     //Ticks per frame
-    public tpf: number = 20000;
+    public tpf: number = 10000;
 
     private runConditions = new Map();
 
@@ -66,7 +65,7 @@ export class GameBoy {
         }
     }
 
-    public tick(): void{
+    public step(): void{
         let cycles = this.cpu.tick();
         this.ticks++;
         this.ppu.renderscan(cycles);
@@ -78,15 +77,15 @@ export class GameBoy {
      * @param pc
      */
     public tickAnimation(): void {
-        let tick = function(){
+        let step = function(){
             for(let i = 0; i <= this.tpf; i++){
                 if(!this.switch.stat()){return}
-                this.tick();           
+                this.step();           
             }
             this.tickAnimation.bind(this)();
         }.bind(this);
 
-        requestAnimationFrame(tick);
+        requestAnimationFrame(step);
     }
 
     /**

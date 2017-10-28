@@ -46,7 +46,7 @@ export class Registers {
      */
 
     public setPC(num : number): void {
-        this.isValid(num, 0xFFFF, "Register argument to large for PC: " + num);
+        //this.isValid(num, 0xFFFF, "Register argument to large for PC: " + num);
         this.pc = num;
     }
 
@@ -61,7 +61,7 @@ export class Registers {
      */
 
     public setSP(num : number): void {
-        this.isValid(num, 0xFFFF, "Register argument to large for SP: " + num);
+        //this.isValid(num, 0xFFFF, "Register argument to large for SP: " + num);
         this.sp = num;
     }
 
@@ -76,7 +76,7 @@ export class Registers {
      */
 
     public setA(num : number): void {
-        this.isValid(num, 0xFF, "Register argument to large for A: " + num);
+        //this.isValid(num, 0xFF, "Register argument to large for A: " + num);
         this.a = num;
     }
 
@@ -85,7 +85,7 @@ export class Registers {
     }
 
     public setAF(num : number) : void {
-        this.isValid(num, 0xFFFF, "Register argument to large for AF: " + num);
+        //this.isValid(num, 0xFFFF, "Register argument to large for AF: " + num);
         this.setA(num >> 8);  //high
         this.setF(num & 0xFF);    //low
     }
@@ -106,7 +106,7 @@ export class Registers {
      */
 
     public setZeroFlag(num : number) {
-        this.isValid(num, 0x1, "Register argument to large for Zero: " + num);
+        //this.isValid(num, 0x1, "Register argument to large for Zero: " + num);
         this.f.zero = num;
     }
 
@@ -115,7 +115,7 @@ export class Registers {
     }
 
     public setSubtractFlag(num : number) {
-        this.isValid(num, 0x1, "Register argument to large for Subtract: " + num);
+        //this.isValid(num, 0x1, "Register argument to large for Subtract: " + num);
         this.f.subtract = num;
     }
 
@@ -124,7 +124,7 @@ export class Registers {
     }
 
     public setHalfFlag(num : number) {
-        this.isValid(num, 0x1, "Register argument to large for Half: " + num);
+        //this.isValid(num, 0x1, "Register argument to large for Half: " + num);
         this.f.half = num;
     }
 
@@ -133,7 +133,7 @@ export class Registers {
     }
 
     public setCarryFlag(num : number) {
-        this.isValid(num, 0x1, "Register argument to large for Carry: " + num);
+        //this.isValid(num, 0x1, "Register argument to large for Carry: " + num);
         this.f.carry = num;
     }
 
@@ -142,7 +142,7 @@ export class Registers {
     }
 
     public setF(num : number): void {
-        this.isValid(num, 0xFF, "Register argument to large for F: " + num);
+        //this.isValid(num, 0xFF, "Register argument to large for F: " + num);
         this.f.zero =       (num & 0x80)? 1 : 0;
         this.f.subtract =   (num & 0x40)? 1: 0;
         this.f.half =       (num & 0x20)? 1: 0;
@@ -162,7 +162,7 @@ export class Registers {
      */
 
     public setB(num : number): void {
-        this.isValid(num, 0xFF, "Register argument to large for B: " + num);
+        //this.isValid(num, 0xFF, "Register argument to large for B: " + num);
         this.b = num;
     }
 
@@ -171,7 +171,7 @@ export class Registers {
     }
 
     public setC(num : number): void {
-        this.isValid(num, 0xFF, "Register argument to large for C: " + num);
+        //this.isValid(num, 0xFF, "Register argument to large for C: " + num);
         this.c = num;
     }
 
@@ -180,7 +180,7 @@ export class Registers {
     }
 
     public setBC(num : number) : void {
-        this.isValid(num, 0xFFFF, "Register argument to large for BC: " + num);
+        //this.isValid(num, 0xFFFF, "Register argument to large for BC: " + num);
         this.setB(num >> 8);       //high
         this.setC(num & 0xFF);    //low
     }
@@ -196,7 +196,7 @@ export class Registers {
      */
 
     public setD(num : number): void {
-        this.isValid(num, 0xFF, "Register argument to large for D: " + num);
+        //this.isValid(num, 0xFF, "Register argument to large for D: " + num);
         this.d = num;
     }
 
@@ -205,7 +205,7 @@ export class Registers {
     }
 
     public setE(num : number): void {
-        this.isValid(num, 0xFF, "Register argument to large for E: " + num);
+        //this.isValid(num, 0xFF, "Register argument to large for E: " + num);
         this.e = num;
     }
 
@@ -214,7 +214,7 @@ export class Registers {
     }
 
     public setDE(num : number) : void {
-        this.isValid(num, 0xFFFF, "Register argument to large for DE: " + num);
+        //this.isValid(num, 0xFFFF, "Register argument to large for DE: " + num);
         this.setD(num >> 8);      //high
         this.setE(num & 0xFF);    //low
     }
@@ -230,7 +230,7 @@ export class Registers {
      */
 
     public setH(num : number): void {
-        this.isValid(num, 0xFF, "Register argument to large for H: " + num);
+        //this.isValid(num, 0xFF, "Register argument to large for H: " + num);
         this.h = num;
     }
 
@@ -239,7 +239,7 @@ export class Registers {
     }
 
     public setL(num : number): void {
-        this.isValid(num, 0xFF, "Register argument to large for L: " + num);
+        //this.isValid(num, 0xFF, "Register argument to large for L: " + num);
         this.l = num;
     }
 
@@ -248,7 +248,7 @@ export class Registers {
     }
 
     public setHL(num : number) : void {
-        this.isValid(num, 0xFFFF, "Register argument to large for HL: " + num);
+        //this.isValid(num, 0xFFFF, "Register argument to large for HL: " + num);
         this.setH(num >> 8);  //high
         this.setL(num & 0xFF);    //low
     }

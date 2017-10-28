@@ -246,7 +246,7 @@ export class Debugger {
         let chart = memmap.children[0];
         for (let i = 0x8000; i <= 0xFFF0; i += 0x10) {
             (function (addr:number) {
-                setTimeout(function () {
+                requestAnimationFrame(function () {
                     let keys;
                     let index = Math.floor((addr - 0x8000) / 0x10);
 
@@ -278,7 +278,7 @@ export class Debugger {
                         }
                         queue = {};
                     }
-                }, 100);
+                });
             })(i);
         }
     }
@@ -287,12 +287,12 @@ export class Debugger {
         let memory = Debugger.gameboy.memory;        
         for (let i = 0x8000; i <= 0xFFF0; i += 0x10) {
             (function (addr) {
-                setTimeout(function () {
+                requestAnimationFrame(function () {
                     for (let j = 0; j <= 0xF; j++) {
                         let td : Element = document.getElementById((addr + j).toString());
                         td.innerHTML = memory.readByte(addr + j).toString(16);
                     }
-                }, 50);
+                });
             })(i);
         }
     }
