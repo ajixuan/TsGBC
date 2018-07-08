@@ -14,19 +14,18 @@
     "watch": "gulp watch"
   },
   "devDependencies": {
-    "@types/jquery": "^3.1.34",
-    "@types/mocha": "^2.2.36",
-    "del": "^2.2.1",
-    "gulp": "^3.9.1",
-    "gulp-mocha": "^3.0.1",
+    "@types/jquery": "^3.3.4",
+    "del": "^3.0.0",
+    "gulp": "^4.0.0",
+    "gulp-mocha": "^6.0.0",
     "gulp-systemjs-builder": "^0.15.0",
-    "gulp-tar": "^1.9.0",
-    "gulp-typescript": "^3.1.3",
-    "http-server": "^0.9.0",
-    "jquery": "^3.1.1",
-    "run-sequence": "^1.2.2",
-    "systemjs-builder": "^0.15.34",
-    "typescript": "^2.1.4"
+    "gulp-tar": "^2.1.0",
+    "gulp-typescript": "^5.0.0-alpha.3",
+    "http-server": "^0.11.1",
+    "jquery": "^3.3.1",
+    "run-sequence": "^2.2.1",
+    "systemjs-builder": "^0.16.13",
+    "typescript": "^2.9.2"
   },
   "repository": {
     "type": "git",
@@ -39,6 +38,7 @@
   },
   "homepage": "https://github.com/hkamran/TsGBC#readme",
   "dependencies": {
-    "uglify-es": "^3.1.5"
+    "npm-update-all": "^1.0.1",
+    "uglify-es": "^3.3.9"
   }
 }
